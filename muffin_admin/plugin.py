@@ -2,6 +2,7 @@
 import os.path as op
 
 from muffin.plugins import BasePlugin, PluginException
+from collections import OrderedDict
 
 from .handler import AdminHandler
 
@@ -26,7 +27,7 @@ class Plugin(BasePlugin):
         """ Initialize the application. """
         super().setup(app)
 
-        self.handlers = []
+        self.handlers = OrderedDict()
 
         # Connect admin static files
         app.cfg.STATIC_FOLDERS.append(op.join(PLUGIN_ROOT, 'static'))
@@ -46,3 +47,11 @@ class Plugin(BasePlugin):
             self.options.home = admin_home
 
         app.register(self.options.prefix)(self.options.home)
+
+    def register(self, handler):
+        """ Ensure that handler is not registered. """
+        name = handler.name.lower()
+        if name in self.handlers:
+            raise PluginException('Admin handler %s is already registered' % name)
+        self.handlers[name] = handler
+        return handler

@@ -7,15 +7,15 @@ from muffin_admin.peewee import PWAdminHandler
 @app.register
 class TestHandler(app.ps.admin.Handler):
 
-    name = 'one'
+    name = 'simple'
     columns = 'id', 'name'
 
-    def get_one(self, request):
-        resource = request.match_info.get(self.name)
+    def get_resource(self, request):
+        resource = request.GET.get('pk')
         if resource:
             return self.collection[int(resource) - 1]
 
-    def get_many(self, request):
+    def get_collection(self, request):
         return [
             Structure(id=1, name='test1'),
             Structure(id=2, name='test2'),
@@ -27,3 +27,4 @@ class TestHandler(app.ps.admin.Handler):
 class PWHandler(PWAdminHandler):
 
     model = Test
+    name = 'peewee'

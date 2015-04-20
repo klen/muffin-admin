@@ -28,7 +28,7 @@ setup(
     description=_read('DESCRIPTION'),
     long_description=_read('README.rst'),
     platforms=('Any'),
-    keywords = "django flask sqlalchemy testing mock stub mongoengine data".split(), # noqa
+    keywords = "asyncion aiohttp muffin admin".split(), # noqa
 
     author='Kirill Klenov',
     author_email='horneds@gmail.com',
@@ -36,11 +36,10 @@ setup(
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
+        'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         'Natural Language :: Russian',
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python',
         'Topic :: Software Development :: Libraries :: Python Modules',

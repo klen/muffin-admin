@@ -3,49 +3,21 @@
 (function ($) {
   "use strict";
 
-  $.fn.serializeObject = function () {
-      var o = {};
-      var a = this.serializeArray();
-      $.each(a, function () {
-        if (o[this.name] !== undefined) {
-          if (!o[this.name].push) {
-            o[this.name] = [o[this.name]];
-          }
-          o[this.name].push(this.value || '');
-        } else {
-          o[this.name] = this.value || '';
-        }
-      });
-      return o;
-  };
-
   $(function(){
-
-    var seek = {};
 
     // Initialize tooltips
     $('[data-toggle="tooltip"]').tooltip();
 
-    // Prepare data
-    $.each(window.data, function(c, item){
-        seek[item.id] = item;
-    });
-
     // Delete items
     $('.btn-delete').click(function(){
       $(this).button('toggle');
-      var item = $(this).parents('tr')[0], id = item.onclick(), data = seek[id];
-      var confirmation = confirm('Are you sure to delete this item #' + data.id + '?');
-      if (!confirmation) {
-        $(this).button('toggle');
-        return false;
-      }
+      var item = $(this).parents('tr')[0], id = $(item).data('pk'), modal=$(this).parents('.modal');
       $.ajax({
-        url: window.base_url + '/' + data.id,
+        url: window.base_url + '?pk=' + id,
         method: 'DELETE',
         success: function () {
-          $('#item-' + data.id).hide(600);
-          // window.location.reload();
+          modal.modal('toggle');
+          $('#item-' + id).hide(600);
         }
       });
     });
@@ -53,14 +25,36 @@
     // Reset a form
     $('.btn-reset').click(function(e){
       e.preventDefault();
-      $(this).parents('form').trigger('reset');
+      var parents = $(this).parents('.modal');
+      parents.find('form').trigger('reset');
+      parents.find('.has-error').removeClass('has-error');
+      parents.find('.help-block').remove();
     });
 
-    // Create an item
-    $('.form-create').submit(function(e) {
+    // Submit modal forms
+    $(window.document).on('click', 'button[type="submit"]', function(){
+      $(this).parents('.modal').find('form').submit();
+    });
+
+    // Parse modal forms
+    $(window.document).on('submit', 'form', function(e){
       e.preventDefault();
-      var data = $(this).serializeObject();
-      console.log(data);
+      var $this = $(this),
+          posting = $.post($this.attr('action'), $this.serialize());
+
+      $this.find('.has-error').removeClass('has-error');
+      $this.find('.help-block').remove();
+
+      posting.done(function(){ window.location.reload();}).fail(function(data){
+        var errors = data.responseJSON;
+        $.each(errors, function(c, errors) {
+          var parent = $this.find('#' + c).parent();
+          parent.addClass('has-error');
+          $.each(errors, function(c, e){
+              parent.append('<p class="help-block">' + e + '</p>');
+          });
+        });
+      });
     });
 
   });

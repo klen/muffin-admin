@@ -80,8 +80,12 @@ test: $(VIRTUALENV)/bin/py.test
 t: test
 
 .PHONY: run
-run: $(VIRTUALENV)/bin/py.test
+run: $(VIRTUALENV)/bin/py.test db.sqlite
 	@$(VIRTUALENV)/bin/muffin example run --bind=0.0.0.0:5000
+
+db.sqlite: $(VIRTUALENV)/bin/py.test
+	@$(VIRTUALENV)/bin/muffin example db
+	@$(VIRTUALENV)/bin/muffin example devdata
 
 .PHONY: daemon
 daemon: $(VIRTUALENV)/bin/py.test daemon-kill

@@ -26,15 +26,9 @@ html
           #navbar
             ul.nav.navbar-nav
               for handler in app.ps.admin.handlers
-                li(class="#{'active' if active.name == handler.name else ''")
-                if active.name == handler.name
-                  li.active
-                    a(href="#{app.ps.admin.options.prefix}/#{handler.name.lower()}")
-                      =handler.name.title()
-                else
-                  li
-                    a(href="#{app.ps.admin.options.prefix}/#{handler.name.lower()}")
-                      =handler.name.title()
+                li(class="#{'active' if active.name.lower() == handler else ''}")
+                    a(href="#{app.ps.admin.options.prefix}/#{handler}")
+                      =handler.title()
 
     .container
       block content

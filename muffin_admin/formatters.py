@@ -9,9 +9,8 @@ def default_formatter(handler, item, value):
 
 def bool_formatter(handler, item, value):
     """ Boolean formatter. """
-    glyph = 'ok-circle' if value else 'minus-sign'
-    fa = 'check-circle' if value else 'minus-circle'
-    return '<span class="fa fa-%s glyphicon glyphicon-%s icon-%s"></span>' % (fa, glyph, glyph)
+    glyph = 'ok' if value else 'minus'
+    return '<span class="glyphicon glyphicon-%s"></span>' % glyph
 
 
 def list_formatter(handler, item, value):

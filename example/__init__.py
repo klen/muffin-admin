@@ -13,5 +13,11 @@ app = application = muffin.Application(
     ],
 )
 
+
+@app.register('/')
+def index(request):
+    return "<a href='/admin'>Admin</a>"
+
+
 from example.admin import *  # noqa Register admin handlers
 from example.manage import * # noqa Register commands

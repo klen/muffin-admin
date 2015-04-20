@@ -3,17 +3,13 @@ Muffin-Admin
 
 .. _description:
 
-Muffin-Admin -- Short description.
+Muffin-Admin -- Admin interface for Muffin-Framework
 
 .. _badges:
 
 .. image:: http://img.shields.io/travis/klen/muffin-admin.svg?style=flat-square
     :target: http://travis-ci.org/klen/muffin-admin
     :alt: Build Status
-
-.. image:: http://img.shields.io/coveralls/klen/muffin-admin.svg?style=flat-square
-    :target: https://coveralls.io/r/klen/muffin-admin
-    :alt: Coverals
 
 .. image:: http://img.shields.io/pypi/v/muffin-admin.svg?style=flat-square
     :target: https://pypi.python.org/pypi/muffin-admin
@@ -25,11 +21,6 @@ Muffin-Admin -- Short description.
     :target: https://www.gratipay.com/klen/
     :alt: Donate
 
-.. _documentation:
-
-**Docs are available at https://muffin-admin.readthedocs.org/. Pull requests
-with documentation enhancements and/or fixes are awesome and most welcome.**
-
 .. _contents:
 
 .. contents::
@@ -39,7 +30,7 @@ with documentation enhancements and/or fixes are awesome and most welcome.**
 Requirements
 =============
 
-- python >= 2.6
+- python >= 3.3
 
 .. _installation:
 
@@ -54,6 +45,9 @@ Installation
 
 Usage
 =====
+
+See a example application.
+Enter `make run` for run.
 
 .. _bugtracker:
 

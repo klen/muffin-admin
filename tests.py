@@ -17,12 +17,12 @@ def app(loop):
 
         columns = 'id', 'name'
 
-        def get_one(self, request):
+        def get_resource(self, request):
             resource = request.match_info.get(self.name)
             if resource:
                 return self.collection[int(resource) - 1]
 
-        def get_many(self, request, **resources):
+        def get_collection(self, request, **resources):
             return [
                 muffin.utils.Structure(id=1, name='test1'),
                 muffin.utils.Structure(id=2, name='test2'),
@@ -40,7 +40,7 @@ def test_home(client):
 def test_handler(app, client):
     assert app.ps.admin.handlers
 
-    [th] = app.ps.admin.handlers
+    th = app.ps.admin.handlers['test']
     assert th.name == 'test'
 
     response = client.get('/admin/test')
@@ -80,10 +80,13 @@ def test_peewee(app, client):
     assert models[1].content in response.text
     assert models[2].content in response.text
 
-    response = client.get('/admin/model/1')
-    assert 'Model' in response.text
+    response = client.get('/admin/model?pk=1')
+    assert 'created' in response.text
 
-    response = client.delete('/admin/model/%s' % models[0].pk)
-    assert response.status_code == 200
+    response = client.post('/admin/model?pk=1', {
+        'content': 'new content'
+    })
+    assert response.status_code == 302
 
-    tmpl = ModelHandler.render_form_template()
+    response = client.delete('/admin/model?pk=1')
+    assert not Model.select().where(Model.id == 1).exists()
