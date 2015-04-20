@@ -1,0 +1,7 @@
+-r requirements.txt
+
+mixer
+wtf-peewee
+muffin_peewee >= 0.0.14
+pytest
+webtest

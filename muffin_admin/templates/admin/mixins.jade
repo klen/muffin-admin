@@ -1,0 +1,19 @@
+mixin render_field(field, value)
+  if field.type == 'HiddenField'
+    #{field}
+
+  else
+
+    if field.type == 'BooleanField'
+      .form-group
+        .col-sm-offset-1.col-sm-9
+          .checkbox: label
+            #{field(value=value)} #{field.label.text}
+
+
+    else
+      .form-group
+        #{field.label(class_="col-sm-1 control-label")}
+
+        .col-sm-9
+          #{field(class_="form-control")}

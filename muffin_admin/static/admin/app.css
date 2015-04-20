@@ -1,0 +1,14 @@
+/* Common styles */
+body {
+  padding-top: 70px;
+  padding-bottom: 30px;
+}
+
+/* List items */
+.admin-list tbody tr td {
+  vertical-align: middle;
+}
+
+.admin-list thead th.admin-control {
+  width: 40px;
+}

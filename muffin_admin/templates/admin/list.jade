@@ -1,0 +1,87 @@
+extends admin/base.jade
+
+block title
+  title #{active.name} -- list
+
+block content
+
+  <admin></admin>
+
+  include admin/mixins.jade
+
+  - var base_url = app.ps.admin.options.prefix + '/' + active.name.lower()
+    
+
+  div(role="tabpanel")
+
+    ul.nav.nav-tabs(role="tablist")
+      li#list-tab.active(role="presentation"): a(href="#list", role="tab", data-toggle="tab", aria-controls="list") List
+      if form
+        li#create-tab(role="presentation"): a(href="#create", role="tab", data-toggle="tab", aria-controls="create") Create 
+
+    .tab-content
+
+      .tab-pane.active#list(role="tabpanel")
+
+        table.table.table-striped.admin-list
+          thead: tr
+            th(style="width:40px")
+            for column in active.columns
+              th
+                =column.title()
+            th(style="width:40px")
+
+          tbody
+
+            for item in list(data)
+              tr(onclick="return #{item['id']};")
+                td
+                    if form
+                      button.btn.btn-xs.btn-default(type="button", title="edit", data-toggle="modal", data-target="#edit-form")
+                        span.glyphicon.glyphicon-pencil
+
+                for column in active.columns
+                  td #{active.render_value(item, column)}
+
+                td
+                    .btn.btn-xs.btn-danger.btn-delete(data-toggle="tooltip", title="delete")
+                        span.glyphicon.glyphicon-trash
+
+      if form
+
+        .tab-pane#create(role="tabpanel")
+
+          .col-sm-8(style="padding-top: 2em")
+            .row
+              form.form-horizontal.form-create
+                for field in form
+                  +render_field(field, None)
+                .form-group(style="padding-top: 2em")
+                    button.btn.btn-success.btn-create Create
+                    button.btn.btn-danger.btn-reset(href="#reset") Reset
+
+  if form
+    div#edit-form.modal.fade
+      .modal-dialog
+        .modal-content
+          .modal-header
+            h4.modal-title Edit
+          .modal-body#edit-body
+            p One line
+
+block js
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js")
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.min.js")
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.2/handlebars.min.js")
+  script(src="#{app.cfg.STATIC_PREFIX}/admin/app.js")
+  if form
+    script#edit-template(type="text/x-handlebars-template")
+        form.form-horizontal.form-create
+          for field in form
+            +render_field(field, '{{ field.name }}')
+          .form-group(style="padding-top: 2em")
+              button.btn.btn-success.btn-create Create
+              button.btn.btn-danger.btn-reset(href="#reset") Reset
+  script.
+    var base_url = '#{base_url}',
+        data = #{json(data)};
