@@ -1,4 +1,6 @@
 """ Setup the plugin. """
+import asyncio
+import muffin
 import os.path as op
 
 from muffin.plugins import BasePlugin, PluginException
@@ -41,8 +43,10 @@ class Plugin(BasePlugin):
         if self.options.name is None:
             self.options.name = "%s admin" % app.name.title()
 
+        # Register a base view
         if not callable(self.options.home):
             def admin_home(request):
+                yield from self.authorize(request, app)
                 return app.ps.jade.render('admin/home.jade')
             self.options.home = admin_home
 
@@ -55,3 +59,16 @@ class Plugin(BasePlugin):
             raise PluginException('Admin handler %s is already registered' % name)
         self.handlers[name] = handler
         return handler
+
+    def authorization(self, func):
+        """ Define a authorization process. """
+        if self.app is None:
+            raise PluginException('The plugin must be installed to application.')
+
+        self.authorize = muffin.to_coroutine(func)
+        return func
+
+    @asyncio.coroutine
+    def authorize(self, request, app=None):
+        """ Default authorization. """
+        return True

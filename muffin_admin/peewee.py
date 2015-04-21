@@ -30,6 +30,7 @@ class PWAdminHandlerMeta(type(AdminHandler)):
         cls = super(PWAdminHandlerMeta, mcs).__new__(mcs, name, bases, params)
         if not cls.form and cls.model and model_form:
             cls.form = model_form(cls.model, **cls.form_meta)
+
         return cls
 
 
