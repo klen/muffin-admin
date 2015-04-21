@@ -1,10 +1,15 @@
 """ Define formatters. """
 import datetime as dt
+from html import escape
 
 
 def default_formatter(handler, item, value):
     """ Default formatter. """
-    return str(value)
+    if hasattr(value, '__unicode__'):
+        value = value.__unicode__()
+    else:
+        value = str(value)
+    return escape(value)
 
 
 def bool_formatter(handler, item, value):
