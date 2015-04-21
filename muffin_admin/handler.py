@@ -48,9 +48,7 @@ class AdminHandler(Handler):
     @abcoroutine
     def authorize(self, request):
         """ Base point for authorization. """
-        app = request.app
-        admin = request.app.ps.admin
-        auth = yield from admin.authorize(request, app=app)
+        auth = yield from request.app.ps.admin.authorize(request)
         return auth
 
     @abcoroutine

@@ -46,7 +46,7 @@ class Plugin(BasePlugin):
         # Register a base view
         if not callable(self.options.home):
             def admin_home(request):
-                yield from self.authorize(request, app)
+                yield from self.authorize(request)
                 return app.ps.jade.render('admin/home.jade')
             self.options.home = admin_home
 
@@ -69,6 +69,6 @@ class Plugin(BasePlugin):
         return func
 
     @asyncio.coroutine
-    def authorize(self, request, app=None):
+    def authorize(self, request):
         """ Default authorization. """
         return True

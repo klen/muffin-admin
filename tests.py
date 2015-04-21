@@ -30,7 +30,7 @@ def app(loop):
             ]
 
     @app.ps.admin.authorization
-    def ensure_code_in_get(request, app=None):
+    def ensure_code_in_get(request):
         """ Simple fake authentication process. """
         if 'auth' not in request.GET:
             raise muffin.HTTPForbidden()
