@@ -11,6 +11,10 @@ app = application = muffin.Application(
         'muffin_admin',
         'muffin_peewee',
     ],
+
+    JADE_TEMPLATE_FOLDERS='example/templates',
+
+    ADMIN_TEMPLATE_LIST='custom_list.jade'
 )
 
 

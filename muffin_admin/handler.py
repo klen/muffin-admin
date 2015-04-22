@@ -13,10 +13,22 @@ class AdminHandler(Handler):
 
     """ Docstring here. """
 
-    columns = '#',
+    # List of columns
+    columns = 'id',
+
+    # WTF form class
     form = None
-    template_list = 'admin/list.jade'
-    template_item = 'admin/item.jade'
+
+    # Templates
+    template_list = None
+    template_item = None
+
+    def __init__(self, app):
+        """ Define self templates. """
+        super(AdminHandler, self).__init__(app)
+
+        self.template_list = self.template_list or app.ps.admin.options.template_list
+        self.template_item = self.template_item or app.ps.admin.options.template_item
 
     @classmethod
     def connect(cls, app, *paths, name=None):
@@ -42,6 +54,11 @@ class AdminHandler(Handler):
         """ Dispatch a request. """
         self.auth = yield from self.authorize(request)
         self.collection = yield from self.get_collection(request)
+        ordering = request.GET.get('_ordering')
+        if ordering:
+            reverse = ordering.startswith('-')
+            self.ordering = ordering.lstrip('+-')
+            self.collection = self.sort_collection(self.collection, self.ordering, reverse=reverse)
         self.resource = yield from self.get_resource(request)
         return (yield from super(AdminHandler, self).dispatch(request, **kwargs))
 
@@ -75,6 +92,10 @@ class AdminHandler(Handler):
         resource = self.resource or self.populate()
         form.populate_obj(resource)
         return resource
+
+    def sort_collection(self, collection, ordering, reverse=False):
+        """ Sort collection. """
+        return sorted(collection, lambda o: getattr(o, ordering, None), reverse=reverse)
 
     def populate(self):
         """ Create object. """

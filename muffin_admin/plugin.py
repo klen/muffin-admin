@@ -21,6 +21,8 @@ class Plugin(BasePlugin):
         'prefix': '/admin',
         'name': None,
         'home': None,
+        'template_list': 'admin/list.jade',
+        'template_item': 'admin/item.jade',
     }
 
     Handler = AdminHandler
@@ -30,9 +32,6 @@ class Plugin(BasePlugin):
         super().setup(app)
 
         self.handlers = OrderedDict()
-
-        # Connect admin static files
-        app.cfg.STATIC_FOLDERS.append(op.join(PLUGIN_ROOT, 'static'))
 
         if 'jade' not in app.plugins:
             raise PluginException('The plugin requires Muffin-Jade installed.')

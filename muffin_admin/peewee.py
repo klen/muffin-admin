@@ -45,6 +45,17 @@ class PWAdminHandler(AdminHandler, metaclass=PWAdminHandlerMeta):
         """ Get collection. """
         return self.model.select()
 
+    def sort_collection(self, collection, ordering, reverse=False):
+        """ Order a current collection. """
+        field = self.model._meta.fields.get(ordering)
+        if not field:
+            return collection
+
+        if reverse:
+            field = field.desc()
+
+        return self.collection.order_by(field)
+
     def get_resource(self, request):
         """ Load a resource. """
         resource = request.GET.get('pk')
