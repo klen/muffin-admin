@@ -31,6 +31,9 @@ class PWAdminHandlerMeta(type(AdminHandler)):
         if not cls.form and cls.model and model_form:
             cls.form = model_form(cls.model, **cls.form_meta)
 
+        if cls.columns_exclude:
+            cls.columns = [col for col in cls.columns if col not in cls.columns_exclude]
+
         return cls
 
 
@@ -39,6 +42,9 @@ class PWAdminHandler(AdminHandler, metaclass=PWAdminHandlerMeta):
     """ Peewee operations. """
 
     model = None
+
+    columns_exclude = ()
+
     form_meta = {}
 
     def get_collection(self, request):
@@ -79,6 +85,10 @@ class PWAdminHandler(AdminHandler, metaclass=PWAdminHandlerMeta):
 
     def delete(self, request):
         """ Delete an item. """
+        if not self.can_delete:
+            raise muffin.HTTPMethodNotAllowed()
+
         if not self.resource:
             raise muffin.HTTPNotFound('Resource not found')
+
         self.resource.delete_instance()

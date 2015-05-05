@@ -7,7 +7,7 @@ def app(loop):
     app = muffin.Application(
         'admin', loop=loop,
 
-        PLUGINS=['muffin_jade', 'muffin_admin', 'muffin_peewee'],
+        PLUGINS=['muffin_jinja2', 'muffin_admin', 'muffin_peewee'],
 
         PEEWEE_CONNECTION='sqlite:///:memory:'
     )
@@ -79,10 +79,15 @@ def test_peewee(app, client):
     @app.register
     class ModelHandler(PWAdminHandler):
         model = Model
+        columns_exclude = 'created',
 
     assert ModelHandler.columns
+    assert ModelHandler.columns == ['id', 'active', 'content']
     assert ModelHandler.name == 'model'
     assert ModelHandler.form
+    assert ModelHandler.can_create
+    assert ModelHandler.can_edit
+    assert ModelHandler.can_delete
 
     from mixer.backend.peewee import Mixer
     mixer = Mixer(commit=True)

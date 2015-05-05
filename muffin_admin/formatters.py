@@ -46,7 +46,8 @@ FORMATTERS = {
 }
 
 
-def format_value(handler, item, value):
+def format_value(handler, item, column):
     """ Format value. """
+    value = getattr(item, column, None)
     formatter = FORMATTERS.get(type(value), default_formatter)
     return formatter(handler, item, value)

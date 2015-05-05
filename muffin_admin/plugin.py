@@ -21,8 +21,10 @@ class Plugin(BasePlugin):
         'prefix': '/admin',
         'name': None,
         'home': None,
-        'template_list': 'admin/list.jade',
-        'template_item': 'admin/item.jade',
+
+        'template_list': 'admin/list.html',
+        'template_item': 'admin/item.html',
+        'template_home': 'admin/home.html',
     }
 
     Handler = AdminHandler
@@ -33,20 +35,30 @@ class Plugin(BasePlugin):
 
         self.handlers = OrderedDict()
 
-        if 'jade' not in app.plugins:
-            raise PluginException('The plugin requires Muffin-Jade installed.')
+        if 'jinja2' not in app.plugins:
+            raise PluginException('The plugin requires Muffin-Jinja2 plugin installed.')
 
         # Connect admin templates
-        app.ps.jade.options.template_folders.append(op.join(PLUGIN_ROOT, 'templates'))
+        app.ps.jinja2.options.template_folders.append(op.join(PLUGIN_ROOT, 'templates'))
+
+        @app.ps.jinja2.filter
+        def admtest(value, a, b=None):
+            return a if value else b
+
+        @app.ps.jinja2.filter
+        def admeq(a, b, result=True):
+            return result if a == b else not result
 
         if self.options.name is None:
             self.options.name = "%s admin" % app.name.title()
 
         # Register a base view
         if not callable(self.options.home):
+
             def admin_home(request):
                 yield from self.authorize(request)
-                return app.ps.jade.render('admin/home.jade')
+                return app.ps.jinja2.render(self.options.template_home, active=None)
+
             self.options.home = admin_home
 
         app.register(self.options.prefix)(self.options.home)

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    {% block title %}
+      <title>{{handler.name}}</title>
+    {% endblock %}
+
+    {% block meta %}
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% endblock %}
+
+    {% block css_common %}
+      <link rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap.min.css"/>
+      <link rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap-theme.min.css"/>
+    {% endblock %}
+
+    {% block css_admin %}
+      <style>
+        body {
+          padding-top: 70px;
+          padding-bottom: 30px;
+        }
+        .nowrap { white-space: nowrap; }
+        .admin-list tbody tr td { vertical-align: middle; }
+        .admin-list thead .admin-control { width: 40px; }
+        .admin-list thead .glyphicon { font-size: 10px; }
+      </style>
+    {% endblock %}
+
+    {% block css_additional %}
+    {% endblock %}
+
+  </head>
+  <body>
+
+    {% set prefix = app.ps.admin.options.prefix %}
+
+    {% block navbar %}
+      <div class="nav navbar navbar-fixed-top navbar-inverse">
+        <div class="container-fluid">
+
+          {% block navbar_header %}
+            <div class="navbar-header">
+              <a class="navbar-brand" href="{{prefix}}">{{app.ps.admin.options.name}}</a>
+            </div>
+          {% endblock %}
+
+          {% block navbar_models %}
+            <ul class="nav navbar-nav">
+              {% for handler in app.ps.admin.handlers %}
+                <li class="{{ active.name|lower|admeq(handler, 'active') }}">
+                  <a href="{{ prefix }}/{{ handler }}">{{ handler|title }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          {% endblock %}
+
+          {% block navbar_additional %}
+          {% endblock %}
+
+        </div>
+      </div>
+    {% endblock %}
+
+    <div class="container-fluid">
+      {% block content %}
+      {% endblock %}
+    </div>
+
+    {% block content_additional %}
+    {% endblock %}
+
+    {% block js_common %}
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    {% endblock %}
+
+    {% block js_admin %}
+    {% endblock %}
+
+    {% block js_additional %}
+    {% endblock %}
+
+  </body>
+</html>

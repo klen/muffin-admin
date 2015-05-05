@@ -1,3 +1,2 @@
 muffin
-muffin_jade >= 0.0.6
-muffin-rest >= 0.0.6
+muffin_jinja2 >= 0.0.4

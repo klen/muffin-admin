@@ -1,5 +1,6 @@
 from example import app
 from muffin.utils import Structure
+import random
 from example.models import Test
 from muffin_admin.peewee import PWAdminHandler
 
@@ -8,7 +9,10 @@ from muffin_admin.peewee import PWAdminHandler
 class TestHandler(app.ps.admin.Handler):
 
     name = 'simple'
-    columns = 'id', 'name'
+    columns = 'id', 'name', 'random'
+    columns_formatters = {
+        'random': lambda view, item, col: random.randint(1, 99)
+    }
 
     def get_resource(self, request):
         resource = request.GET.get('pk')
@@ -28,3 +32,4 @@ class PWHandler(PWAdminHandler):
 
     model = Test
     name = 'peewee'
+    columns_labels = {'created': 'Created at'}

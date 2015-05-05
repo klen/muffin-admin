@@ -15,6 +15,8 @@ class AdminHandler(Handler):
 
     # List of columns
     columns = 'id',
+    columns_labels = {}
+    columns_formatters = {}
 
     # WTF form class
     form = None
@@ -22,6 +24,11 @@ class AdminHandler(Handler):
     # Templates
     template_list = None
     template_item = None
+
+    # Permissions
+    can_create = True
+    can_edit = True
+    can_delete = True
 
     def __init__(self, app):
         """ Define self templates. """
@@ -89,13 +96,19 @@ class AdminHandler(Handler):
     @abcoroutine
     def save_form(self, form, request, **resources):
         """ Save self form. """
+        if not self.can_create and not self.resource:
+            raise muffin.HTTPForbidden()
+
+        if not self.can_edit and self.resource:
+            raise muffin.HTTPForbidden()
+
         resource = self.resource or self.populate()
         form.populate_obj(resource)
         return resource
 
     def sort_collection(self, collection, ordering, reverse=False):
         """ Sort collection. """
-        return sorted(collection, lambda o: getattr(o, ordering, None), reverse=reverse)
+        return sorted(collection, key=lambda o: getattr(o, ordering, 0), reverse=reverse)
 
     def populate(self):
         """ Create object. """
@@ -107,8 +120,8 @@ class AdminHandler(Handler):
         form = yield from self.get_form(request)
         ctx = dict(active=self, form=form)
         if self.resource:
-            return self.app.ps.jade.render(self.template_item, **ctx)
-        return self.app.ps.jade.render(self.template_list, **ctx)
+            return self.app.ps.jinja2.render(self.template_item, **ctx)
+        return self.app.ps.jinja2.render(self.template_list, **ctx)
 
     @abcoroutine
     def post(self, request):
@@ -122,4 +135,5 @@ class AdminHandler(Handler):
 
     def render_value(self, data, column):
         """ Render value. """
-        return format_value(self, data, getattr(data, column))
+        renderer = self.columns_formatters.get(column, format_value)
+        return renderer(self, data, column)

@@ -7,14 +7,14 @@ app = application = muffin.Application(
     'example',
 
     PLUGINS=[
-        'muffin_jade',
+        'muffin_jinja2',
         'muffin_admin',
         'muffin_peewee',
     ],
 
-    JADE_TEMPLATE_FOLDERS='example/templates',
+    JINJA2_TEMPLATE_FOLDERS='example/templates',
 
-    ADMIN_TEMPLATE_LIST='custom_list.jade'
+    ADMIN_TEMPLATE_LIST='custom_list.html'
 )
 
 

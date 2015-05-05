@@ -1,0 +1,175 @@
+{% extends "admin/base.html" %}
+
+{% import "admin/macros.html" as macros %}
+
+{% set base_url = app.ps.admin.options.prefix + '/' + active.name.lower() %}
+
+{% block title %}
+  <title>{{active.name}}</title>
+{% endblock %}
+
+{% block content %}
+
+  <ul class="nav nav-tabs" role="tablist">
+    <li class="active"><a href="#list">List</a></li>
+    {% if active.can_create and active.form %}
+      <li><a href="#create" data-toggle="modal" data-target="#create">Create</a></li>
+      <div id="create" class="modal fade">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header"><h4>Create {{active.name}}</h4></div>
+            <div class="modal-body">
+              {{ macros.render_form(form, action=base_url) }}
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-success btn-create" type="submit">Create</button>
+              <button class="btn btn-danger  btn-reset" href="#reset">Reset</button>
+              <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </ul>
+
+  <table class="table table-striped table-hover admin-list">
+    <thead>
+      <tr>
+        <th style="width: 40px"></th>
+        {% for column in active.columns %}
+          <th class="nowrap">
+            <div class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span data-toggle="tooltip" title="sort"> {{active.columns_labels.get(column, column.title())}} <span class="caret"></span> </span></a>
+              <ul class="dropdown-menu">
+                <li class="dropdown-header">Sorting</li>
+                <li><a href="{{base_url}}?_ordering={{column}}"><span class="glyphicon glyphicon-arrow-down">Ascending</span></a></li>
+                <li><a href="{{base_url}}?_ordering=-{{column}}"><span class="glyphicon glyphicon-arrow-up">Descending</span></a></li>
+              </ul>
+            </div>
+          </th>
+        {% endfor %}
+        <th style="width: 40px"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in active.collection|list %}
+        <tr id="item-{{item.id}}" data-pk="{{item.id}}">
+
+          <td>
+            {% if active.can_edit and active.form %}
+              <a class="btn btn-xs btn-default" href="{{base_url}}?pk={{item.id}}" data-toggle="modal" data-target="#edit-{{item.id}}">
+                <span class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="edit"></span>
+              </a>
+              <div class="modal fade" id="edit-{{item.id}}">
+                <div class="modal-dialog"><div class="modal-content"></div></div>
+              </div>
+            {% endif %}
+          </td>
+
+          {% for column in active.columns %}
+            <td> {{ active.render_value(item, column)|safe }} </td>
+          {% endfor %}
+
+          <td>
+            {% if active.can_delete and active.delete %}
+              <button class="btn btn-xs btn-danger" data-toggle="modal" data-target="#delete-{{item.id}}">
+                <span class="glyphicon glyphicon-trash" data-toggle="tooltip" title="delete"></span>
+              </button>
+              <div class="modal fade" id="delete-{{item.id}}">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header"><h4>Are you sure want to delete {{active.name}} #{{item.id}}?</h4></div>
+                    <div class="modal-body">
+                      {% for column in active.columns[:4] %}
+                      <b> {{ active.render_value(item, column)|safe }} </b>
+                      {% endfor %}
+                    </div>
+                    <div class="modal-footer">
+                      <button class="btn btn-danger btn-delete">Delete</button>
+                      <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock %}
+
+
+{% block js_admin %}
+
+  <script>
+
+    (function ($) {
+      "use strict";
+
+      $(function(){
+
+        // Initialize tooltips
+        $('[data-toggle="tooltip"]').tooltip();
+
+        // Delete items
+        $('.btn-delete').click(function(){
+          $(this).button('toggle');
+          var item = $(this).parents('tr')[0], id = $(item).data('pk'), modal=$(this).parents('.modal');
+          $.ajax({
+            url: window.base_url + '?pk=' + id,
+            method: 'DELETE',
+            success: function () {
+              modal.modal('toggle');
+              $('#item-' + id).hide(600);
+            }
+          });
+        });
+
+        // Reset a form
+        $('.btn-reset').click(function(e){
+          e.preventDefault();
+          var parents = $(this).parents('.modal');
+          parents.find('form').trigger('reset');
+          parents.find('.has-error').removeClass('has-error');
+          parents.find('.help-block').remove();
+        });
+
+        // Submit modal forms
+        $(window.document).on('click', 'button[type="submit"]', function(){
+          $(this).parents('.modal').find('form').submit();
+        });
+
+        // Parse modal forms
+        $(window.document).on('submit', 'form', function(e){
+          e.preventDefault();
+          var $this = $(this),
+              posting = $.post($this.attr('action'), $this.serialize());
+
+          $this.find('.has-error').removeClass('has-error');
+          $this.find('.help-block').remove();
+
+          posting.done(function(){ window.location.reload();}).fail(function(data){
+            var errors = data.responseJSON;
+            $.each(errors, function(c, errors) {
+              var parent = $this.find('#' + c).parent();
+              parent.addClass('has-error');
+              $.each(errors, function(c, e){
+                  parent.append('<p class="help-block">' + e + '</p>');
+              });
+            });
+          });
+        });
+
+      });
+      
+    }(jQuery));
+
+  </script>
+
+  <script>
+    var base_url = '{{base_url}}';
+  </script>
+
+{% endblock %}
