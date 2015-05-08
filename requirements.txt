@@ -1,2 +1,3 @@
 muffin
 muffin_jinja2 >= 0.0.4
+wtforms
