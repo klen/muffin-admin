@@ -47,6 +47,8 @@ class PWAdminHandler(AdminHandler, metaclass=PWAdminHandlerMeta):
 
     form_meta = {}
 
+    methods = 'get', 'post', 'delete'
+
     def get_collection(self, request):
         """ Get collection. """
         return self.model.select()
