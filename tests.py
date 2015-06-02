@@ -72,7 +72,12 @@ def test_peewee(app, client):
         active = pw.BooleanField()
         content = pw.CharField()
 
+    @app.ps.peewee.register
+    class Model2(app.ps.peewee.TModel):
+        pass
+
     Model.create_table()
+    Model2.create_table()
 
     from muffin_admin.peewee import PWAdminHandler
 
@@ -80,6 +85,8 @@ def test_peewee(app, client):
     class ModelHandler(PWAdminHandler):
         model = Model
         columns_exclude = 'created',
+
+    app.ps.admin.register(Model2)
 
     assert ModelHandler.columns
     assert ModelHandler.columns == ['id', 'active', 'content']
@@ -108,3 +115,6 @@ def test_peewee(app, client):
 
     response = client.delete('/admin/model?pk=1&auth=1')
     assert not Model.select().where(Model.id == 1).exists()
+
+    response = client.get('/admin/model2?auth=1')
+    assert response.status_code == 200

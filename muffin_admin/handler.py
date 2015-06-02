@@ -38,7 +38,7 @@ class AdminHandler(Handler):
         self.template_item = self.template_item or app.ps.admin.options.template_item
 
     @classmethod
-    def connect(cls, app, *paths, name=None):
+    def connect(cls, app, *paths, methods=None, name=None):
         """ Connect to admin interface and application. """
         # Register self in admin
         app.ps.admin.register(cls)

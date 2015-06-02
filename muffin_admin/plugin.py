@@ -8,6 +8,12 @@ from collections import OrderedDict
 
 from .handler import AdminHandler
 
+try:
+    from .peewee import PWAdminHandler, pw
+    PWModel = pw.Model
+except Exception:
+    PWModel = None
+
 
 PLUGIN_ROOT = op.dirname(op.abspath(__file__))
 
@@ -63,13 +69,25 @@ class Plugin(BasePlugin):
 
         app.register(self.options.prefix)(self.options.home)
 
-    def register(self, handler):
+    def register(self, *handlers):
         """ Ensure that handler is not registered. """
-        name = handler.name.lower()
-        if name in self.handlers:
-            raise PluginException('Admin handler %s is already registered' % name)
-        self.handlers[name] = handler
-        return handler
+        for handler in handlers:
+
+            if issubclass(handler, PWModel):
+                handler = type(
+                    handler._meta.db_table.title() + 'Admin',
+                    (PWAdminHandler,), dict(model=handler))
+                self.app.register(handler)
+
+            else:
+
+                name = handler.name.lower()
+                if name in self.handlers:
+                    raise PluginException('Admin handler %s is already registered' % name)
+                self.handlers[name] = handler
+
+        else:
+            return handler
 
     def authorization(self, func):
         """ Define a authorization process. """
