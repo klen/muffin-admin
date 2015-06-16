@@ -7,4 +7,5 @@ from example import app
 class Test(app.ps.peewee.TModel):
 
     active = pw.BooleanField()
+    status = pw.CharField(choices=list(zip(('new', 'done'), ('new', 'done'))))
     content = pw.CharField()

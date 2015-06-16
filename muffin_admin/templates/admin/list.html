@@ -11,7 +11,7 @@
 {% block content %}
 
   <ul class="nav nav-tabs" role="tablist">
-    <li class="active"><a href="#list">List</a></li>
+    <li class="active"><a href="#list">List ({{active.count}})</a></li>
     {% if active.can_create and active.form %}
       <li><a href="#create" data-toggle="modal" data-target="#create">Create</a></li>
       <div id="create" class="modal fade">
@@ -19,7 +19,7 @@
           <div class="modal-content">
             <div class="modal-header"><h4>Create {{active.name}}</h4></div>
             <div class="modal-body">
-              {{ macros.render_form(form, action=base_url) }}
+              {{ macros.render_form(form, action=base_url, class="ajax") }}
             </div>
             <div class="modal-footer">
               <button class="btn btn-success btn-create" type="submit">Create</button>
@@ -30,20 +30,39 @@
         </div>
       </div>
     {% endif %}
+
+    {% if active.filter_form %}
+        <div class="pull-right dropdown">
+            <button class="btn {% if active.filter_form.active %}btn-success{% else %}btn-default{% endif %}" data-toggle="dropdown">Filters <b class="caret"></b></button>
+            <div class="dropdown-menu" style="min-width: 300px">
+                <form method="GET" action="{{ request.path }}" class="form" style="padding: 10px">
+                {% for field in active.filter_form %}
+                    {{ macros.render_field(field) }}
+                {% endfor %}
+                <div class="pull-right">
+                    <button class="btn btn-success" type="submit"> Submit </button>
+                    <a class="btn btn-danger" href="{{request.path}}"> Reset </a>
+                </div>
+                </form>
+            </div>
+        <div>
+    {% endif %}
+
   </ul>
 
   <table class="table table-striped table-hover admin-list">
     <thead>
       <tr>
         <th style="width: 40px"></th>
+        {% set url = admurl(request, 'ap-sort') %}
         {% for column in active.columns %}
           <th class="nowrap">
             <div class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span data-toggle="tooltip" title="sort"> {{active.columns_labels.get(column, column.title())}} <span class="caret"></span> </span></a>
+                <a class="dropdown-toggle {{(active.sorting != column)|admtest('text-muted')}}" data-toggle="dropdown" href="#"><span data-toggle="tooltip" title="sort"> {{active.columns_labels.get(column, column.title())}} <span class="caret"></span> </span></a>
               <ul class="dropdown-menu">
                 <li class="dropdown-header">Sorting</li>
-                <li><a href="{{base_url}}?_ordering={{column}}"><span class="glyphicon glyphicon-arrow-down">Ascending</span></a></li>
-                <li><a href="{{base_url}}?_ordering=-{{column}}"><span class="glyphicon glyphicon-arrow-up">Descending</span></a></li>
+                <li><a href="{{url}}&ap-sort={{column}}"><span class="glyphicon glyphicon-arrow-down">Ascending</span></a></li>
+                <li><a href="{{url}}&ap-sort=-{{column}}"><span class="glyphicon glyphicon-arrow-up">Descending</span></a></li>
               </ul>
             </div>
           </th>
@@ -98,6 +117,31 @@
     </tbody>
   </table>
 
+  {% if active.limit %}
+    <ul class="pagination pull-right">
+        {% set page = active.offset // active.limit %}
+        {% set pages = active.count // active.limit %}
+        {% set url = admurl(request, 'ap-offset') %}
+
+        {% if page == 0 %}
+            <li class="disabled"><a href="{{request.path_qs}}">&laquo;</a></li>
+        {% else %}
+            <li><a href="{{ url }}&ap-offset={{active.offset - active.limit }}">&laquo;</a></li>
+        {% endif %}
+
+        {% for num in range(active.count // active.limit) %}
+        <li class="{{ (page == num) | admtest('active') }}"><a href="{{ url }}&ap-offset={{ num * active.limit }}">{{ num + 1 }}</a></li>
+        {% endfor %}
+
+        {% if active.count // active.limit <= page + 1 %}
+            <li class="disabled"><a href="{{request.path_qs}}">&raquo;</a></li>
+        {% else %}
+            <li><a href="{{ url }}&ap-offset={{active.offset + active.limit }}">&raquo;</a></li>
+        {% endif %}
+
+    </ul>
+  {% endif %}
+
 {% endblock %}
 
 
@@ -142,7 +186,7 @@
         });
 
         // Parse modal forms
-        $(window.document).on('submit', 'form', function(e){
+        $(window.document).on('submit', '.ajax', function(e){
           e.preventDefault();
           var $this = $(this),
               posting = $.post($this.attr('action'), $this.serialize());

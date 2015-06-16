@@ -6,7 +6,8 @@ from example.models import Test
 @app.manage.command
 def devdata():
     mixer = Mixer(commit=True)
-    mixer.cycle(20).blend(Test)
+    statuses = [choice[0] for choice in Test.status.choices]
+    mixer.cycle(20).blend(Test, status=mixer.RANDOM(*statuses))
 
 
 @app.manage.command

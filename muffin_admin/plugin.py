@@ -5,6 +5,7 @@ import os.path as op
 
 from muffin.plugins import BasePlugin, PluginException
 from collections import OrderedDict
+import urllib.parse as urlparse
 
 from .handler import AdminHandler
 
@@ -54,6 +55,13 @@ class Plugin(BasePlugin):
         @app.ps.jinja2.filter
         def admeq(a, b, result=True):
             return result if a == b else not result
+
+        @app.ps.jinja2.register
+        def admurl(request, prefix):
+            qs = {k: v for k, v in request.GET.items() if not k.startswith(prefix)}
+            if not qs:
+                qs = {'ap': 0}
+            return "%s?%s" % (request.path, urlparse.urlencode(qs))
 
         if self.options.name is None:
             self.options.name = "%s admin" % app.name.title()

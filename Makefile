@@ -81,11 +81,11 @@ t: test
 
 .PHONY: run
 run: $(VIRTUALENV)/bin/py.test db.sqlite
-	@$(VIRTUALENV)/bin/muffin example run --bind=0.0.0.0:5000
+	@$(VIRTUALENV)/bin/muffin example run --bind=0.0.0.0:5000 --timeout=3000
 
 db.sqlite: $(VIRTUALENV)/bin/py.test
-	@[ -r db.sqlite ] || $(VIRTUALENV)/bin/muffin example db
-	@[ -r db.sqlite ] || $(VIRTUALENV)/bin/muffin example devdata
+	@$(VIRTUALENV)/bin/muffin example db
+	@$(VIRTUALENV)/bin/muffin example devdata
 
 .PHONY: daemon
 daemon: $(VIRTUALENV)/bin/py.test daemon-kill

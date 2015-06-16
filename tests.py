@@ -17,12 +17,12 @@ def app(loop):
 
         columns = 'id', 'name'
 
-        def get_resource(self, request):
+        def load_one(self, request):
             resource = request.match_info.get(self.name)
             if resource:
                 return self.collection[int(resource) - 1]
 
-        def get_collection(self, request, **resources):
+        def load_many(self, request):
             return [
                 muffin.utils.Structure(id=1, name='test1'),
                 muffin.utils.Structure(id=2, name='test2'),
@@ -85,6 +85,7 @@ def test_peewee(app, client):
     class ModelHandler(PWAdminHandler):
         model = Model
         columns_exclude = 'created',
+        columns_filters = 'content',
 
     app.ps.admin.register(Model2)
 
@@ -118,3 +119,7 @@ def test_peewee(app, client):
 
     response = client.get('/admin/model2?auth=1')
     assert response.status_code == 200
+
+    response = client.get('/admin/model?auth=1&af-content=%s' % models[1].content)
+    assert models[1].content in response.text
+    assert not models[2].content in response.text
