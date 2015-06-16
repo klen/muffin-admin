@@ -118,28 +118,31 @@
   </table>
 
   {% if active.limit %}
-    <ul class="pagination pull-right">
-        {% set page = active.offset // active.limit %}
-        {% set pages = active.count // active.limit %}
-        {% set url = admurl(request, 'ap-offset') %}
+    {% set pages = active.count // active.limit %}
 
-        {% if page == 0 %}
-            <li class="disabled"><a href="{{request.path_qs}}">&laquo;</a></li>
-        {% else %}
-            <li><a href="{{ url }}&ap-offset={{active.offset - active.limit }}">&laquo;</a></li>
-        {% endif %}
+    {% if pages %}
+        <ul class="pagination pull-right">
+            {% set page = active.offset // active.limit %}
+            {% set url = admurl(request, 'ap-offset') %}
 
-        {% for num in range(active.count // active.limit) %}
-        <li class="{{ (page == num) | admtest('active') }}"><a href="{{ url }}&ap-offset={{ num * active.limit }}">{{ num + 1 }}</a></li>
-        {% endfor %}
+            {% if page == 0 %}
+                <li class="disabled"><a href="{{request.path_qs}}">&laquo;</a></li>
+            {% else %}
+                <li><a href="{{ url }}&ap-offset={{active.offset - active.limit }}">&laquo;</a></li>
+            {% endif %}
 
-        {% if active.count // active.limit <= page + 1 %}
-            <li class="disabled"><a href="{{request.path_qs}}">&raquo;</a></li>
-        {% else %}
-            <li><a href="{{ url }}&ap-offset={{active.offset + active.limit }}">&raquo;</a></li>
-        {% endif %}
+            {% for num in range(active.count // active.limit) %}
+            <li class="{{ (page == num) | admtest('active') }}"><a href="{{ url }}&ap-offset={{ num * active.limit }}">{{ num + 1 }}</a></li>
+            {% endfor %}
 
-    </ul>
+            {% if pages <= page + 1 %}
+                <li class="disabled"><a href="{{request.path_qs}}">&raquo;</a></li>
+            {% else %}
+                <li><a href="{{ url }}&ap-offset={{active.offset + active.limit }}">&raquo;</a></li>
+            {% endif %}
+
+        </ul>
+    {% endif %}
   {% endif %}
 
 {% endblock %}
