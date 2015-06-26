@@ -20,6 +20,7 @@ class AdminHandler(Handler):
     columns_labels = {}
     columns_formatters = {}
     columns_filters = ()
+    columns_sort = None
 
     # WTF form class
     form = None
@@ -88,10 +89,10 @@ class AdminHandler(Handler):
             self.count = yield from self.count(request)
 
             # Sort collection
-            self.sorting = request.GET.get('ap-sort')
-            if self.sorting:
-                reverse = self.sorting.startswith('-')
-                self.sorting = self.sorting.lstrip('+-')
+            self.columns_sort = request.GET.get('ap-sort', self.columns_sort)
+            if self.columns_sort:
+                reverse = self.columns_sort.startswith('-')
+                self.columns_sort = self.columns_sort.lstrip('+-')
                 self.collection = yield from self.sort(request, reverse=reverse)
 
             # Paginate collection
@@ -138,7 +139,8 @@ class AdminHandler(Handler):
     @abcoroutine
     def sort(self, request, reverse=False):
         """ Sort collection. """
-        return sorted(self.collection, key=lambda o: getattr(o, self.sorting, 0), reverse=reverse)
+        return sorted(
+            self.collection, key=lambda o: getattr(o, self.columns_sort, 0), reverse=reverse)
 
     @abcoroutine
     def paginate(self, request):

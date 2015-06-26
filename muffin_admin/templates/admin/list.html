@@ -61,8 +61,8 @@
                 <a class="dropdown-toggle {{(active.sorting != column)|admtest('text-muted')}}" data-toggle="dropdown" href="#"><span data-toggle="tooltip" title="sort"> {{active.columns_labels.get(column, column.title())}} <span class="caret"></span> </span></a>
               <ul class="dropdown-menu">
                 <li class="dropdown-header">Sorting</li>
-                <li><a href="{{url}}&ap-sort={{column}}"><span class="glyphicon glyphicon-arrow-down">Ascending</span></a></li>
-                <li><a href="{{url}}&ap-sort=-{{column}}"><span class="glyphicon glyphicon-arrow-up">Descending</span></a></li>
+                <li><a href="{{url}}&ap-sort={{column}}"><span class="glyphicon glyphicon-arrow-up">Ascending</span></a></li>
+                <li><a href="{{url}}&ap-sort=-{{column}}"><span class="glyphicon glyphicon-arrow-down">Descending</span></a></li>
               </ul>
             </div>
           </th>

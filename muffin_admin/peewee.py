@@ -45,6 +45,7 @@ class PWAdminHandler(AdminHandler, metaclass=PWAdminHandlerMeta):
     model = None
 
     columns_exclude = ()
+    columns_sort = '-id'
 
     form_meta = {}
 
@@ -69,7 +70,7 @@ class PWAdminHandler(AdminHandler, metaclass=PWAdminHandlerMeta):
 
     def sort(self, request, reverse=False):
         """ Order a current collection. """
-        field = self.model._meta.fields.get(self.sorting)
+        field = self.model._meta.fields.get(self.columns_sort)
         if not field:
             return self.collection
 
