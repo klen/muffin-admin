@@ -122,8 +122,19 @@
 
     {% if pages %}
         <ul class="pagination pull-right">
-            {% set page = active.offset // active.limit %}
             {% set url = admurl(request, 'ap-offset') %}
+            {% set size = 3 %}
+            {% set page = active.offset // active.limit %}
+            {% set pages = active.count // active.limit %}
+
+            {% set left = page - size - 1 %}
+            {% set right = page + size + 1 %}
+            {% if left < 0 %}
+                {% set right = right - left %}
+            {% endif %}
+            {% if right > pages %}
+                {% set left = left - (right - pages) %}
+            {% endif %}
 
             {% if page == 0 %}
                 <li class="disabled"><a href="{{request.path_qs}}">&laquo;</a></li>
@@ -131,8 +142,22 @@
                 <li><a href="{{ url }}&ap-offset={{active.offset - active.limit }}">&laquo;</a></li>
             {% endif %}
 
-            {% for num in range(active.count // active.limit) %}
+            {% for num in range(pages) %}
+
+            {% if num in [0, pages - 1] or left < num < right %}
+
             <li class="{{ (page == num) | admtest('active') }}"><a href="{{ url }}&ap-offset={{ num * active.limit }}">{{ num + 1 }}</a></li>
+
+            {% elif num == left  %}
+
+            <li class="disabled"><a href="#">...</a></li>
+
+            {% elif num == right %}
+
+            <li class="disabled"><a href="#">...</a></li>
+
+            {% endif %}
+
             {% endfor %}
 
             {% if pages <= page + 1 %}

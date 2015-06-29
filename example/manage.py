@@ -12,4 +12,7 @@ def devdata():
 
 @app.manage.command
 def db():
-    Test.create_table()
+    try:
+        Test.create_table()
+    except Exception:
+        pass
