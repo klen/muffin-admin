@@ -216,24 +216,34 @@
         // Parse modal forms
         $(window.document).on('submit', '.ajax', function(e){
           e.preventDefault();
-          var $this = $(this),
-              posting = $.post($this.attr('action'), $this.serialize());
+
+          var $this = $(this);
 
           $this.find('.has-error').removeClass('has-error');
           $this.find('.help-block').remove();
 
-          posting.done(function(){ window.location.reload();}).fail(function(data){
-            var errors = data.responseJSON;
-            $.each(errors, function(c, errors) {
-              var parent = $this.find('#' + c).parent();
-              parent.addClass('has-error');
-              $.each(errors, function(c, e){
+          $.ajax({
+            url: $this.attr('action'),
+            type: $this.attr('method'),
+            data: new FormData(this),
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                window.location.reload();
+            },
+            error: function (data) {
+              var errors = data.responseJSON;
+              $.each(errors, function(c, errors) {
+                var parent = $this.find('#' + c).parent();
+                parent.addClass('has-error');
+                $.each(errors, function(c, e){
                   parent.append('<p class="help-block">' + e + '</p>');
+                });
               });
-            });
+            }
           });
         });
-
       });
       
     }(jQuery));

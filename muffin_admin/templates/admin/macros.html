@@ -17,7 +17,7 @@
 {%- endmacro %}
 
 {% macro render_form(form, action="", method="POST", class="") -%}
-  <form class="form {{class}}" method="{{method}}" action="{{action}}">
+  <form class="form {{class}}" method="{{method}}" action="{{action}}" enctype="multipart/form-data">
       {% for field in form %}{{ render_field(field) }}{% endfor %}
   </form>
 {%- endmacro %}
