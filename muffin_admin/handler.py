@@ -190,6 +190,14 @@ class AdminHandler(Handler):
         yield from self.save_form(form, request)
         raise muffin.HTTPFound("%s/%s" % (self.app.ps.admin.options.prefix, self.name))
 
+    @classmethod
+    def columns_formatter(cls, colname):
+        """ Decorator to mark a function as columns formatter. """
+        def wrapper(func):
+            cls.columns_formatters[colname] = func
+            return func
+        return wrapper
+
     def render_value(self, data, column):
         """ Render value. """
         renderer = self.columns_formatters.get(column, format_value)

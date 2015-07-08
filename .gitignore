@@ -45,3 +45,4 @@ docs/_build
 *.sqlite
 /todo.txt
 /.env
+/.ropeproject
