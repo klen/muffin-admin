@@ -1,6 +1,7 @@
 """ Implement Admin interfaces. """
 import asyncio
 import muffin
+import copy
 import ujson as json
 
 from muffin import Handler
@@ -11,7 +12,18 @@ from .formatters import format_value
 from .filters import default_converter, PREFIX as FILTERS_PREFIX, DEFAULT
 
 
-class AdminHandler(Handler):
+class AdminHandlerMeta(type(Handler)):
+
+    """ Prepare admin handler. """
+
+    def __new__(mcs, name, bases, params):
+        """ Copy columns formatters to created class. """
+        cls = super(AdminHandlerMeta, mcs).__new__(mcs, name, bases, params)
+        cls.columns_formatters = copy.copy(cls.columns_formatters)
+        return cls
+
+
+class AdminHandler(Handler, metaclass=AdminHandlerMeta):
 
     """ Docstring here. """
 

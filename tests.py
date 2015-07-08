@@ -96,6 +96,7 @@ def test_peewee(app, client):
     assert ModelHandler.can_create
     assert ModelHandler.can_edit
     assert ModelHandler.can_delete
+    assert ModelHandler.columns_formatters is not PWAdminHandler.columns_formatters
 
     from mixer.backend.peewee import Mixer
     mixer = Mixer(commit=True)
