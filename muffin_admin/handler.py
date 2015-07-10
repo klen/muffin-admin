@@ -1,5 +1,4 @@
 """ Implement Admin interfaces. """
-import asyncio
 import muffin
 import copy
 import ujson as json
@@ -27,6 +26,8 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
 
     """ Docstring here. """
 
+    actions = None
+
     # List of columns
     columns = 'id',
     columns_labels = {}
@@ -50,12 +51,12 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
 
     filters_converter = default_converter
 
-    def __init__(self, app):
-        """ Define self templates. """
-        super(AdminHandler, self).__init__(app)
+    url = None
 
-        self.template_list = self.template_list or app.ps.admin.options.template_list
-        self.template_item = self.template_item or app.ps.admin.options.template_item
+    def __init__(self):
+        """ Define self templates. """
+        self.template_list = self.template_list or self.app.ps.admin.options.template_list
+        self.template_item = self.template_item or self.app.ps.admin.options.template_item
 
         # Prepare filters
         self.columns_filters = list(map(self.filters_converter, self.columns_filters))
@@ -64,23 +65,24 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
             flt.bind(self.filter_form)
 
     @classmethod
-    def connect(cls, app, *paths, methods=None, name=None):
+    def connect(cls, app, *paths, methods=None, name=None, view=None):
         """ Connect to admin interface and application. """
         # Register self in admin
-        app.ps.admin.register(cls)
+        if view is None:
+            app.ps.admin.register(cls)
+            if not paths:
+                paths = ('%s/%s' % (app.ps.admin.options.prefix, name or cls.name),)
+            cls.url = paths[0]
+        return super(AdminHandler, cls).connect(app, *paths, methods=methods, name=name, view=view)
 
-        @asyncio.coroutine
-        def view(request):
-            handler = cls(app)
-            response = yield from handler.dispatch(request)
-            return response
-
-        paths = paths or (
-            '%s/%s' % (app.ps.admin.options.prefix, name or cls.name),
-        )
-
-        for path in paths:
-            app.router.add_route('*', path, view)
+    @classmethod
+    def action(cls, view):
+        name = "%s-%s" % (cls.name, view.__name__)
+        path = "%s/%s" %(cls.url, view.__name__)
+        if cls.actions is None:
+            cls.actions = []
+        cls.actions.append((view.__doc__, path))
+        return cls.register(path, name=name)(view)
 
     @abcoroutine
     def dispatch(self, request, **kwargs):
@@ -200,7 +202,7 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
             raise muffin.HTTPBadRequest(
                 text=json.dumps(form.errors), content_type='application/json')
         yield from self.save_form(form, request)
-        raise muffin.HTTPFound("%s/%s" % (self.app.ps.admin.options.prefix, self.name))
+        raise muffin.HTTPFound(self.url)
 
     @classmethod
     def columns_formatter(cls, colname):

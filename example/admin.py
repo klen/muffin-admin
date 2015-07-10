@@ -1,4 +1,5 @@
 from example import app
+import muffin
 from muffin.utils import Structure
 import random
 from example.models import Test
@@ -31,9 +32,16 @@ class TestHandler(app.ps.admin.Handler):
 
 @app.register
 class PWHandler(PWAdminHandler):
-
+    limit = 5
     model = Test
     name = 'peewee'
     columns_labels = {'created': 'Created at'}
     columns_filters = 'active', 'status', PWLikeFilter('content')
-    limit = 5
+
+
+@PWHandler.action
+def bulk_delete(handler, request):
+    """ Delete items """
+    ids = request.GET.getall('ids')
+    Test.delete().where(Test.id << ids).execute()
+    raise muffin.HTTPFound(handler.url)

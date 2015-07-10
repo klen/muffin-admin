@@ -13,6 +13,7 @@ app = application = muffin.Application(
     ],
 
     JINJA2_TEMPLATE_FOLDERS='example/templates',
+    JINJA2_AUTO_RELOAD=True,
 
     ADMIN_TEMPLATE_LIST='custom_list.html'
 )

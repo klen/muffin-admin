@@ -77,25 +77,19 @@ class Plugin(BasePlugin):
 
         app.register(self.options.prefix)(self.options.home)
 
-    def register(self, *handlers):
+    def register(self, *handlers, **params):
         """ Ensure that handler is not registered. """
         for handler in handlers:
 
             if issubclass(handler, PWModel):
                 handler = type(
                     handler._meta.db_table.title() + 'Admin',
-                    (PWAdminHandler,), dict(model=handler))
+                    (PWAdminHandler,), dict(model=handler, **params))
                 self.app.register(handler)
+                continue
 
-            else:
-
-                name = handler.name.lower()
-                if name in self.handlers:
-                    raise PluginException('Admin handler %s is already registered' % name)
-                self.handlers[name] = handler
-
-        else:
-            return handler
+            name = handler.name.lower()
+            self.handlers[name] = handler
 
     def authorization(self, func):
         """ Define a authorization process. """

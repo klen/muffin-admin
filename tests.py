@@ -87,8 +87,6 @@ def test_peewee(app, client):
         columns_exclude = 'created',
         columns_filters = 'content',
 
-    app.ps.admin.register(Model2)
-
     assert ModelHandler.columns
     assert ModelHandler.columns == ['id', 'active', 'content']
     assert ModelHandler.name == 'model'
@@ -97,6 +95,12 @@ def test_peewee(app, client):
     assert ModelHandler.can_edit
     assert ModelHandler.can_delete
     assert ModelHandler.columns_formatters is not PWAdminHandler.columns_formatters
+
+    # Make admin handler dynamically
+    app.ps.admin.register(Model2, can_delete=False)
+    handler = app.ps.admin.handlers['model2']
+    assert handler.model == Model2
+    assert handler.can_delete is False
 
     from mixer.backend.peewee import Mixer
     mixer = Mixer(commit=True)
