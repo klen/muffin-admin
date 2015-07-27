@@ -55,8 +55,8 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
 
     def __init__(self):
         """ Define self templates. """
-        self.template_list = self.template_list or self.app.ps.admin.options.template_list
-        self.template_item = self.template_item or self.app.ps.admin.options.template_item
+        self.template_list = self.template_list or self.app.ps.admin.cfg.template_list
+        self.template_item = self.template_item or self.app.ps.admin.cfg.template_item
 
         # Prepare filters
         self.columns_filters = list(map(self.filters_converter, self.columns_filters))
@@ -71,14 +71,15 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
         if view is None:
             app.ps.admin.register(cls)
             if not paths:
-                paths = ('%s/%s' % (app.ps.admin.options.prefix, name or cls.name),)
+                paths = ('%s/%s' % (app.ps.admin.cfg.prefix, name or cls.name),)
             cls.url = paths[0]
         return super(AdminHandler, cls).connect(app, *paths, methods=methods, name=name, view=view)
 
     @classmethod
     def action(cls, view):
+        """ Register admin view action. """
         name = "%s-%s" % (cls.name, view.__name__)
-        path = "%s/%s" %(cls.url, view.__name__)
+        path = "%s/%s" % (cls.url, view.__name__)
         if cls.actions is None:
             cls.actions = []
         cls.actions.append((view.__doc__, path))

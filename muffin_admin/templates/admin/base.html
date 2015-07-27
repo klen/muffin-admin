@@ -36,7 +36,7 @@
   </head>
   <body>
 
-    {% set prefix = app.ps.admin.options.prefix %}
+    {% set prefix = app.ps.admin.cfg.prefix %}
 
     {% block navbar %}
       <div class="nav navbar navbar-fixed-top navbar-inverse">
@@ -44,7 +44,7 @@
 
           {% block navbar_header %}
             <div class="navbar-header">
-              <a class="navbar-brand" href="{{prefix}}">{{app.ps.admin.options.name}}</a>
+              <a class="navbar-brand" href="{{prefix}}">{{app.ps.admin.cfg.name}}</a>
             </div>
           {% endblock %}
 

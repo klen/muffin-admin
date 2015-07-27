@@ -24,9 +24,9 @@ def app(loop):
 
         def load_many(self, request):
             return [
-                muffin.utils.Structure(id=1, name='test1'),
-                muffin.utils.Structure(id=2, name='test2'),
-                muffin.utils.Structure(id=3, name='test3'),
+                muffin.utils.Struct(id=1, name='test1'),
+                muffin.utils.Struct(id=2, name='test2'),
+                muffin.utils.Struct(id=3, name='test3'),
             ]
 
     @app.ps.admin.authorization

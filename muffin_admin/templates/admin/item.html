@@ -1,4 +1,4 @@
-{% set base_url = app.ps.admin.options.prefix + '/' + active.name.lower() %}
+{% set base_url = app.ps.admin.cfg.prefix + '/' + active.name.lower() %}
 {% set action = "%(base_url)s?pk=%(id)s"|format(base_url=base_url, id=active.resource.id) %}
 
 {% import "admin/macros.html" as macros %}

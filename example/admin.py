@@ -1,10 +1,12 @@
-from example import app
-import muffin
-from muffin.utils import Structure
 import random
+
+import muffin
+from muffin.utils import Struct
+
+from example import app
 from example.models import Test
-from muffin_admin.peewee import PWAdminHandler
 from muffin_admin.filters import PWLikeFilter
+from muffin_admin.peewee import PWAdminHandler
 
 
 @app.register
@@ -24,9 +26,9 @@ class TestHandler(app.ps.admin.Handler):
 
     def load_many(self, request):
         return [
-            Structure(id=1, name='test1'),
-            Structure(id=2, name='test2'),
-            Structure(id=3, name='test3'),
+            Struct(id=1, name='test1'),
+            Struct(id=2, name='test2'),
+            Struct(id=3, name='test3'),
         ]
 
 

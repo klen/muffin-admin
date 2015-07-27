@@ -22,16 +22,16 @@ class Filter:
 
     field = wtf.StringField
     default = DEFAULT
-    options = {}
+    field_kwargs = {}
 
-    def __init__(self, name, **options):
+    def __init__(self, name, **field_kwargs):
         """ Store name and mode. """
         self.name = name
-        self.options = options or self.options
+        self.field_kwargs = field_kwargs or self.field_kwargs
 
     def bind(self, form):
         """ Bind to filters form. """
-        field = self.field(default=self.default, **self.options)
+        field = self.field(default=self.default, **self.field_kwargs)
         form._fields[self.name] = field.bind(form, self.name, prefix=form._prefix)
 
     def value(self, data):
@@ -102,7 +102,7 @@ class PWBoolFilter(PWFilter):
     """ Boolean filter. """
 
     field = wtf.SelectField
-    options = {
+    field_kwargs = {
         'choices': (
             (Filter.default, '---'),
             (1, 'yes'),

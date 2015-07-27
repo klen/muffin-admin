@@ -2,7 +2,7 @@
 
 {% import "admin/macros.html" as macros %}
 
-{% set base_url = app.ps.admin.options.prefix + '/' + active.name.lower() %}
+{% set base_url = app.ps.admin.cfg.prefix + '/' + active.name.lower() %}
 
 {% block title %}
   <title>{{active.name}}</title>

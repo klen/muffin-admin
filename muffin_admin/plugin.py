@@ -1,13 +1,15 @@
 """ Setup the plugin. """
 import asyncio
-import muffin
 import os.path as op
-
-from muffin.plugins import BasePlugin, PluginException
-from collections import OrderedDict
 import urllib.parse as urlparse
+from collections import OrderedDict
+
+import muffin
+from muffin.plugins import BasePlugin, PluginException
+from muffin_jinja2 import Plugin as JPlugin
 
 from .handler import AdminHandler
+
 
 try:
     from .peewee import PWAdminHandler, pw
@@ -33,6 +35,7 @@ class Plugin(BasePlugin):
         'template_item': 'admin/item.html',
         'template_home': 'admin/home.html',
     }
+    dependencies = {'jinja2': JPlugin}
 
     Handler = AdminHandler
 
@@ -42,11 +45,8 @@ class Plugin(BasePlugin):
 
         self.handlers = OrderedDict()
 
-        if 'jinja2' not in app.plugins:
-            raise PluginException('The plugin requires Muffin-Jinja2 plugin installed.')
-
         # Connect admin templates
-        app.ps.jinja2.options.template_folders.append(op.join(PLUGIN_ROOT, 'templates'))
+        app.ps.jinja2.cfg.template_folders.append(op.join(PLUGIN_ROOT, 'templates'))
 
         @app.ps.jinja2.filter
         def admtest(value, a, b=None):
@@ -63,19 +63,19 @@ class Plugin(BasePlugin):
                 qs = {'ap': 0}
             return "%s?%s" % (request.path, urlparse.urlencode(qs))
 
-        if self.options.name is None:
-            self.options.name = "%s admin" % app.name.title()
+        if self.cfg.name is None:
+            self.cfg.name = "%s admin" % app.name.title()
 
         # Register a base view
-        if not callable(self.options.home):
+        if not callable(self.cfg.home):
 
             def admin_home(request):
                 yield from self.authorize(request)
-                return app.ps.jinja2.render(self.options.template_home, active=None)
+                return app.ps.jinja2.render(self.cfg.template_home, active=None)
 
-            self.options.home = admin_home
+            self.cfg.home = admin_home
 
-        app.register(self.options.prefix)(self.options.home)
+        app.register(self.cfg.prefix)(self.cfg.home)
 
     def register(self, *handlers, **params):
         """ Ensure that handler is not registered. """
