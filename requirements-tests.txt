@@ -2,6 +2,6 @@
 
 mixer
 wtf-peewee
-muffin_peewee >= 0.0.14
+muffin_peewee >= 0.0.41
 pytest
 webtest
