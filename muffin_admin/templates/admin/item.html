@@ -4,7 +4,7 @@
 {% import "admin/macros.html" as macros %}
 
 <div class="modal-header">
-  <h4 class="modal-title"> Edit {{active.name}} {{active.resource.id }}</h4>
+    <h4 class="modal-title"> {{ gettext('Edit') }} {{ active.name}} {{ active.resource.id }}</h4>
 </div>
 
 <div class="modal-body">
@@ -12,6 +12,6 @@
 </div>
 
 <div class="modal-footer">
-  <button class="btn btn-success" type="submit">Save</button>
-  <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+  <button class="btn btn-success" type="submit">{{ gettext('Save') }}</button>
+  <button class="btn btn-default" data-dismiss="modal">{{ gettext('Cancel') }}</button>
 </div>

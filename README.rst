@@ -3,7 +3,7 @@ Muffin-Admin
 
 .. _description:
 
-Muffin-Admin -- Admin interface for Muffin-Framework
+Muffin-Admin -- an extension to Muffin_ that implements admin-interfaces
 
 .. _badges:
 
@@ -48,6 +48,19 @@ Usage
 
 See a example application.
 Enter `make run` for run.
+
+Options
+-------
+
+========================== ==============================================================
+ *ADMIN_PREFIX*             Admin's HTTP prefix (``/admin``)
+ *ADMIN_NAME*               Admin's name (``<app.name.title()> admin``)
+ *ADMIN_HOME*               A callable object that provides the admin's home view
+ *ADMIN_I18N*               Internationalization support (``False``)
+ *ADMIN_TEMPLATE_LIST*      Path to a template (``admin/list.html``)
+ *ADMIN_TEMPLATE_ITEM*      Path to a template (``admin/item.html``)
+ *ADMIN_TEMPLATE_HOME*      Path to a template (``admin/home.html``)
+========================== ==============================================================
 
 .. _bugtracker:
 

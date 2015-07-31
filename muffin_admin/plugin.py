@@ -7,6 +7,7 @@ from collections import OrderedDict
 import muffin
 from muffin.plugins import BasePlugin, PluginException
 from muffin_jinja2 import Plugin as JPlugin
+from muffin_babel import Plugin as BPlugin
 
 from .handler import AdminHandler
 
@@ -30,6 +31,7 @@ class Plugin(BasePlugin):
         'prefix': '/admin',
         'name': None,
         'home': None,
+        'i18n': False,
 
         'template_list': 'admin/list.html',
         'template_item': 'admin/item.html',
@@ -76,6 +78,25 @@ class Plugin(BasePlugin):
             self.cfg.home = admin_home
 
         app.register(self.cfg.prefix)(self.cfg.home)
+
+        if not self.cfg.i18n:
+            app.ps.jinja2.env.globals.update({
+                '_': lambda s: s,
+                'gettext': lambda s: s,
+                'ngettext': lambda s, p, n: (n != 1 and (p,) or (s,))[0],
+            })
+
+            return
+
+        if 'babel' not in app.ps or not isinstance(app.ps.babel, BPlugin):
+            raise PluginException(
+                'Plugin `%s` requires for plugin `%s` to be installed to the application.' % (
+                    self.name, BPlugin))
+
+        # Connect admin locales
+        app.ps.babel.cfg.locales_dirs.append(op.join(PLUGIN_ROOT, 'locales'))
+        if not app.ps.babel.locale_selector_func:
+            app.ps.babel.locale_selector_func = app.ps.babel.select_locale_by_request
 
     def register(self, *handlers, **params):
         """ Ensure that handler is not registered. """

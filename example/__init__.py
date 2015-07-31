@@ -8,6 +8,7 @@ app = application = muffin.Application(
 
     PLUGINS=[
         'muffin_jinja2',
+        'muffin_babel',
         'muffin_admin',
         'muffin_peewee',
     ],
@@ -15,7 +16,8 @@ app = application = muffin.Application(
     JINJA2_TEMPLATE_FOLDERS='example/templates',
     JINJA2_AUTO_RELOAD=True,
 
-    ADMIN_TEMPLATE_LIST='custom_list.html'
+    ADMIN_TEMPLATE_LIST='custom_list.html',
+    ADMIN_I18N=True,
 )
 
 

@@ -11,22 +11,22 @@
 {% block content %}
 
   <ul class="nav nav-tabs" role="tablist">
-    <li class="active"><a href="#list">List ({{active.count}})</a></li>
+    <li class="active"><a href="#list">{{ gettext('List') }} ({{active.count}})</a></li>
 
     {# Create button #}
     {% if active.can_create and active.form %}
-      <li><a href="#create" data-toggle="modal" data-target="#create">Create</a></li>
+      <li><a href="#create" data-toggle="modal" data-target="#create">{{ gettext('Create') }}</a></li>
       <div id="create" class="modal fade">
         <div class="modal-dialog">
           <div class="modal-content">
-            <div class="modal-header"><h4>Create {{active.name}}</h4></div>
+            <div class="modal-header"><h4>{{gettext('Create')}} {{active.name}}</h4></div>
             <div class="modal-body">
               {{ macros.render_form(form, action=base_url, class="ajax") }}
             </div>
             <div class="modal-footer">
-              <button class="btn btn-success btn-create" type="submit">Create</button>
-              <button class="btn btn-danger  btn-reset" href="#reset">Reset</button>
-              <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+              <button class="btn btn-success btn-create" type="submit">{{ gettext('Create') }}</button>
+              <button class="btn btn-danger  btn-reset" href="#reset">{{ gettext('Reset') }}</button>
+              <button class="btn btn-default" data-dismiss="modal">{{ gettext('Cancel') }}</button>
             </div>
           </div>
         </div>
@@ -36,15 +36,15 @@
     {# Filters #}
     {% if active.columns_filters %}
         <div class="pull-right dropdown">
-            <button class="btn {% if active.filter_form.active %}btn-success{% else %}btn-default{% endif %}" data-toggle="dropdown">Filters <b class="caret"></b></button>
+            <button class="btn {% if active.filter_form.active %}btn-success{% else %}btn-default{% endif %}" data-toggle="dropdown">{{ gettext('Filters') }} <b class="caret"></b></button>
             <div class="dropdown-menu" style="min-width: 300px">
                 <form method="GET" action="{{ request.path }}" class="form" style="padding: 10px">
                 {% for field in active.filter_form %}
                     {{ macros.render_field(field) }}
                 {% endfor %}
                 <div class="pull-right">
-                    <button class="btn btn-success" type="submit"> Submit </button>
-                    <a class="btn btn-danger" href="{{request.path}}"> Reset </a>
+                    <button class="btn btn-success" type="submit"> {{ gettext('Submit') }} </button>
+                    <a class="btn btn-danger" href="{{request.path}}"> {{ gettext('Reset') }} </a>
                 </div>
                 </form>
             </div>
@@ -55,7 +55,7 @@
     {% if active.actions %}
     <div class="pull-right dropdown" style="margin-right: 2em">
         <button class="btn btn-default dropdown-toggle" id="actions" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" disabled="disabled">
-            With selected
+            {{ gettext('With selected') }}
             <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
@@ -81,9 +81,9 @@
             <div class="dropdown">
                 <a class="dropdown-toggle {{(active.sorting != column)|admtest('text-muted')}}" data-toggle="dropdown" href="#"><span data-toggle="tooltip" title="sort"> {{active.columns_labels.get(column, column.title())}} <span class="caret"></span> </span></a>
               <ul class="dropdown-menu">
-                <li class="dropdown-header">Sorting</li>
-                <li><a href="{{url}}&ap-sort={{column}}"><span class="glyphicon glyphicon-arrow-up">Ascending</span></a></li>
-                <li><a href="{{url}}&ap-sort=-{{column}}"><span class="glyphicon glyphicon-arrow-down">Descending</span></a></li>
+                <li class="dropdown-header">{{ gettext('Sort') }}</li>
+                <li><a href="{{url}}&ap-sort={{column}}"><span class="glyphicon glyphicon-arrow-up">{{ gettext('Ascending') }}</span></a></li>
+                <li><a href="{{url}}&ap-sort=-{{column}}"><span class="glyphicon glyphicon-arrow-down">{{ gettext('Descending') }}</span></a></li>
               </ul>
             </div>
           </th>
@@ -130,8 +130,8 @@
                       {% endfor %}
                     </div>
                     <div class="modal-footer">
-                      <button class="btn btn-danger btn-delete">Delete</button>
-                      <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+                      <button class="btn btn-danger btn-delete">{{ gettext('Delete') }}</button>
+                      <button class="btn btn-default" data-dismiss="modal">{{ gettext('Cancel') }}</button>
                     </div>
                   </div>
                 </div>

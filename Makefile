@@ -100,3 +100,9 @@ daemon-kill:
 watch:
 	@make daemon
 	@(fswatch -0or $(CURDIR)/example -e "__pycache__" | xargs -0n1 -I {} make daemon) || make daemon-kill
+
+.PHONY: locales
+LOCALE ?= ru
+locales: $(VIRTUAL_ENV)/bin/py.test db.sqlite
+	@$(VIRTUAL_ENV)/bin/muffin example extract_messages muffin_admin --locale $(LOCALE)
+	@$(VIRTUAL_ENV)/bin/muffin example compile_messages
