@@ -65,12 +65,14 @@ def test_handler(app, client):
 
 def test_peewee(app, client):
     import peewee as pw
+    from muffin_peewee.fields import JSONField
 
     @app.ps.peewee.register
     class Model(app.ps.peewee.TModel):
 
         active = pw.BooleanField()
         content = pw.CharField()
+        config = JSONField(default={})
 
     @app.ps.peewee.register
     class Model2(app.ps.peewee.TModel):
@@ -88,9 +90,10 @@ def test_peewee(app, client):
         columns_filters = 'content',
 
     assert ModelHandler.columns
-    assert ModelHandler.columns == ['id', 'active', 'content']
+    assert ModelHandler.columns == ['id', 'active', 'content', 'config']
     assert ModelHandler.name == 'model'
     assert ModelHandler.form
+    assert ModelHandler.form.config
     assert ModelHandler.can_create
     assert ModelHandler.can_edit
     assert ModelHandler.can_delete
