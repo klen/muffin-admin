@@ -1,4 +1,4 @@
-""" Plugin meta information. """
+"""Plugin meta information."""
 
 from .plugin import Plugin # noqa
 from .formatters import FORMATTERS # noqa

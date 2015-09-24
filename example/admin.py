@@ -43,7 +43,7 @@ class PWHandler(PWAdminHandler):
 
 @PWHandler.action
 def bulk_delete(handler, request):
-    """ Delete items """
+    """Bulk delete items"""
     ids = request.GET.getall('ids')
     Test.delete().where(Test.id << ids).execute()
     raise muffin.HTTPFound(handler.url)

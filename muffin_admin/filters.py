@@ -1,4 +1,4 @@
-""" Support admin filters. """
+"""Support admin filters."""
 import wtforms as wtf
 
 
@@ -7,10 +7,10 @@ PREFIX = 'af-'
 
 class FilterDefault:
 
-    """ Default filters value. """
+    """Default filters value."""
 
     def __str__(self):
-        """ Nothing here. """
+        """Nothing here."""
         return ""
 
 DEFAULT = FilterDefault()
@@ -18,29 +18,29 @@ DEFAULT = FilterDefault()
 
 class Filter:
 
-    """ Implement admin filters. """
+    """Implement admin filters."""
 
     field = wtf.StringField
     default = DEFAULT
     field_kwargs = {}
 
     def __init__(self, name, **field_kwargs):
-        """ Store name and mode. """
+        """Store name and mode."""
         self.name = name
         self.field_kwargs = field_kwargs or self.field_kwargs
 
     def bind(self, form):
-        """ Bind to filters form. """
+        """Bind to filters form."""
         field = self.field(default=self.default, **self.field_kwargs)
         form._fields[self.name] = field.bind(form, self.name, prefix=form._prefix)
 
     def value(self, data):
-        """ Get value from data. """
+        """Get value from data."""
         value = data.get(self.name, self.default)
         return value or self.default
 
     def apply(self, collection, data):
-        """ Filter collection. """
+        """Filter collection."""
         value = self.value(data)
         if value is self.default:
             return collection
@@ -49,20 +49,20 @@ class Filter:
 
 class BoolFilter(Filter):
 
-    """ Boolean filter. """
+    """Boolean filter."""
 
     field = wtf.BooleanField
 
 
 class ChoiceFilter(Filter):
 
-    """ Boolean filter. """
+    """Boolean filter."""
 
     field = wtf.SelectField
 
 
 def default_converter(handler, flt):
-    """ Convert column name to filter. """
+    """Convert column name to filter."""
     if isinstance(flt, Filter):
         return flt
     return Filter(flt)
@@ -70,10 +70,10 @@ def default_converter(handler, flt):
 
 class PWFilter(Filter):
 
-    """ Base filter for Peewee handlers. """
+    """Base filter for Peewee handlers."""
 
     def apply(self, query, data):
-        """ Filter a query. """
+        """Filter a query."""
         field = query.model_class._meta.fields.get(self.name)
         if not field or self.name not in data:
             return query
@@ -82,24 +82,25 @@ class PWFilter(Filter):
             return query
         return self.filter_query(query, field, value)
 
-    def filter_query(self, query, field, value):
-        """ Filter a query. """
+    @staticmethod
+    def filter_query(query, field, value):
+        """Filter a query."""
         return query.where(field == value)
 
 
 class PWLikeFilter(PWFilter):
 
-    """ Filter query by value. """
+    """Filter query by value."""
 
     def filter_query(self, query, field, value):
-        """ Filter a query. """
+        """Filter a query."""
         value = "*%s*" % value
         return query.where(field % value)
 
 
 class PWBoolFilter(PWFilter):
 
-    """ Boolean filter. """
+    """Boolean filter."""
 
     field = wtf.SelectField
     field_kwargs = {
@@ -111,7 +112,7 @@ class PWBoolFilter(PWFilter):
     }
 
     def value(self, data):
-        """ Get value from data. """
+        """Get value from data."""
         value = data.get(self.name)
         if value:
             return int(value)
@@ -120,13 +121,13 @@ class PWBoolFilter(PWFilter):
 
 class PWChoiceFilter(PWFilter):
 
-    """ Select field. """
+    """Select field."""
 
     field = wtf.SelectField
 
 
 def pw_converter(handler, flt):
-    """ Convert column name to filter. """
+    """Convert column name to filter."""
     import peewee as pw
 
     if isinstance(flt, Filter):

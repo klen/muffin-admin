@@ -17,12 +17,14 @@ app = application = muffin.Application(
     JINJA2_AUTO_RELOAD=True,
 
     ADMIN_TEMPLATE_LIST='custom_list.html',
+    ADMIN_TEMPLATE_HOME='custom_home.html',
     ADMIN_I18N=True,
 )
 
 
 @app.register('/')
 def index(request):
+    """Index page."""
     return "<a href='/admin'>Admin</a>"
 
 
