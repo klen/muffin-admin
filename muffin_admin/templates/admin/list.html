@@ -94,18 +94,18 @@
 
     <tbody>
       {% for item in active.collection|list %}
-        <tr id="item-{{item.id}}" class="item-row" data-pk="{{item.id}}">
+        <tr id="item-{{item._get_pk_value()}}" class="item-row" data-pk="{{item._get_pk_value()}}">
           {% if active.actions %}
           <td>
-              <input class="select" type="checkbox" value="{{item.id}}"/>
+              <input class="select" type="checkbox" value="{{item._get_pk_value()}}"/>
           </td>
           {% endif %}
           <td>
             {% if active.can_edit and active.form %}
-              <a class="btn btn-xs btn-default" href="{{base_url}}?pk={{item.id}}" data-toggle="modal" data-target="#edit-{{item.id}}">
+              <a class="btn btn-xs btn-default" href="{{base_url}}?pk={{item._get_pk_value()}}" data-toggle="modal" data-target="#edit-{{item._get_pk_value()}}">
                 <span class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="edit"></span>
               </a>
-              <div class="modal fade" id="edit-{{item.id}}">
+              <div class="modal fade" id="edit-{{item._get_pk_value()}}">
                 <div class="modal-dialog"><div class="modal-content"></div></div>
               </div>
             {% endif %}
@@ -117,13 +117,13 @@
 
           <td>
             {% if active.can_delete and active.delete %}
-              <button class="btn btn-xs btn-danger" data-toggle="modal" data-target="#delete-{{item.id}}">
+              <button class="btn btn-xs btn-danger" data-toggle="modal" data-target="#delete-{{item._get_pk_value()}}">
                 <span class="glyphicon glyphicon-trash" data-toggle="tooltip" title="delete"></span>
               </button>
-              <div class="modal fade" id="delete-{{item.id}}">
+              <div class="modal fade" id="delete-{{item._get_pk_value()}}">
                 <div class="modal-dialog">
                   <div class="modal-content">
-                    <div class="modal-header"><h4>Are you sure want to delete {{active.name}} #{{item.id}}?</h4></div>
+                    <div class="modal-header"><h4>Are you sure want to delete {{active.name}} #{{item._get_pk_value()}}?</h4></div>
                     <div class="modal-body">
                       {% for column in active.columns[:4] %}
                       <b> {{ active.render_value(item, column)|safe }} </b>
