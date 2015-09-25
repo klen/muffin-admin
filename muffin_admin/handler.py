@@ -1,4 +1,4 @@
-""" Implement Admin interfaces. """
+"""Implement Admin interfaces."""
 import muffin
 import copy
 import ujson as json
@@ -13,10 +13,10 @@ from .filters import default_converter, PREFIX as FILTERS_PREFIX, DEFAULT
 
 class AdminHandlerMeta(type(Handler)):
 
-    """ Prepare admin handler. """
+    """Prepare admin handler."""
 
     def __new__(mcs, name, bases, params):
-        """ Copy columns formatters to created class. """
+        """Copy columns formatters to created class."""
         cls = super(AdminHandlerMeta, mcs).__new__(mcs, name, bases, params)
         cls.columns_formatters = copy.copy(cls.columns_formatters)
         return cls
@@ -24,7 +24,7 @@ class AdminHandlerMeta(type(Handler)):
 
 class AdminHandler(Handler, metaclass=AdminHandlerMeta):
 
-    """ Docstring here. """
+    """Base admin handler. Inherit from this class any other implementation."""
 
     actions = None
 
@@ -54,7 +54,7 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
     url = None
 
     def __init__(self):
-        """ Define self templates. """
+        """Define self templates."""
         self.template_list = self.template_list or self.app.ps.admin.cfg.template_list
         self.template_item = self.template_item or self.app.ps.admin.cfg.template_item
 
@@ -66,7 +66,7 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
 
     @classmethod
     def connect(cls, app, *paths, methods=None, name=None, view=None):
-        """ Connect to admin interface and application. """
+        """Connect to admin interface and application."""
         # Register self in admin
         if view is None:
             app.ps.admin.register(cls)
@@ -77,7 +77,7 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
 
     @classmethod
     def action(cls, view):
-        """ Register admin view action. """
+        """Register admin view action."""
         name = "%s-%s" % (cls.name, view.__name__)
         path = "%s/%s" % (cls.url, view.__name__)
         if cls.actions is None:
@@ -87,7 +87,7 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
 
     @abcoroutine
     def dispatch(self, request, **kwargs):
-        """ Dispatch a request. """
+        """Dispatch a request."""
         # Authorize request
         self.auth = yield from self.authorize(request)
 
@@ -122,27 +122,27 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
 
     @abcoroutine
     def authorize(self, request):
-        """ Base point for authorization. """
+        """Base point for authorization."""
         return (yield from self.app.ps.admin.authorize(request))
 
     @abcoroutine
     def load_many(self, request):
-        """ Base point for collect data. """
+        """Base point for collect data."""
         return []
 
     @abcoroutine
     def count(self, request):
-        """ Get count. """
+        """Get count."""
         return len(self.collection)
 
     @abcoroutine
     def load_one(self, request):
-        """ Base point load resource. """
+        """Base point load resource."""
         return request.GET.get('pk')
 
     @abcoroutine
     def filter(self, request):
-        """ Filter collection. """
+        """Filter collection."""
         collection = self.collection
         self.filter_form.process(request.GET)
         data = self.filter_form.data
@@ -153,17 +153,17 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
 
     @abcoroutine
     def sort(self, request, reverse=False):
-        """ Sort collection. """
+        """Sort collection."""
         return sorted(
             self.collection, key=lambda o: getattr(o, self.columns_sort, 0), reverse=reverse)
 
     @abcoroutine
     def paginate(self, request):
-        """ Paginate collection. """
+        """Paginate collection."""
         return self.collection[self.offset: self.offset + self.limit]
 
     def get_form(self, request):
-        """ Base point load resource. """
+        """Base point load resource."""
         if not self.form:
             return None
         formdata = yield from request.post()
@@ -171,7 +171,7 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
 
     @abcoroutine
     def save_form(self, form, request, **resources):
-        """ Save self form. """
+        """Save self form."""
         if not self.can_create and not self.resource:
             raise muffin.HTTPForbidden()
 
@@ -183,12 +183,12 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
         return resource
 
     def populate(self):
-        """ Create object. """
+        """Create object."""
         return object()
 
     @abcoroutine
     def get(self, request):
-        """ Get collection of resources. """
+        """Get collection of resources."""
         form = yield from self.get_form(request)
         ctx = dict(active=self, form=form, request=request)
         if self.resource:
@@ -197,7 +197,7 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
 
     @abcoroutine
     def post(self, request):
-        """ Create/Edit items. """
+        """Create/Edit items."""
         form = yield from self.get_form(request)
         if not form.validate():
             raise muffin.HTTPBadRequest(
@@ -207,13 +207,19 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
 
     @classmethod
     def columns_formatter(cls, colname):
-        """ Decorator to mark a function as columns formatter. """
+        """Decorator to mark a function as columns formatter."""
         def wrapper(func):
             cls.columns_formatters[colname] = func
             return func
         return wrapper
 
     def render_value(self, data, column):
-        """ Render value. """
+        """Render value."""
         renderer = self.columns_formatters.get(column, format_value)
         return renderer(self, data, column)
+
+    def get_pk(self, item):
+        """Get PK field."""
+        return getattr(item, 'pk', item)
+
+#  pylama:ignore=C0202,R0201,W0201,E0202,E1102

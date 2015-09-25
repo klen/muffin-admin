@@ -1,4 +1,4 @@
-""" Peewee support. """
+"""Peewee support."""
 import muffin
 import peewee as pw
 from wtforms import fields as f
@@ -22,10 +22,10 @@ except ImportError:
 
 class PWAdminHandlerMeta(type(AdminHandler)):
 
-    """ Fill name from model. """
+    """Fill name from model."""
 
     def __new__(mcs, name, bases, params):
-        """ Create a class. """
+        """Create a class."""
         model = params.get('model')
         if model:
             params.setdefault('name', model._meta.db_table)
@@ -43,7 +43,7 @@ class PWAdminHandlerMeta(type(AdminHandler)):
 
 class PWAdminHandler(AdminHandler, metaclass=PWAdminHandlerMeta):
 
-    """ Peewee operations. """
+    """Peewee operations."""
 
     model = None
 
@@ -57,11 +57,11 @@ class PWAdminHandler(AdminHandler, metaclass=PWAdminHandlerMeta):
     filters_converter = pw_converter
 
     def load_many(self, request):
-        """ Get collection. """
+        """Get collection."""
         return self.model.select()
 
     def load_one(self, request):
-        """ Load a resource. """
+        """Load a resource."""
         resource = request.GET.get('pk')
         if not resource:
             return None
@@ -72,7 +72,7 @@ class PWAdminHandler(AdminHandler, metaclass=PWAdminHandlerMeta):
             raise muffin.HTTPNotFound()
 
     def sort(self, request, reverse=False):
-        """ Order a current collection. """
+        """Sort current collection."""
         field = self.model._meta.fields.get(self.columns_sort)
         if not field:
             return self.collection
@@ -83,29 +83,35 @@ class PWAdminHandler(AdminHandler, metaclass=PWAdminHandlerMeta):
         return self.collection.order_by(field)
 
     def paginate(self, request):
-        """ Paginate collection. """
+        """Paginate collection."""
         return self.collection.offset(self.offset).limit(self.limit)
 
     def count(self, request):
-        """ Get count. """
+        """Get count."""
         return self.collection.count()
 
     def populate(self):
-        """ Create object. """
+        """Create object."""
         return self.model()
 
     def save_form(self, form, request, **resources):
-        """ Save self form. """
+        """Save self form."""
         resource = yield from super(PWAdminHandler, self).save_form(form, request, **resources)
         resource.save()
         return resource
 
     def delete(self, request):
-        """ Delete an item. """
+        """Delete an item."""
         if not self.can_delete:
             raise muffin.HTTPMethodNotAllowed()
 
         if not self.resource:
-            raise muffin.HTTPNotFound('Resource not found')
+            raise muffin.HTTPNotFound(reason='Resource not found')
 
         self.resource.delete_instance()
+
+    def get_pk(self, item):
+        """Get PK field."""
+        return item._get_pk_value()
+
+#  pylama:ignore=C0202,R0201,W0201,E0202,E1102,E1120

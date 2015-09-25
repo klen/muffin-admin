@@ -1,10 +1,10 @@
 {% set base_url = app.ps.admin.cfg.prefix + '/' + active.name.lower() %}
-{% set action = "%(base_url)s?pk=%(id)s"|format(base_url=base_url, id=active.resource._get_pk_value()) %}
+{% set action = "%(base_url)s?pk=%(id)s"|format(base_url=base_url, id=active.get_pk(active.resource)) %}
 
 {% import "admin/macros.html" as macros %}
 
 <div class="modal-header">
-    <h4 class="modal-title"> {{ gettext('Edit') }} {{ active.name}} {{ active.resource._get_pk_value() }}</h4>
+    <h4 class="modal-title"> {{ gettext('Edit') }} {{ active.name}} {{ active.get_pk(active.resource) }}</h4>
 </div>
 
 <div class="modal-body">
