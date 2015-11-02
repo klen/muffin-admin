@@ -78,7 +78,7 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
     @classmethod
     def action(cls, view):
         """Register admin view action."""
-        name = "%s-%s" % (cls.name, view.__name__)
+        name = "%s:%s" % (cls.name, view.__name__)
         path = "%s/%s" % (cls.url, view.__name__)
         if cls.actions is None:
             cls.actions = []

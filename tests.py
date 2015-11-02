@@ -89,6 +89,10 @@ def test_peewee(app, client):
         columns_exclude = 'created',
         columns_filters = 'content',
 
+    @ModelHandler.action
+    def test(handler, request):
+        return 'PASSED'
+
     assert ModelHandler.columns
     assert ModelHandler.columns == ['id', 'active', 'content', 'config']
     assert ModelHandler.name == 'model'
