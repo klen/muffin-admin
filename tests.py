@@ -71,6 +71,7 @@ def test_peewee(app, client):
     class Model(app.ps.peewee.TModel):
 
         active = pw.BooleanField()
+        number = pw.IntegerField()
         content = pw.CharField()
         config = JSONField(default={})
 
@@ -87,14 +88,14 @@ def test_peewee(app, client):
     class ModelHandler(PWAdminHandler):
         model = Model
         columns_exclude = 'created',
-        columns_filters = 'content',
+        columns_filters = 'content', 'number'
 
     @ModelHandler.action
     def test(handler, request):
         return 'PASSED'
 
     assert ModelHandler.columns
-    assert ModelHandler.columns == ['id', 'active', 'content', 'config']
+    assert ModelHandler.columns == ['id', 'active', 'number', 'content', 'config']
     assert ModelHandler.name == 'model'
     assert ModelHandler.form
     assert ModelHandler.form.config
@@ -135,3 +136,10 @@ def test_peewee(app, client):
     response = client.get('/admin/model?auth=1&af-content=%s' % models[1].content)
     assert models[1].content in response.text
     assert not models[2].content in response.text
+
+    response = client.get('/admin/model?auth=1&af-number=%s' % models[1].number)
+    assert models[1].content in response.text
+    assert not models[2].content in response.text
+
+    response = client.get('/admin/model?auth=1&af-number=invalid')
+    assert response.status_code == 200

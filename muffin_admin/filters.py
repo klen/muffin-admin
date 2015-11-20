@@ -80,6 +80,7 @@ class PWFilter(Filter):
         value = self.value(data)
         if value is self.default:
             return query
+        value = field.db_value(value)
         return self.filter_query(query, field, value)
 
     @staticmethod

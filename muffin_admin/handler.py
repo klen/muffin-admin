@@ -101,7 +101,6 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
 
             # Filter collection
             self.collection = yield from self.filter(request)
-            self.count = yield from self.count(request)
 
             # Sort collection
             self.columns_sort = request.GET.get('ap-sort', self.columns_sort)
@@ -114,6 +113,7 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
             try:
                 self.offset = int(request.GET.get('ap-offset', 0))
                 if self.limit:
+                    self.count = yield from self.count(request)
                     self.collection = yield from self.paginate(request)
             except ValueError:
                 pass
@@ -148,7 +148,11 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
         data = self.filter_form.data
         self.filter_form.active = any(o and o is not DEFAULT for o in data.values())
         for flt in self.columns_filters:
-            collection = flt.apply(collection, data)
+            try:
+                collection = flt.apply(collection, data)
+            # Invalid filter value
+            except ValueError:
+                continue
         return collection
 
     @abcoroutine
