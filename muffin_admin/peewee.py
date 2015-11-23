@@ -29,7 +29,7 @@ class PWAdminHandlerMeta(type(AdminHandler)):
         model = params.get('model')
         if model:
             params.setdefault('name', model._meta.db_table)
-            params.setdefault('columns', [n for (n, _) in model._meta.get_sorted_fields()])
+            params.setdefault('columns', [f.name for f in model._meta.sorted_fields])
 
         cls = super(PWAdminHandlerMeta, mcs).__new__(mcs, name, bases, params)
         if not cls.form and cls.model and model_form:
