@@ -1,40 +1,40 @@
-""" Define formatters. """
+"""Define formatters."""
+
 import datetime as dt
 from html import escape
 
 
 def default_formatter(handler, item, value):
-    """ Default formatter. """
+    """Default formatter. Convert value to string."""
     if hasattr(value, '__unicode__'):
         value = value.__unicode__()
-    else:
-        value = str(value)
-    return escape(value)
+
+    return escape(str(value))
 
 
 def bool_formatter(handler, item, value):
-    """ Boolean formatter. """
+    """Boolean formatter."""
     glyph = 'ok' if value else 'minus'
     return '<span class="glyphicon glyphicon-%s"></span>' % glyph
 
 
 def list_formatter(handler, item, value):
-    """ Format list. """
+    """Format list."""
     return u', '.join(str(v) for v in value)
 
 
 def empty_formatter(handler, item, value):
-    """ Format None. """
+    """Format None."""
     return ''
 
 
 def datetime_formatter(handler, item, value):
-    """ Format Datetime. """
+    """Format Datetime."""
     return value.strftime('<span style="white-space: nowrap">%Y-%m-%d %H:%M</span>')
 
 
 def date_formatter(handler, item, value):
-    """ Format Date. """
+    """Format Date."""
     return value.strftime('%Y-%m-%d')
 
 
@@ -47,7 +47,7 @@ FORMATTERS = {
 
 
 def format_value(handler, item, column):
-    """ Format value. """
+    """Format value."""
     value = getattr(item, column, None)
     formatter = FORMATTERS.get(type(value), default_formatter)
     return formatter(handler, item, value)
