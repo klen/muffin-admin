@@ -11,6 +11,9 @@
         <div class="form-group">
             {{ field.label(class_="control-label") }}
             {{ field(class_="form-control") }}
+            {% if field.description %}
+                <span class="help-block">{{ field.description | e }}</span>
+            {% endif %}
         </div>
     {% endif %}
   {% endif %}

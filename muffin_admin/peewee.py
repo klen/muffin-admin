@@ -1,10 +1,11 @@
 """Peewee support."""
 import muffin
 import peewee as pw
-from wtforms import fields as f
 
-from .handler import AdminHandler
+from wtforms import fields as f, Form, StringField
+
 from .filters import pw_converter
+from .handler import AdminHandler
 
 
 try:
@@ -18,6 +19,22 @@ try:
 
 except ImportError:
     model_form = None
+    ModelConverter = None
+
+
+class RawIDField(StringField):
+
+    """Simple Raw ID field implementation."""
+
+    def process(self, *args, **kwargs):
+        """Get a description."""
+        super(RawIDField, self).process(*args, **kwargs)
+        if self.object_data:
+            self.description = self.description or str(self.object_data)
+
+    def _value(self):
+        """Get field value."""
+        return str(self.data._get_pk_value()) if self.data is not None else ''
 
 
 class PWAdminHandlerMeta(type(AdminHandler)):
@@ -32,8 +49,13 @@ class PWAdminHandlerMeta(type(AdminHandler)):
             params.setdefault('columns', [f.name for f in model._meta.sorted_fields])
 
         cls = super(PWAdminHandlerMeta, mcs).__new__(mcs, name, bases, params)
-        if not cls.form and cls.model and model_form:
-            cls.form = model_form(cls.model, **cls.form_meta)
+        if not cls.form and cls.model and model_form and ModelConverter:
+            converter = ModelConverter(overrides=cls.form_overrides)
+            cls.form = model_form(
+                cls.model,
+                base_class=cls.form_base_class,
+                allow_pk=cls.form_allow_pk, only=cls.form_only, exclude=cls.form_exclude,
+                field_args=cls.form_field_args, converter=converter)
 
         if cls.columns_exclude:
             cls.columns = [col for col in cls.columns if col not in cls.columns_exclude]
@@ -50,7 +72,23 @@ class PWAdminHandler(AdminHandler, metaclass=PWAdminHandlerMeta):
     columns_exclude = ()
     columns_sort = '-id'
 
-    form_meta = {}
+    # Base form class to extend from.
+    form_base_class = Form
+
+    # Allow pk editing.
+    form_allow_pk = False
+
+    # An optional iterable with the property names that should be included in the form.
+    form_only = None
+
+    # An optional iterable with the property names that should be excluded from the form
+    form_exclude = None
+
+    # An optional dictionary of field names mapping to keyword arguments used to construct field
+    form_field_args = None
+
+    # Override form fields
+    form_overrides = {}
 
     methods = 'get', 'post', 'delete'
 
