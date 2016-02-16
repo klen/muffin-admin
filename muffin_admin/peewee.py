@@ -75,8 +75,6 @@ class PWAdminHandlerMeta(type(AdminHandler)):
         converter = cls.__converter
         if field.name not in cls.form_rawid_fields:
             return converter.handle_foreign_key(model, field, **kwargs)
-        if field.null:
-            kwargs['allow_blank'] = True
         return FieldInfo(field.name, RawIDField(field, **kwargs))
 
 
