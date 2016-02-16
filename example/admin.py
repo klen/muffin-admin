@@ -6,8 +6,7 @@ from muffin.utils import Struct
 from example import app
 from example.models import User, Message
 from muffin_admin.filters import PWLikeFilter
-from muffin_admin.peewee import PWAdminHandler, RawIDField
-from wtforms import IntegerField
+from muffin_admin.peewee import PWAdminHandler
 
 
 @app.register
@@ -25,7 +24,8 @@ class TestHandler(app.ps.admin.Handler):
         if resource:
             return self.collection[int(resource) - 1]
 
-    def load_many(self, request):
+    @staticmethod
+    def load_many(request):
         return [
             Struct(id=1, name='test1'),
             Struct(id=2, name='test2'),
@@ -35,14 +35,12 @@ class TestHandler(app.ps.admin.Handler):
 
 @app.register
 class PWHandler1(PWAdminHandler):
-    limit = 5
+    limit = 35
     model = Message
     name = 'peewee message'
     columns_labels = {'created': 'Created at'}
     columns_filters = 'active', 'status', PWLikeFilter('content')
-    form_overrides = {
-        'user': RawIDField,
-    }
+    form_rawid_fields = 'user',
 
 
 @PWHandler1.action

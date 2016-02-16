@@ -41,8 +41,9 @@ output/*/index.html
 # Sphinx
 docs/_build
 
-/_
 *.sqlite
-/todo.txt
+/.cache
 /.env
 /.ropeproject
+/_
+/todo.txt

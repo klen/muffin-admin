@@ -149,9 +149,9 @@
     {% if pages %}
         <ul class="pagination pull-right">
             {% set url = admurl(request, 'ap-offset') %}
-            {% set size = 3 %}
             {% set page = active.offset // active.limit %}
-            {% set pages = active.count // active.limit %}
+            {% set pages = active.count / active.limit %}
+            {% set size = 3 %}
 
             {% set left = page - size - 1 %}
             {% set right = page + size + 1 %}
@@ -168,7 +168,7 @@
                 <li><a href="{{ url }}&ap-offset={{active.offset - active.limit }}">&laquo;</a></li>
             {% endif %}
 
-            {% for num in range(pages) %}
+            {% for num in range(pages|round(0, 'ceil')|int) %}
 
             {% if num in [0, pages - 1] or left < num < right %}
 

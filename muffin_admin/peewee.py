@@ -50,6 +50,9 @@ class PWAdminHandlerMeta(type(AdminHandler)):
 
         cls = super(PWAdminHandlerMeta, mcs).__new__(mcs, name, bases, params)
         if not cls.form and cls.model and model_form and ModelConverter:
+            for field in cls.form_rawid_fields:
+                cls.form_overrides[field] = RawIDField
+
             converter = ModelConverter(overrides=cls.form_overrides)
             cls.form = model_form(
                 cls.model,
@@ -86,6 +89,9 @@ class PWAdminHandler(AdminHandler, metaclass=PWAdminHandlerMeta):
 
     # An optional dictionary of field names mapping to keyword arguments used to construct field
     form_field_args = None
+
+    # RawID fields
+    form_rawid_fields = ()
 
     # Override form fields
     form_overrides = {}
