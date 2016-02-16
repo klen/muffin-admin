@@ -9,7 +9,7 @@ from .handler import AdminHandler
 
 
 try:
-    from wtfpeewee.orm import model_form, ModelConverter
+    from wtfpeewee.orm import model_form, ModelConverter, FieldInfo
 
     ModelConverter.defaults[pw.DateField] = f.DateField
     ModelConverter.defaults[pw.DateTimeField] = f.DateTimeField
@@ -18,13 +18,17 @@ try:
     ModelConverter.defaults[JSONField] = f.TextAreaField
 
 except ImportError:
-    model_form = None
-    ModelConverter = None
+    model_form = ModelConverter = None
 
 
 class RawIDField(StringField):
 
     """Simple Raw ID field implementation."""
+
+    def __init__(self, field, *args, **kwargs):
+        """Store model field."""
+        self.field = field
+        super(RawIDField, self).__init__(*args, **kwargs)
 
     def process(self, *args, **kwargs):
         """Get a description."""
@@ -34,7 +38,10 @@ class RawIDField(StringField):
 
     def _value(self):
         """Get field value."""
-        return str(self.data._get_pk_value()) if self.data is not None else ''
+        if self.data is not None:
+            value = self.data._data.get(self.field.to_field.name)
+            return str(value)
+        return ''
 
 
 class PWAdminHandlerMeta(type(AdminHandler)):
@@ -50,20 +57,27 @@ class PWAdminHandlerMeta(type(AdminHandler)):
 
         cls = super(PWAdminHandlerMeta, mcs).__new__(mcs, name, bases, params)
         if not cls.form and cls.model and model_form and ModelConverter:
-            for field in cls.form_rawid_fields:
-                cls.form_overrides[field] = RawIDField
+            cls.__converter = ModelConverter(
+                additional={pw.ForeignKeyField: cls.handle_fk}, overrides=cls.form_overrides)
 
-            converter = ModelConverter(overrides=cls.form_overrides)
             cls.form = model_form(
                 cls.model,
                 base_class=cls.form_base_class,
                 allow_pk=cls.form_allow_pk, only=cls.form_only, exclude=cls.form_exclude,
-                field_args=cls.form_field_args, converter=converter)
+                field_args=cls.form_field_args, converter=cls.__converter)
 
         if cls.columns_exclude:
             cls.columns = [col for col in cls.columns if col not in cls.columns_exclude]
 
         return cls
+
+    def handle_fk(cls, model, field, **kwargs): # noqa
+        converter = cls.__converter
+        if field.name not in cls.form_rawid_fields:
+            return converter.handle_foreign_key(model, field, **kwargs)
+        if field.null:
+            kwargs['allow_blank'] = True
+        return FieldInfo(field.name, RawIDField(field, **kwargs))
 
 
 class PWAdminHandler(AdminHandler, metaclass=PWAdminHandlerMeta):
