@@ -99,5 +99,6 @@ a postcard to: ::
 
 
 .. _klen: https://github.com/klen
+.. _Muffin: https://github.com/klen/muffin
 
 .. _MIT license: http://opensource.org/licenses/MIT
