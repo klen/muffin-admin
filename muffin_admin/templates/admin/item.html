@@ -4,14 +4,20 @@
 {% import "admin/macros.html" as macros %}
 
 <div class="modal-header">
-    <h4 class="modal-title"> {{ gettext('Edit') }} {{ active.name}} {{ active.get_pk(active.resource) }}</h4>
+    {% block header %}
+        <h4 class="modal-title"> {{ gettext('Edit') }} {{ active.name}} {{ active.get_pk(active.resource) }}</h4>
+    {% endblock %}
 </div>
 
 <div class="modal-body">
-  {{ macros.render_form(form, action=action, class="ajax") }}
+    {% block body %}
+        {{ macros.render_form(form, action=action, class="ajax") }}
+    {% endblock %}
 </div>
 
 <div class="modal-footer">
-  <button class="btn btn-success" type="submit">{{ gettext('Save') }}</button>
-  <button class="btn btn-default" data-dismiss="modal">{{ gettext('Cancel') }}</button>
+    {% block footer %}
+        <button class="btn btn-success" type="submit">{{ gettext('Save') }}</button>
+        <button class="btn btn-default" data-dismiss="modal">{{ gettext('Cancel') }}</button>
+    {% endblock %}
 </div>
