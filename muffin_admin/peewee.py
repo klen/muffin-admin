@@ -9,7 +9,7 @@ from .handler import AdminHandler
 
 
 try:
-    from wtfpeewee.orm import model_form, ModelConverter, FieldInfo
+    from wtfpeewee.orm import ModelConverter, FieldInfo, model_fields
 
     ModelConverter.defaults[pw.DateField] = f.DateField
     ModelConverter.defaults[pw.DateTimeField] = f.DateTimeField
@@ -54,17 +54,21 @@ class PWAdminHandlerMeta(type(AdminHandler)):
         if model:
             params.setdefault('name', model._meta.db_table)
             params.setdefault('columns', [f.name for f in model._meta.sorted_fields])
+            # Peewee 3+
+            #  params.setdefault('name', model._meta.table_name)
+            #  params.setdefault('columns', model._meta.sorted_field_names)
 
         cls = super(PWAdminHandlerMeta, mcs).__new__(mcs, name, bases, params)
-        if not cls.form and cls.model and model_form and ModelConverter:
+        if not cls.form and cls.model and model_fields and ModelConverter:
             cls.__converter = ModelConverter(
                 additional={pw.ForeignKeyField: cls.handle_fk}, overrides=cls.form_overrides)
 
-            cls.form = model_form(
-                cls.model,
-                base_class=cls.form_base_class,
-                allow_pk=cls.form_allow_pk, only=cls.form_only, exclude=cls.form_exclude,
-                field_args=cls.form_field_args, converter=cls.__converter)
+            fields = model_fields(
+                cls.model, allow_pk=cls.form_allow_pk, only=cls.form_only,
+                exclude=cls.form_exclude, field_args=cls.form_field_args,
+                converter=cls.__converter)
+            fields.update(cls.form_fields)
+            cls.form = type("%sForm" % cls.model.__name__, (cls.form_base_class,), fields)
 
         if cls.columns_exclude:
             cls.columns = [col for col in cls.columns if col not in cls.columns_exclude]
@@ -98,6 +102,9 @@ class PWAdminHandler(AdminHandler, metaclass=PWAdminHandlerMeta):
 
     # An optional iterable with the property names that should be excluded from the form
     form_exclude = None
+
+    # Form fields
+    form_fields = {}
 
     # An optional dictionary of field names mapping to keyword arguments used to construct field
     form_field_args = None
@@ -169,5 +176,7 @@ class PWAdminHandler(AdminHandler, metaclass=PWAdminHandlerMeta):
     def get_pk(self, item):
         """Get PK field."""
         return item._get_pk_value()
+        #  Peewee 3+
+        #  return item._pk
 
 #  pylama:ignore=C0202,R0201,W0201,E0202,E1102,E1120
