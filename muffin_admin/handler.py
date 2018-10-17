@@ -4,7 +4,6 @@ import copy
 import ujson as json
 
 from muffin import Handler
-from muffin.utils import abcoroutine
 from wtforms import Form
 
 from .formatters import format_value
@@ -66,7 +65,7 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
             flt.bind(self.filter_form)
 
     @classmethod
-    def connect(cls, app, *paths, methods=None, name=None, view=None):
+    def bind(cls, app, *paths, methods=None, name=None, view=None):
         """Connect to admin interface and application."""
         # Register self in admin
         if view is None:
@@ -74,7 +73,7 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
             if not paths:
                 paths = ('%s/%s' % (app.ps.admin.cfg.prefix, name or cls.name),)
             cls.url = paths[0]
-        return super(AdminHandler, cls).connect(app, *paths, methods=methods, name=name, view=view)
+        return super(AdminHandler, cls).bind(app, *paths, methods=methods, name=name, view=view)
 
     @classmethod
     def action(cls, view):
@@ -86,66 +85,60 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
         cls.actions.append((view.__doc__, path))
         return cls.register(path, name=name)(view)
 
-    @abcoroutine
-    def dispatch(self, request, **kwargs):
+    async def dispatch(self, request, **kwargs):
         """Dispatch a request."""
         # Authorize request
-        self.auth = yield from self.authorize(request)
+        self.auth = await self.authorize(request)
 
         # Load collection
-        self.collection = yield from self.load_many(request)
+        self.collection = await self.load_many(request)
 
         # Load resource
-        self.resource = yield from self.load_one(request)
+        self.resource = await self.load_one(request)
 
         if request.method == 'GET' and self.resource is None:
 
             # Filter collection
-            self.collection = yield from self.filter(request)
+            self.collection = await self.filter(request)
 
             # Sort collection
-            self.columns_sort = request.GET.get('ap-sort', self.columns_sort)
+            self.columns_sort = request.query.get('ap-sort', self.columns_sort)
             if self.columns_sort:
                 reverse = self.columns_sort.startswith('-')
                 self.columns_sort = self.columns_sort.lstrip('+-')
-                self.collection = yield from self.sort(request, reverse=reverse)
+                self.collection = await self.sort(request, reverse=reverse)
 
             # Paginate collection
             try:
-                self.offset = int(request.GET.get('ap-offset', 0))
+                self.offset = int(request.query.get('ap-offset', 0))
                 if self.limit:
-                    self.count = yield from self.count(request)
-                    self.collection = yield from self.paginate(request)
+                    self.count = await self.count(request)
+                    self.collection = await self.paginate(request)
             except ValueError:
                 pass
 
-        return (yield from super(AdminHandler, self).dispatch(request, **kwargs))
+        return await super(AdminHandler, self).dispatch(request, **kwargs)
 
-    @abcoroutine
-    def authorize(self, request):
+    async def authorize(self, request):
         """Base point for authorization."""
-        return (yield from self.app.ps.admin.authorize(request))
+        return await self.app.ps.admin.authorize(request)
 
-    @abcoroutine
-    def load_many(self, request):
+    async def load_many(self, request):
         """Base point for collect data."""
         return []
 
-    @abcoroutine
-    def count(self, request):
+    async def count(self, request):
         """Get count."""
         return len(self.collection)
 
-    @abcoroutine
-    def load_one(self, request):
+    async def load_one(self, request):
         """Base point load resource."""
-        return request.GET.get('pk')
+        return request.query.get('pk')
 
-    @abcoroutine
-    def filter(self, request):
+    async def filter(self, request):
         """Filter collection."""
         collection = self.collection
-        self.filter_form.process(request.GET)
+        self.filter_form.process(request.query)
         data = self.filter_form.data
         self.filter_form.active = any(o and o is not DEFAULT for o in data.values())
         for flt in self.columns_filters:
@@ -156,26 +149,23 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
                 continue
         return collection
 
-    @abcoroutine
-    def sort(self, request, reverse=False):
+    async def sort(self, request, reverse=False):
         """Sort collection."""
         return sorted(
             self.collection, key=lambda o: getattr(o, self.columns_sort, 0), reverse=reverse)
 
-    @abcoroutine
-    def paginate(self, request):
+    async def paginate(self, request):
         """Paginate collection."""
         return self.collection[self.offset: self.offset + self.limit]
 
-    def get_form(self, request):
+    async def get_form(self, request):
         """Base point load resource."""
         if not self.form:
             return None
-        formdata = yield from request.post()
+        formdata = await request.post()
         return self.form(formdata, obj=self.resource)
 
-    @abcoroutine
-    def save_form(self, form, request, **resources):
+    async def save_form(self, form, request, **resources):
         """Save self form."""
         if not self.can_create and not self.resource:
             raise muffin.HTTPForbidden()
@@ -191,23 +181,21 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
         """Create object."""
         return object()
 
-    @abcoroutine
-    def get(self, request):
+    async def get(self, request):
         """Get collection of resources."""
-        form = yield from self.get_form(request)
+        form = await self.get_form(request)
         ctx = dict(active=self, form=form, request=request)
         if self.resource:
             return self.app.ps.jinja2.render(self.template_item, **ctx)
         return self.app.ps.jinja2.render(self.template_list, **ctx)
 
-    @abcoroutine
-    def post(self, request):
+    async def post(self, request):
         """Create/Edit items."""
-        form = yield from self.get_form(request)
+        form = await self.get_form(request)
         if not form.validate():
             raise muffin.HTTPBadRequest(
                 text=json.dumps(form.errors), content_type='application/json')
-        yield from self.save_form(form, request)
+        await self.save_form(form, request)
         raise muffin.HTTPFound(self.url)
 
     @classmethod

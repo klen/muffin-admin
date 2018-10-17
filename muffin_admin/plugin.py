@@ -60,7 +60,7 @@ class Plugin(BasePlugin):
 
         @app.ps.jinja2.register
         def admurl(request, prefix):
-            qs = {k: v for k, v in request.GET.items() if not k.startswith(prefix)}
+            qs = {k: v for k, v in request.query.items() if not k.startswith(prefix)}
             if not qs:
                 qs = {'ap': 0}
             return "%s?%s" % (request.path, urlparse.urlencode(qs))

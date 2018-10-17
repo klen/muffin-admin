@@ -1,19 +1,13 @@
-import pytest
 import muffin
 
 
-@pytest.fixture(scope='session')
-def app(loop):
-    app = muffin.Application(
-        'admin', loop=loop,
-
-        PLUGINS=['muffin_jinja2', 'muffin_admin', 'muffin_peewee'],
-
-        PEEWEE_CONNECTION='sqlite:///:memory:'
-    )
+async def test_base(aiohttp_client):
+    app = muffin.Application('admin')
+    app.install('muffin_jinja2')
+    admin = app.install('muffin_admin')
 
     @app.register
-    class Test(app.ps.admin.Handler):
+    class Test(admin.Handler):
 
         columns = 'id', 'name'
 
@@ -26,57 +20,54 @@ def app(loop):
             return [
                 muffin.utils.Struct(id=1, name='test1'),
                 muffin.utils.Struct(id=2, name='test2'),
-                muffin.utils.Struct(id=3, name='test3'),
             ]
 
-    @app.ps.admin.authorization
+    @admin.authorization
     def ensure_code_in_get(request):
         """ Simple fake authentication process. """
-        if 'auth' not in request.GET:
+        if 'auth' not in request.query:
             raise muffin.HTTPForbidden()
         return True
 
-    return app
+    client = await aiohttp_client(app)
 
+    async with client.get('/admin') as resp:
+        assert resp.status == 403
 
-def test_home(client):
-    response = client.get('/admin', status=403)
-    assert response.status_code == 403
+    async with client.get('/admin?auth=1') as resp:
+        assert resp.status == 200
 
-    response = client.get('/admin?auth=1')
-    assert response.status_code == 200
+    assert admin.handlers
 
-
-def test_handler(app, client):
-    assert app.ps.admin.handlers
-
-    th = app.ps.admin.handlers['test']
+    th = admin.handlers['test']
     assert th.name == 'test'
 
-    response = client.get('/admin/test', status=403)
-    assert response.status_code == 403
-
-    response = client.get('/admin/test?auth=1')
-    assert response.status_code == 200
-    assert 'test1' in response.text
-    assert 'test2' in response.text
-    assert 'test3' in response.text
+    async with client.get('/admin/test?auth=1') as resp:
+        assert resp.status == 200
+        text = await resp.text()
+        assert 'test1' in text
+        assert 'test2' in text
 
 
-def test_peewee(app, client):
+async def test_peewee(aiohttp_client):
+    app = muffin.Application('pw_admin', PEEWEE_CONNECTION='sqlite:///:memory:')
+    app.install('muffin_jinja2')
+    db = app.install('muffin_peewee')
+    admin = app.install('muffin_admin')
+
     import peewee as pw
     from muffin_peewee.fields import JSONField
 
-    @app.ps.peewee.register
-    class Model(app.ps.peewee.TModel):
+    @db.register
+    class Model(db.TModel):
 
         active = pw.BooleanField()
         number = pw.IntegerField()
         content = pw.CharField()
         config = JSONField(default={})
 
-    @app.ps.peewee.register
-    class Model2(app.ps.peewee.TModel):
+    @db.register
+    class Model2(db.TModel):
         pass
 
     Model.create_table()
@@ -105,8 +96,8 @@ def test_peewee(app, client):
     assert ModelHandler.columns_formatters is not PWAdminHandler.columns_formatters
 
     # Make admin handler dynamically
-    app.ps.admin.register(Model2, can_delete=False)
-    handler = app.ps.admin.handlers['model2']
+    admin.register(Model2, can_delete=False)
+    handler = admin.handlers['model2']
     assert handler.model == Model2
     assert handler.can_delete is False
 
@@ -114,32 +105,42 @@ def test_peewee(app, client):
     mixer = Mixer(commit=True)
     models = mixer.cycle(3).blend(Model)
 
-    response = client.get('/admin/model?auth=1')
-    assert models[0].content in response.text
-    assert models[1].content in response.text
-    assert models[2].content in response.text
+    client = await aiohttp_client(app)
 
-    response = client.get('/admin/model?pk=1&auth=1')
-    assert 'created' in response.text
+    async with client.get('/admin/model?auth=1') as resp:
+        assert resp.status == 200
+        text = await resp.text()
+        assert models[0].content in text
+        assert models[1].content in text
+        assert models[2].content in text
 
-    response = client.post('/admin/model?pk=1&auth=1', {
-        'content': 'new content'
-    })
-    assert response.status_code == 302
+    async with client.get('/admin/model?pk=1&auth=1') as resp:
+        assert resp.status == 200
+        text = await resp.text()
+        assert 'created' in text
 
-    response = client.delete('/admin/model?pk=1&auth=1')
-    assert not Model.select().where(Model.id == 1).exists()
+    async with client.post('/admin/model?pk=1&auth=1', data={
+                'content': 'new content'
+            }) as resp:
+        assert resp.status == 200
 
-    response = client.get('/admin/model2?auth=1')
-    assert response.status_code == 200
+    async with client.delete('/admin/model?pk=1&auth=1'):
+        assert not Model.select().where(Model.id == 1).exists()
 
-    response = client.get('/admin/model?auth=1&af-content=%s' % models[1].content)
-    assert models[1].content in response.text
-    assert not models[2].content in response.text
+    async with client.get('/admin/model2?auth=1') as resp:
+        assert resp.status == 200
 
-    response = client.get('/admin/model?auth=1&af-number=%s' % models[1].number)
-    assert models[1].content in response.text
-    assert not models[2].content in response.text
+    async with client.get('/admin/model?auth=1&af-content=%s' % models[1].content) as resp:
+        assert resp.status == 200
+        text = await resp.text()
+        assert models[1].content in text
+        assert not models[2].content in text
 
-    response = client.get('/admin/model?auth=1&af-number=invalid')
-    assert response.status_code == 200
+    async with client.get('/admin/model?auth=1&af-number=%s' % models[1].number) as resp:
+        assert resp.status == 200
+        text = await resp.text()
+        assert models[1].content in text
+        assert not models[2].content in text
+
+    async with client.get('/admin/model?auth=1&af-number=invalid') as resp:
+        assert resp.status == 200

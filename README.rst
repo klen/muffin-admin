@@ -14,9 +14,6 @@ Muffin-Admin -- an extension to Muffin_ that implements admin-interfaces
 .. image:: http://img.shields.io/pypi/v/muffin-admin.svg?style=flat-square
     :target: https://pypi.python.org/pypi/muffin-admin
 
-.. image:: http://img.shields.io/pypi/dm/muffin-admin.svg?style=flat-square
-    :target: https://pypi.python.org/pypi/muffin-admin
-
 .. _contents:
 
 .. contents::

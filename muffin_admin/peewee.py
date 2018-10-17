@@ -18,7 +18,7 @@ try:
     ModelConverter.defaults[JSONField] = f.TextAreaField
 
 except ImportError:
-    model_form = ModelConverter = None
+    model_form = ModelConverter = model_fields = None
 
 
 class RawIDField(StringField):
@@ -125,7 +125,7 @@ class PWAdminHandler(AdminHandler, metaclass=PWAdminHandlerMeta):
 
     def load_one(self, request):
         """Load a resource."""
-        resource = request.GET.get('pk')
+        resource = request.query.get('pk')
         if not resource:
             return None
 
