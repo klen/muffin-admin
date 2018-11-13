@@ -96,7 +96,7 @@ class PWLikeFilter(PWFilter):
 
     def filter_query(self, query, field, value):
         """Filter a query."""
-        return query.where(field % "%{}%".format(value))
+        return query.where(field ** "%{}%".format(value.lower()))
 
 
 class PWBoolFilter(PWFilter):
