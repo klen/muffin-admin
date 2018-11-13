@@ -1,4 +1,4 @@
 muffin          >= 0.30.2
 muffin_jinja2   >= 0.2
 muffin_babel    >= 0.4
-wtforms
+wtforms==2.2.1
