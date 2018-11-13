@@ -13,6 +13,7 @@ class FilterDefault:
         """Nothing here."""
         return ""
 
+
 DEFAULT = FilterDefault()
 
 
@@ -95,8 +96,7 @@ class PWLikeFilter(PWFilter):
 
     def filter_query(self, query, field, value):
         """Filter a query."""
-        value = "*%s*" % value
-        return query.where(field % value)
+        return query.where(field % "%{}%".format(value))
 
 
 class PWBoolFilter(PWFilter):
