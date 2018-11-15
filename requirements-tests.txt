@@ -3,4 +3,4 @@
 mixer           >= 5.3.0
 muffin_peewee   >= 0.0.41
 wtf-peewee      == 0.2.5
-pytest
+pytest==4.0.0
