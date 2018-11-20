@@ -4,7 +4,7 @@ import peewee as pw
 
 from wtforms import fields as f, Form, StringField
 
-from .filters import pw_converter
+from .filters import Filter
 from .handler import AdminHandler
 
 
@@ -19,6 +19,26 @@ try:
 
 except ImportError:
     model_form = ModelConverter = model_fields = None
+
+
+def pw_converter(handler, flt):
+    """Convert column name to filter."""
+    import peewee as pw
+
+    if isinstance(flt, Filter):
+        return flt
+
+    model = handler.model
+    field = getattr(model, flt)
+
+    if isinstance(field, pw.BooleanField):
+        return PWBoolFilter(flt)
+
+    if field.choices:
+        choices = [(Filter.default, '---')] + list(field.choices)
+        return PWChoiceFilter(flt, choices=choices)
+
+    return PWFilter(flt)
 
 
 class RawIDField(StringField):
@@ -178,5 +198,68 @@ class PWAdminHandler(AdminHandler, metaclass=PWAdminHandlerMeta):
         return item._get_pk_value()
         #  Peewee 3+
         #  return item._pk
+
+
+class PWFilter(Filter):
+
+    """Base filter for Peewee handlers."""
+
+    def __init__(self, name, model_field=None, **field_kwargs):
+        """Store name and mode."""
+        self.name = name
+        self.model_field = model_field
+
+    def apply(self, query, data):
+        """Filter a query."""
+        field = self.model_field or query.model_class._meta.fields.get(self.name)
+        if not field or self.name not in data:
+            return query
+        value = self.value(data)
+        if value is self.default:
+            return query
+        value = field.db_value(value)
+        return self.filter_query(query, field, value)
+
+    @staticmethod
+    def filter_query(query, field, value):
+        """Filter a query."""
+        return query.where(field == value)
+
+
+class PWLikeFilter(PWFilter):
+
+    """Filter query by value."""
+
+    def filter_query(self, query, field, value):
+        """Filter a query."""
+        return query.where(field ** "%{}%".format(value.lower()))
+
+
+class PWBoolFilter(PWFilter):
+
+    """Boolean filter."""
+
+    field = f.SelectField
+    field_kwargs = {
+        'choices': (
+            (Filter.default, '---'),
+            (1, 'yes'),
+            (0, 'no'),
+        )
+    }
+
+    def value(self, data):
+        """Get value from data."""
+        value = data.get(self.name)
+        if value:
+            return int(value)
+        return self.default
+
+
+class PWChoiceFilter(PWFilter):
+
+    """Select field."""
+
+    field = f.SelectField
 
 #  pylama:ignore=C0202,R0201,W0201,E0202,E1102,E1120

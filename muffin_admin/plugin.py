@@ -15,7 +15,7 @@ from .handler import AdminHandler
 try:
     from .peewee import PWAdminHandler, pw
     PWModel = pw.Model
-except Exception:
+except Exception as exc:
     PWModel = None
 
 
