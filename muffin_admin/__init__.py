@@ -6,7 +6,7 @@ from .formatters import FORMATTERS # noqa
 # Package information
 # ===================
 
-__version__ = "0.5.6"
+__version__ = "0.5.7"
 __project__ = "muffin-admin"
 __author__ = "Kirill Klenov <horneds@gmail.com>"
 __license__ = "MIT"
