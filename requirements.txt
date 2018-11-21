@@ -1,4 +1,6 @@
 muffin          >= 0.30.2
 muffin_jinja2   >= 0.2
 muffin_babel    >= 0.4
-wtforms         >= 2.2.1
+
+# TODO: Support latest WTForms
+wtforms         == 2.1
