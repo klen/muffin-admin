@@ -206,7 +206,7 @@ class PWFilter(Filter):
 
     def __init__(self, name, model_field=None, **field_kwargs):
         """Store name and mode."""
-        self.name = name
+        super(PWFilter, self).__init__(name, **field_kwargs)
         self.model_field = model_field
 
     def apply(self, query, data):

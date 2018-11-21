@@ -62,7 +62,7 @@ async def test_peewee(aiohttp_client):
     class Model(db.TModel):
 
         active = pw.BooleanField()
-        number = pw.IntegerField()
+        number = pw.IntegerField(default=1, choices=zip(range(3), range(3)))
         content = pw.CharField()
         config = JSONField(default={})
 
@@ -80,6 +80,7 @@ async def test_peewee(aiohttp_client):
         model = Model
         columns_exclude = 'created',
         columns_filters = 'content', 'number'
+        form_exclude = 'number',
 
     @ModelHandler.action
     def test(handler, request):
@@ -103,7 +104,7 @@ async def test_peewee(aiohttp_client):
 
     from mixer.backend.peewee import Mixer
     mixer = Mixer(commit=True)
-    models = mixer.cycle(3).blend(Model)
+    models = mixer.cycle(3).blend(Model, number=(n for n in (1, 2, 3)))
 
     client = await aiohttp_client(app)
 
@@ -120,7 +121,7 @@ async def test_peewee(aiohttp_client):
         assert 'created' in text
 
     async with client.post('/admin/model?pk=1&auth=1', data={
-                'content': 'new content'
+            'content': 'new content'
             }) as resp:
         assert resp.status == 200
 
