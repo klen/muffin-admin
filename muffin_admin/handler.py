@@ -17,6 +17,7 @@ class AdminHandlerMeta(type(Handler)):
     def __new__(mcs, name, bases, params):
         """Copy columns formatters to created class."""
         cls = super(AdminHandlerMeta, mcs).__new__(mcs, name, bases, params)
+        cls.actions = []
         cls.name = cls.name.replace(' ', '_')
         cls.columns_formatters = copy.copy(cls.columns_formatters)
         return cls
@@ -25,8 +26,6 @@ class AdminHandlerMeta(type(Handler)):
 class AdminHandler(Handler, metaclass=AdminHandlerMeta):
 
     """Base admin handler. Inherit from this class any other implementation."""
-
-    actions = []
 
     # List of columns
     columns = 'id',
