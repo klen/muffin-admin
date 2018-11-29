@@ -86,6 +86,7 @@ async def test_peewee(aiohttp_client):
     def test(handler, request):
         return 'PASSED'
 
+    assert ModelHandler.actions
     assert ModelHandler.columns
     assert ModelHandler.columns == ['id', 'active', 'number', 'content', 'config']
     assert ModelHandler.name == 'model'

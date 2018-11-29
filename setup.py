@@ -12,6 +12,7 @@ def _read(fname):
     except IOError:
         return ''
 
+
 _meta = _read('muffin_admin/__init__.py')
 _license = re.search(r'^__license__\s*=\s*"(.*)"', _meta, re.M).group(1)
 _project = re.search(r'^__project__\s*=\s*"(.*)"', _meta, re.M).group(1)
@@ -41,7 +42,6 @@ setup(
         'Natural Language :: Russian',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Software Development :: Testing',
         'Topic :: Utilities',

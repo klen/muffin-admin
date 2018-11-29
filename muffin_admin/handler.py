@@ -26,7 +26,7 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
 
     """Base admin handler. Inherit from this class any other implementation."""
 
-    actions = None
+    actions = []
 
     # List of columns
     columns = 'id',
@@ -80,8 +80,6 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
         """Register admin view action."""
         name = "%s:%s" % (cls.name, view.__name__)
         path = "%s/%s" % (cls.url, view.__name__)
-        if cls.actions is None:
-            cls.actions = []
         cls.actions.append((view.__doc__, path))
         return cls.register(path, name=name)(view)
 
