@@ -55,11 +55,27 @@
           <div class="collapse navbar-collapse" id="navbar-collapse">
             {% block navbar_models %}
                 <ul class="nav navbar-nav">
-                {% for handler in app.ps.admin.handlers %}
-                    <li class="{{ active.name|lower|admeq(handler, 'active') }}">
-                    <a href="{{ prefix }}/{{ handler }}">{{ handler|title }}</a>
-                    </li>
-                {% endfor %}
+                    {% for group in app.ps.admin.handlers.values()|groupby('group') %}
+                        {% if group.grouper %}
+                            <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ group.grouper }}<span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    {% for handler in group.list %}
+                                        <li class="{{ active.name|admeq(handler.name, 'active') }}">
+                                            <a href="{{ prefix }}/{{ handler.name }}">{{ handler.name|title }}</a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% for handler, obj in app.ps.admin.handlers.items() %}
+                        {% if not obj.group %}
+                            <li class="{{ active.name|lower|admeq(handler, 'active') }}">
+                                <a href="{{ prefix }}/{{ handler }}">{{ handler|title }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
                 </ul>
             {% endblock %}
 

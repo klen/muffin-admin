@@ -46,6 +46,9 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
     can_edit = True
     can_delete = True
 
+    # Group
+    group = ''
+
     limit = 50
 
     filters_converter = default_converter
