@@ -56,6 +56,7 @@ register:
 upload: clean
 	@$(VIRTUAL_ENV)/bin/pip install twine wheel
 	@$(VIRTUAL_ENV)/bin/python setup.py sdist bdist_wheel
+	@$(VIRTUAL_ENV)/bin/twine check dist/*
 	@$(VIRTUAL_ENV)/bin/twine upload dist/*.whl || true
 	@$(VIRTUAL_ENV)/bin/twine upload dist/*.gz || true
 

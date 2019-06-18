@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 
 def _read(fname):
     try:
-        return open(op.join(op.dirname(__file__), fname)).read()
+        return open(op.join(op.dirname(__file__), fname), encoding='utf-8').read()
     except IOError:
         return ''
 
@@ -28,6 +28,7 @@ setup(
     license=_license,
     description=_read('DESCRIPTION'),
     long_description=_read('README.rst'),
+    #  long_description_content_type='text/markdown',
     platforms=('Any'),
     keywords = "asyncion aiohttp muffin admin".split(), # noqa
 
