@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 
 def _read(fname):
     try:
-        return open(op.join(op.dirname(__file__), fname), encoding='utf-8').read()
+        return open(op.join(op.dirname(__file__), fname), encoding='utf-8').read().strip()
     except IOError:
         return ''
 
