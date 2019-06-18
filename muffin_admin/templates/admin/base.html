@@ -57,7 +57,8 @@
                 <ul class="nav navbar-nav">
                     {% for group in app.ps.admin.handlers.values()|groupby('group') %}
                         {% if group.grouper %}
-                            <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ group.grouper }}<span class="caret"></span></a>
+                            <li class="dropdown{% if active.group == group.grouper %} active{% endif %}">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ group.grouper }}<span class="caret"></span></a>
                                 <ul class="dropdown-menu">
                                     {% for handler in group.list %}
                                         <li class="{{ active.name|admeq(handler.name, 'active') }}">
