@@ -218,8 +218,8 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
         return renderer(self, data, column)
 
     def render_value_csv(self, data, column):
-        renderer = self.columns_formatters_csv.get(column, str)
-        return renderer(getattr(data, column, None))
+        renderer = self.columns_formatters_csv.get(column, csv_format_value)
+        return renderer(self, data, column)
 
     def get_pk(self, item):
         """Get PK field."""
@@ -249,5 +249,11 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
 
         await res.write_eof()
         return res
+
+
+def csv_format_value(handler, item, column):
+    for attr in column.split('.'):
+        item = getattr(item, attr, None)
+    return str(item)
 
 #  pylama:ignore=C0202,R0201,W0201,E0202,E1102
