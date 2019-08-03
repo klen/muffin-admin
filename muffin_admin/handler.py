@@ -3,6 +3,7 @@ import muffin
 import copy
 import ujson as json
 
+from aiohttp.web import StreamResponse
 from muffin import Handler
 from wtforms import Form
 
@@ -31,8 +32,10 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
     columns = 'id',
     columns_labels = {}
     columns_formatters = {}
+    columns_formatters_csv = {}
     columns_filters = ()
     columns_sort = None
+    columns_csv = None
 
     # WTF form class
     form = None
@@ -107,6 +110,9 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
                 reverse = self.columns_sort.startswith('-')
                 self.columns_sort = self.columns_sort.lstrip('+-')
                 self.collection = await self.sort(request, reverse=reverse)
+
+            if 'csv' in request.query:
+                return await self.render_csv(request)
 
             # Paginate collection
             try:
@@ -211,8 +217,37 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
         renderer = self.columns_formatters.get(column, format_value)
         return renderer(self, data, column)
 
+    def render_value_csv(self, data, column):
+        renderer = self.columns_formatters_csv.get(column, str)
+        return renderer(getattr(data, column, None))
+
     def get_pk(self, item):
         """Get PK field."""
         return getattr(item, 'pk', item)
+
+    async def render_csv(self, request):
+        res = StreamResponse(headers={
+            "Content-Type": "text/csv",
+            "Content-Disposition": 'attachment; filename="%s.csv"' % self.name,
+        })
+        await res.prepare(request)
+        columns = self.columns_csv or self.columns
+        await res.write(
+            ("%s\n" % ';'.join([
+                self.columns_labels.get(col, col.title()) for col in columns]))
+            .encode('utf-8')
+        )
+        count = await self.count(request)
+        for offset in range(0, count, self.limit):
+            self.offset = offset
+            page = await self.paginate(request)
+            for item in page:
+                await res.write(
+                    ("%s\n" % ';'.join([self.render_value_csv(item, col) for col in columns]))
+                    .encode('utf-8')
+                )
+
+        await res.write_eof()
+        return res
 
 #  pylama:ignore=C0202,R0201,W0201,E0202,E1102

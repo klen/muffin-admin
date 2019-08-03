@@ -171,7 +171,7 @@ class PWAdminHandler(AdminHandler, metaclass=PWAdminHandlerMeta):
 
     def count(self, request):
         """Get count."""
-        return self.collection.count()
+        return self.collection.order_by().count()
 
     def populate(self):
         """Create object."""

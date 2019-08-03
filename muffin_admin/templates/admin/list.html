@@ -33,6 +33,12 @@
       </div>
     {% endif %}
 
+    <li>
+        <a href="{{ admurl(request, 'csv') }}&csv">
+            {{ gettext('Download CSV') }}
+        </a>
+    </li>
+
     {# Filters #}
     {% if active.columns_filters %}
         <div class="pull-right dropdown">
