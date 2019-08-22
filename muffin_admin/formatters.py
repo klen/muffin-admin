@@ -48,6 +48,7 @@ FORMATTERS = {
 
 def format_value(handler, item, column):
     """Format value."""
-    value = getattr(item, column, None)
-    formatter = FORMATTERS.get(type(value), default_formatter)
-    return formatter(handler, item, value)
+    for attr in column.split('.'):
+        item = getattr(item, attr, None)
+    formatter = FORMATTERS.get(type(item), default_formatter)
+    return formatter(handler, item, item)
