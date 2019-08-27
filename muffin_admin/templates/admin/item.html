@@ -11,13 +11,15 @@
 
 <div class="modal-body">
     {% block body %}
-        {{ macros.render_form(form, action=action, class="ajax") }}
+        {{ macros.render_form(form, action=action, class="ajax", disabled=request.query.view|default(False)) }}
     {% endblock %}
 </div>
 
 <div class="modal-footer">
     {% block footer %}
-        <button class="btn btn-success" type="submit">{{ gettext('Save') }}</button>
-        <button class="btn btn-default" data-dismiss="modal">{{ gettext('Cancel') }}</button>
+        {% if not request.query.view %}
+            <button class="btn btn-success" type="submit">{{ gettext('Save') }}</button>
+            <button class="btn btn-default" data-dismiss="modal">{{ gettext('Cancel') }}</button>
+        {% endif %}
     {% endblock %}
 </div>

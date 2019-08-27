@@ -11,7 +11,11 @@
 {% block content %}
 
   <ul class="nav nav-tabs" role="tablist">
-    <li class="active"><a href="#list">{{ gettext('List') }} ({{active.count}})</a></li>
+    <li class="active">
+        <a href="#list">
+            {{ active.name|title }} ({{active.count}})
+        </a>
+    </li>
 
     {# Create button #}
     {% if active.can_create and active.form %}
@@ -106,15 +110,25 @@
               <input class="select" type="checkbox" value="{{active.get_pk(item)}}"/>
           </td>
           {% endif %}
-          <td>
-            {% if active.can_edit and active.form %}
-              <a class="btn btn-xs btn-default" href="{{base_url}}?pk={{active.get_pk(item)}}" data-toggle="modal" data-target="#edit-{{active.get_pk(item)}}">
-                <span class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="edit"></span>
-              </a>
-              <div class="modal fade" id="edit-{{active.get_pk(item)}}">
-                <div class="modal-dialog"><div class="modal-content"></div></div>
-              </div>
+          <td style="min-width:5em">
+            {% if active.form %}
+                <div class="btn-group">
+                    <a class="btn btn-xs btn-default" href="{{base_url}}?pk={{active.get_pk(item)}}&view=1" data-toggle="modal" data-target="#view-{{active.get_pk(item)}}">
+                        <span class="glyphicon glyphicon-eye-open" data-toggle="tooltip" title="view"></span>
+                    </a>
+                    {% if active.can_edit %}
+                        <a class="btn btn-xs btn-default" href="{{base_url}}?pk={{active.get_pk(item)}}" data-toggle="modal" data-target="#edit-{{active.get_pk(item)}}">
+                            <span class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="edit"></span>
+                        </a>
+                    {% endif %}
+                </div>
             {% endif %}
+            <div class="modal fade" id="edit-{{active.get_pk(item)}}">
+                <div class="modal-dialog"><div class="modal-content"></div></div>
+            </div>
+            <div class="modal fade" id="view-{{active.get_pk(item)}}">
+                <div class="modal-dialog"><div class="modal-content"></div></div>
+            </div>
           </td>
 
           {% for column in active.columns %}
