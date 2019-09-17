@@ -28,13 +28,12 @@ def pw_converter(handler, flt):
     if isinstance(flt, Filter):
         return flt
 
-    model = handler.model
-    field = getattr(model, flt)
+    field = getattr(handler.model, flt, None)
 
     if isinstance(field, pw.BooleanField):
         return PWBoolFilter(flt)
 
-    if field.choices:
+    elif field and field.choices:
         choices = [(Filter.default, '---')] + list(field.choices)
         return PWChoiceFilter(flt, choices=choices)
 
@@ -211,9 +210,18 @@ class PWFilter(Filter):
 
     def apply(self, query, data):
         """Filter a query."""
-        field = self.model_field or query.model_class._meta.fields.get(self.name)
+        field = self.model_field
+        if not field:
+            parts = self.name.split('.')
+            field = query.model_class._meta.fields.get(parts[0])
+
+        if field and len(parts) > 1:
+            for part in parts[1:]:
+                field = field.rel_model._meta.fields.get(part)
+
         if not field or self.name not in data:
             return query
+
         value = self.value(data)
         if value is self.default:
             return query
