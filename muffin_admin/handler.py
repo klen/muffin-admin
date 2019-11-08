@@ -12,20 +12,19 @@ from .filters import default_converter, PREFIX as FILTERS_PREFIX, DEFAULT
 
 
 class AdminHandlerMeta(type(Handler)):
-
     """Prepare admin handler."""
 
     def __new__(mcs, name, bases, params):
         """Copy columns formatters to created class."""
         cls = super(AdminHandlerMeta, mcs).__new__(mcs, name, bases, params)
         cls.actions = []
+        cls.global_actions = []
         cls.name = cls.name.replace(' ', '_')
         cls.columns_formatters = copy.copy(cls.columns_formatters)
         return cls
 
 
 class AdminHandler(Handler, metaclass=AdminHandlerMeta):
-
     """Base admin handler. Inherit from this class any other implementation."""
 
     # List of columns
@@ -86,6 +85,14 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
         name = "%s:%s" % (cls.name, view.__name__)
         path = "%s/%s" % (cls.url, view.__name__)
         cls.actions.append((view.__doc__, path))
+        return cls.register(path, name=name)(view)
+
+    @classmethod
+    def global_action(cls, view):
+        """Register admin view action."""
+        name = "%s:%s" % (cls.name, view.__name__)
+        path = "%s/%s" % (cls.url, view.__name__)
+        cls.global_actions.append((view.__doc__, path))
         return cls.register(path, name=name)(view)
 
     async def dispatch(self, request, **kwargs):
@@ -218,6 +225,7 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
         return renderer(self, data, column)
 
     def render_value_csv(self, data, column):
+        """Render value for CSV."""
         renderer = self.columns_formatters_csv.get(column, csv_format_value)
         return renderer(self, data, column)
 
@@ -226,6 +234,7 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
         return getattr(item, 'pk', item)
 
     async def render_csv(self, request):
+        """Render CSV."""
         res = StreamResponse(headers={
             "Content-Type": "text/csv",
             "Content-Disposition": 'attachment; filename="%s.csv"' % self.name,
@@ -252,6 +261,7 @@ class AdminHandler(Handler, metaclass=AdminHandlerMeta):
 
 
 def csv_format_value(handler, item, column):
+    """Format CSV."""
     for attr in column.split('.'):
         item = getattr(item, attr, None)
     return str(item)
