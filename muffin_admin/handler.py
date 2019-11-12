@@ -1,10 +1,10 @@
 """Implement Admin interfaces."""
 import muffin
 import copy
-import ujson as json
 
 from aiohttp.web import StreamResponse
 from muffin import Handler
+from muffin.utils import json
 from wtforms import Form
 
 from .formatters import format_value
