@@ -211,13 +211,14 @@ class PWFilter(Filter):
     def apply(self, query, data):
         """Filter a query."""
         field = self.model_field
+
         if not field:
             parts = self.name.split('.')
             field = query.model_class._meta.fields.get(parts[0])
 
-        if field and len(parts) > 1:
-            for part in parts[1:]:
-                field = field.rel_model._meta.fields.get(part)
+            if field and len(parts) > 1:
+                for part in parts[1:]:
+                    field = field.rel_model._meta.fields.get(part)
 
         if not field or self.name not in data:
             return query

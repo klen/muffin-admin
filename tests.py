@@ -59,27 +59,33 @@ async def test_peewee(aiohttp_client):
     from muffin_peewee.fields import JSONField
 
     @db.register
+    class Child(db.TModel):
+        active = pw.BooleanField()
+
+    @db.register
     class Model(db.TModel):
 
         active = pw.BooleanField()
         number = pw.IntegerField(default=1, choices=zip(range(3), range(3)))
         content = pw.CharField()
         config = JSONField(default={})
+        child = pw.ForeignKeyField(Child, null=True)
 
     @db.register
     class Model2(db.TModel):
         pass
 
+    Child.create_table()
     Model.create_table()
     Model2.create_table()
 
-    from muffin_admin.peewee import PWAdminHandler
+    from muffin_admin.peewee import PWAdminHandler, PWFilter
 
     @app.register
     class ModelHandler(PWAdminHandler):
         model = Model
         columns_exclude = 'created',
-        columns_filters = 'content', 'number'
+        columns_filters = 'content', 'child.active', PWFilter('test', Model.number)
         form_exclude = 'number',
 
     @ModelHandler.action
@@ -88,7 +94,7 @@ async def test_peewee(aiohttp_client):
 
     assert ModelHandler.actions
     assert ModelHandler.columns
-    assert ModelHandler.columns == ['id', 'active', 'number', 'content', 'config']
+    assert ModelHandler.columns == ['id', 'active', 'number', 'content', 'config', 'child']
     assert ModelHandler.name == 'model'
     assert ModelHandler.form
     assert ModelHandler.form.config
@@ -138,11 +144,11 @@ async def test_peewee(aiohttp_client):
         assert models[1].content in text
         assert not models[2].content in text
 
-    async with client.get('/admin/model?auth=1&af-number=%s' % models[1].number) as resp:
+    async with client.get('/admin/model?auth=1&af-test=%s' % models[1].number) as resp:
         assert resp.status == 200
         text = await resp.text()
         assert models[1].content in text
         assert not models[2].content in text
 
-    async with client.get('/admin/model?auth=1&af-number=invalid') as resp:
+    async with client.get('/admin/model?auth=1&af-test=invalid') as resp:
         assert resp.status == 200
