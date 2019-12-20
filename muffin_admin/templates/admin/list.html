@@ -76,7 +76,7 @@
 
     {# Global actions #}
         {% for desc, path in active.global_actions %}
-            <a class="pull-right btn btn-default" style="margin-right: 1em" href="{{path}}" class="action">{{desc}}</a>
+        <a class="pull-right btn btn-default" style="margin-right: 1em" href="{{path}}?{{ request.query_string }}" class="action">{{desc}}</a>
     {% endfor %}
 
   </ul>
