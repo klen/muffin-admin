@@ -237,6 +237,9 @@
         $('[data-toggle="tooltip"]').tooltip();
 
         // Toggle checkboxes
+        $('[data-pk]').click(function(e) {
+            $(this).find('input[type=checkbox]').click();
+        });
         $('.select-toggle').click(function() {
             var checked = $(this).prop('checked');
             $('.select').prop('checked', checked);
