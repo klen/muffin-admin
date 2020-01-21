@@ -15,7 +15,7 @@ from .handler import AdminHandler
 try:
     from .peewee import PWAdminHandler, pw
     PWModel = pw.Model
-except Exception as exc:
+except Exception:
     PWModel = None
 
 
@@ -109,8 +109,7 @@ class Plugin(BasePlugin):
                 self.app.register(handler)
                 continue
 
-            name = handler.name.lower()
-            self.handlers[name] = handler
+            self.handlers[handler.name] = handler
 
     def authorization(self, func):
         """ Define a authorization process. """
