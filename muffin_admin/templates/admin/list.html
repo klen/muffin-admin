@@ -119,21 +119,15 @@
             {% if active.form %}
                 <div class="btn-group">
                     <a class="btn btn-xs btn-default" href="{{base_url}}?pk={{active.get_pk(item)}}&view=1" data-toggle="modal" data-target="#view-{{active.get_pk(item)}}">
-                        <span class="glyphicon glyphicon-eye-open" data-toggle="tooltip" title="view"></span>
+                        <span class="glyphicon glyphicon-eye-open" data-toggle="tooltip" title="view" style="pointer-events:none"></span>
                     </a>
                     {% if active.can_edit %}
                         <a class="btn btn-xs btn-default" href="{{base_url}}?pk={{active.get_pk(item)}}" data-toggle="modal" data-target="#edit-{{active.get_pk(item)}}">
-                            <span class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="edit"></span>
+                            <span class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="edit" style="pointer-events:none"></span>
                         </a>
                     {% endif %}
                 </div>
             {% endif %}
-            <div class="modal fade" id="edit-{{active.get_pk(item)}}">
-                <div class="modal-dialog"><div class="modal-content"></div></div>
-            </div>
-            <div class="modal fade" id="view-{{active.get_pk(item)}}">
-                <div class="modal-dialog"><div class="modal-content"></div></div>
-            </div>
           </td>
 
           {% for column in active.columns %}
@@ -167,6 +161,15 @@
       {% endfor %}
     </tbody>
   </table>
+
+  {% for item in active.collection|list %}
+    <div class="modal fade" id="edit-{{active.get_pk(item)}}">
+        <div class="modal-dialog"><div class="modal-content"></div></div>
+    </div>
+    <div class="modal fade" id="view-{{active.get_pk(item)}}">
+        <div class="modal-dialog"><div class="modal-content"></div></div>
+    </div>
+  {% endfor %}
 
   {% if active.limit %}
     {% set pages = active.count // active.limit %}
@@ -236,10 +239,14 @@
         // Initialize tooltips
         $('[data-toggle="tooltip"]').tooltip();
 
+    {% if active.actions %}
         // Toggle checkboxes
         $('[data-pk]').click(function(e) {
+            if(e.target.dataset['target']) return;
             $(this).find('input[type=checkbox]').click();
         });
+    {% endif %}
+
         $('.select-toggle').click(function() {
             var checked = $(this).prop('checked');
             $('.select').prop('checked', checked);
