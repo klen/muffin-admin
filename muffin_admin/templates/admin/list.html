@@ -247,13 +247,14 @@
         });
     {% endif %}
 
-        $('.select-toggle').click(function() {
+        $('.select-toggle').click(function(e) {
             var checked = $(this).prop('checked');
             $('.select').prop('checked', checked);
             $('#actions').prop('disabled', !checked);
         });
 
-        $('.select').change(function(){
+        $('.select').click(function(e){ e.stopPropagation(); });
+        $('.select').change(function(e){
             var checked = $(this).prop('checked'), some;
             $('.select').each(function(i, cc){
                 checked = checked && cc.checked;
