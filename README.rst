@@ -109,7 +109,7 @@ Connect admin to an Muffin_ application:
 
    admin.setup(app, **options)
 
-For futher reference check examples in the repository.
+For futher reference check `https://github.com/klen/muffin-admin/tree/develop/examples <examples>` in the repository.
 
 Configuration options
 ----------------------
