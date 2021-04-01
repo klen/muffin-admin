@@ -1,125 +1,127 @@
-""" Setup the plugin. """
-import asyncio
-import os.path as op
-import urllib.parse as urlparse
-from collections import OrderedDict
+"""Setup the plugin."""
 
-import muffin
-from muffin.plugins import BasePlugin, PluginException
-from muffin_jinja2 import Plugin as JPlugin
-from muffin_babel import Plugin as BPlugin
+from inspect import isclass
+from pathlib import Path
+
+from asgi_tools._compat import json_dumps
+from muffin import Application, ResponseFile, ResponseError
+from muffin.plugin import BasePlugin
+from muffin_rest.api import API, AUTH
 
 from .handler import AdminHandler
 
 
-try:
-    from .peewee import PWAdminHandler, pw
-    PWModel = pw.Model
-except Exception:
-    PWModel = None
+PACKAGE_DIR = Path(__file__).parent
+TEMPLATE = (PACKAGE_DIR / 'admin.html').read_text()
 
 
-PLUGIN_ROOT = op.dirname(op.abspath(__file__))
+async def page404(request):
+    """Default 404 for authorization methods."""
+    return ResponseError.NOT_FOUND()
 
 
 class Plugin(BasePlugin):
 
-    """ Admin interface for Muffin Framework. """
+    """Admin interface for Muffin Framework."""
 
     name = 'admin'
     defaults = {
         'prefix': '/admin',
-        'name': None,
-        'home': None,
-        'i18n': False,
+        'title': 'Muffin Admin',
 
-        'template_list': 'admin/list.html',
-        'template_item': 'admin/item.html',
-        'template_home': 'admin/home.html',
+        'auth_redirect_url': None,
+        'auth_storage': 'localstorage',  # localstorage|cookies
+        'auth_storage_name': 'muffin_admin_auth',
     }
-    dependencies = {'jinja2': JPlugin}
 
-    Handler = AdminHandler
+    def __init__(self, *args, **kwargs):
+        self.api = API()
+        self.auth = {}
+        self.handlers = []
+        self.__login__ = self.__ident__ = page404
+        super(Plugin, self).__init__(*args, **kwargs)
 
-    def setup(self, app):
-        """ Initialize the application. """
-        super().setup(app)
+    def setup(self, app: Application, **options):
+        """Initialize the application."""
+        super().setup(app, **options)
+        self.api.setup(app, prefix=f"{self.cfg.prefix}/api", openapi=False)
 
-        self.handlers = OrderedDict()
+        self.auth['storage'] = self.cfg.auth_storage
+        self.auth['storage_name'] = self.cfg.auth_storage_name
+        self.auth['redirectURL'] = self.cfg.auth_redirect_url
 
-        # Connect admin templates
-        app.ps.jinja2.cfg.template_folders.append(op.join(PLUGIN_ROOT, 'templates'))
+        @app.route(self.cfg.prefix)
+        async def render_admin(request):
+            return TEMPLATE.format(admin=self, title=self.app.cfg.name.title())
 
-        @app.ps.jinja2.filter
-        def admtest(value, a, b=None):
-            return a if value else b
+        @app.route(f"{ self.cfg.prefix }/main.js")
+        async def render_admin_static(request):
+            return ResponseFile(PACKAGE_DIR / 'main.js')
 
-        @app.ps.jinja2.filter
-        def admeq(a, b, result=True):
-            return result if a == b else not result
+        @app.route(f"{self.cfg.prefix}/login")
+        async def login(request):
+            return await self.__login__(request)
 
-        @app.ps.jinja2.register
-        def admurl(request, prefix):
-            qs = {k: v for k, v in request.query.items() if not k.startswith(prefix)}
-            if not qs:
-                qs = {'ap': 0}
-            return "%s?%s" % (request.path, urlparse.urlencode(qs))
+        @app.route(f"{self.cfg.prefix}/ident")
+        async def ident(request):
+            return await self.__ident__(request)
 
-        if self.cfg.name is None:
-            self.cfg.name = "%s admin" % app.name.title()
+    def route(self, path, *paths, **params):
+        """Route an handler."""
+        if not isinstance(path, str):
+            self.register_handler(path)
+            return self.api.route(path)
 
-        # Register a base view
-        if not callable(self.cfg.home):
+        paths = (path, *paths)
 
-            def admin_home(request):
-                yield from self.authorize(request)
-                return app.ps.jinja2.render(self.cfg.template_home, active=None)
+        def wrapper(cb):
+            self.register_handler(cb)
+            return self.api.route(*paths, **params)(cb)
 
-            self.cfg.home = admin_home
+        return wrapper
 
-        app.register(self.cfg.prefix)(self.cfg.home)
+    def register_handler(self, handler):
+        """Register an handler."""
+        if isclass(handler) and issubclass(handler, AdminHandler):
+            self.handlers.append(handler)
 
-        if not self.cfg.i18n:
-            app.ps.jinja2.env.globals.update({
-                '_': lambda s: s,
-                'gettext': lambda s: s,
-                'ngettext': lambda s, p, n: (n != 1 and (p,) or (s,))[0],
-            })
+    # Authorization flow
+    # ------------------
 
-            return
+    def check_auth(self, fn: AUTH) -> AUTH:
+        """Register a function to authorize current user."""
+        self.auth['required'] = True
+        self.api.authorize = fn
+        return fn
 
-        if 'babel' not in app.ps or not isinstance(app.ps.babel, BPlugin):
-            raise PluginException(
-                'Plugin `%s` requires for plugin `%s` to be installed to the application.' % (
-                    self.name, BPlugin))
+    def login(self, fn: AUTH) -> AUTH:
+        """Register a function to login current user."""
+        self.auth['loginURL'] = f"{self.cfg.prefix}/login"
+        self.__login__ = fn
+        return fn
 
-        # Connect admin locales
-        app.ps.babel.cfg.locales_dirs.append(op.join(PLUGIN_ROOT, 'locales'))
-        if not app.ps.babel.locale_selector_func:
-            app.ps.babel.locale_selector_func = app.ps.babel.select_locale_by_request
+    def get_identity(self, fn: AUTH) -> AUTH:
+        """Register a function to identificate current user."""
+        self.auth['identityURL'] = f"{ self.cfg.prefix }/ident"
+        self.__ident__ = fn
+        return fn
 
-    def register(self, *handlers, **params):
-        """ Ensure that handler is not registered. """
-        for handler in handlers:
+    # Serialize to react-admin
+    # -------------------------
 
-            if issubclass(handler, PWModel):
-                handler = type(
-                    handler._meta.db_table.title() + 'Admin',
-                    (PWAdminHandler,), dict(model=handler, **params))
-                self.app.register(handler)
-                continue
+    @property
+    def json(self):
+        """Jsonify the plugin."""
+        return json_dumps(self.to_ra()).decode('utf-8')
 
-            self.handlers[handler.name] = handler
-
-    def authorization(self, func):
-        """ Define a authorization process. """
-        if self.app is None:
-            raise PluginException('The plugin must be installed to application.')
-
-        self.authorize = muffin.to_coroutine(func)
-        return func
-
-    @asyncio.coroutine
-    def authorize(self, request):
-        """ Default authorization. """
-        return True
+    def to_ra(self):
+        """Prepare params for react-admin."""
+        return {
+            "apiUrl": f"{self.cfg.prefix}/api",
+            "auth": self.auth,
+            "adminProps": {
+                "title": self.cfg.title,
+                "disableTelemetry": True,
+            },
+            "resources": [res.to_ra() for res in self.handlers],
+        }

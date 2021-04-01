@@ -1,4 +1,5 @@
-VIRTUAL_ENV ?= $(shell echo "$${VIRTUAL_ENV:-.env}")
+VIRTUAL_ENV ?= env
+EXAMPLE = example
 
 all: $(VIRTUAL_ENV)
 
@@ -22,9 +23,8 @@ clean:
 .PHONY: release
 VERSION?=minor
 # target: release - Bump version
-release:
-	@$(VIRTUAL_ENV)/bin/pip install bumpversion
-	@$(VIRTUAL_ENV)/bin/bumpversion $(VERSION)
+release: $(VIRTUAL_ENV)
+	@$(VIRTUAL_ENV)/bin/bump2version $(VERSION)
 	@git checkout master
 	@git merge develop
 	@git checkout develop
@@ -46,65 +46,66 @@ major:
 #  Build package
 # ===============
 
-.PHONY: register
-# target: register - Register module on PyPi
-register:
-	@$(VIRTUAL_ENV)/bin/python setup.py register
-
 .PHONY: upload
 # target: upload - Upload module on PyPi
-upload: clean
-	@$(VIRTUAL_ENV)/bin/pip install twine wheel
-	@$(VIRTUAL_ENV)/bin/python setup.py sdist bdist_wheel
+upload: clean $(VIRTUAL_ENV)
+	@$(VIRTUAL_ENV)/bin/python setup.py bdist_wheel
 	@$(VIRTUAL_ENV)/bin/twine check dist/*
 	@$(VIRTUAL_ENV)/bin/twine upload dist/*.whl || true
-	@$(VIRTUAL_ENV)/bin/twine upload dist/*.gz || true
 
 # =============
 #  Development
 # =============
 
-$(VIRTUAL_ENV): requirements.txt
-	@[ -d $(VIRTUAL_ENV) ] || virtualenv --no-site-packages --python=python3 $(VIRTUAL_ENV)
-	@$(VIRTUAL_ENV)/bin/pip install -r requirements.txt
+$(VIRTUAL_ENV): setup.cfg
+	@[ -d $(VIRTUAL_ENV) ] || python -m venv $(VIRTUAL_ENV)
+	@$(VIRTUAL_ENV)/bin/pip install -e .[tests,build,example]
 	@touch $(VIRTUAL_ENV)
 
-$(VIRTUAL_ENV)/bin/py.test: $(VIRTUAL_ENV) requirements-tests.txt
-	@$(VIRTUAL_ENV)/bin/pip install -r requirements-tests.txt
-	@touch $(VIRTUAL_ENV)/bin/py.test
-
-.PHONY: test
+.PHONY: test t
 # target: test - Runs tests
-test: $(VIRTUAL_ENV)/bin/py.test
-	@$(VIRTUAL_ENV)/bin/py.test -xs tests.py
+test t: $(VIRTUAL_ENV)
+	@$(VIRTUAL_ENV)/bin/pytest tests
 
-.PHONY: t
-t: test
-
-.PHONY: run
-run: $(VIRTUAL_ENV)/bin/py.test db.sqlite
-	@$(VIRTUAL_ENV)/bin/muffin example run --bind=0.0.0.0:5000 --timeout=3000
-
-db.sqlite: $(VIRTUAL_ENV)/bin/py.test
-	@$(VIRTUAL_ENV)/bin/muffin example db
-	@$(VIRTUAL_ENV)/bin/muffin example devdata
-
-.PHONY: daemon
-daemon: $(VIRTUAL_ENV)/bin/py.test daemon-kill
-	@while nc localhost 5000; do echo 'Waiting for port' && sleep 2; done
-	@$(VIRTUAL_ENV)/bin/muffin example run --bind=0.0.0.0:5000 --pid=$(CURDIR)/pid --daemon
-
-.PHONY: daemon-kill
-daemon-kill:
-	@[ -r $(CURDIR)/pid ] && echo "Kill daemon" `cat $(CURDIR)/pid` && kill `cat $(CURDIR)/pid` || true
-
-.PHONY: watch
-watch:
-	@make daemon
-	@(fswatch -0or $(CURDIR)/example -e "__pycache__" | xargs -0n1 -I {} make daemon) || make daemon-kill
+db.sqlite: $(VIRTUAL_ENV)
+	@$(VIRTUAL_ENV)/bin/muffin $(EXAMPLE) db
+	@$(VIRTUAL_ENV)/bin/muffin $(EXAMPLE) devdata
 
 .PHONY: locales
 LOCALE ?= ru
 locales: $(VIRTUAL_ENV)/bin/py.test db.sqlite
-	@$(VIRTUAL_ENV)/bin/muffin example extract_messages muffin_admin --locale $(LOCALE)
-	@$(VIRTUAL_ENV)/bin/muffin example compile_messages
+	@$(VIRTUAL_ENV)/bin/muffin $(EXAMPLE) extract_messages muffin_admin --locale $(LOCALE)
+	@$(VIRTUAL_ENV)/bin/muffin $(EXAMPLE) compile_messages
+
+.PHONY: frontend
+frontend:
+	make -C frontend
+
+.PHONY: frontend-watch
+frontend-watch:
+	make -C frontend watch
+
+.PHONY: frontend-dev
+frontend-dev:
+	make -C frontend dev
+
+.PHONY: dev
+dev:
+	make -j example frontend-dev
+
+.PHONY: dev
+mypy: $(VIRTUAL_ENV)
+	$(VIRTUAL_ENV)/bin/mypy muffin_admin
+
+
+.PHONY: example-peewee
+# target: example-peewee - Run example
+example-peewee: $(VIRTUAL_ENV)
+	@$(VIRTUAL_ENV)/bin/muffin examples.peewee_orm db
+	@$(VIRTUAL_ENV)/bin/muffin examples.peewee_orm devdata
+	@$(VIRTUAL_ENV)/bin/uvicorn examples.peewee_orm:app --reload --port=5000
+
+.PHONY: example-sqlalchemy
+# target: example-sqlalchemy - Run example
+example-sqlalchemy: $(VIRTUAL_ENV)
+	@$(VIRTUAL_ENV)/bin/uvicorn examples.sqlalchemy_core:app --reload --port=5000

@@ -1,10 +1,19 @@
 import muffin
 
 
-async def test_base(aiohttp_client):
-    app = muffin.Application('admin')
-    app.install('muffin_jinja2')
-    admin = app.install('muffin_admin')
+async def test_base(app, client):
+
+    # Install plugins
+    from muffin_babel import Plugin as Babel
+    from muffin_jinja2 import Plugin as Jinja2
+
+    Babel(app)
+    Jinja2(app)
+
+    # Install the admin
+    from muffin_admin import Plugin as Admin
+
+    Admin(app)
 
     @app.register
     class Test(admin.Handler):
