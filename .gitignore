@@ -45,5 +45,9 @@ docs/_build
 /.cache
 /.env
 /.ropeproject
-/_
+/_*
 /todo.txt
+/frontend/node_modules
+/frontend/package-lock.json
+/muffin_admin/main.js.*
+

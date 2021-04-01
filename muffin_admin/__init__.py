@@ -1,12 +1,27 @@
 """Plugin meta information."""
 
 from .plugin import Plugin # noqa
-from .formatters import FORMATTERS # noqa
 
 # Package information
 # ===================
 
-__version__ = "0.11.7"
+__version__ = "0.20.0"
 __project__ = "muffin-admin"
 __author__ = "Kirill Klenov <horneds@gmail.com>"
 __license__ = "MIT"
+
+
+from .handler import AdminHandler
+
+try:
+    from .peewee import PWAdminHandler
+except ImportError:
+    pass
+
+try:
+    from .sqlalchemy import SAAdminHandler
+except ImportError:
+    pass
+
+
+# pylama: ignore=W0611

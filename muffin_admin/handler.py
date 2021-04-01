@@ -1,269 +1,170 @@
-"""Implement Admin interfaces."""
-import muffin
-import copy
+"""Basic admin handler."""
 
-from aiohttp.web import StreamResponse
-from muffin import Handler
-from muffin.utils import json
-from wtforms import Form
+from __future__ import annotations
 
-from .formatters import format_value
-from .filters import default_converter, PREFIX as FILTERS_PREFIX, DEFAULT
+import typing as t
+
+import marshmallow as ma
+from muffin_rest.handler import RESTBase, RESTOptions
 
 
-class AdminHandlerMeta(type(Handler)):
+class AdminOptions(RESTOptions):
+
     """Prepare admin handler."""
 
-    def __new__(mcs, name, bases, params):
-        """Copy columns formatters to created class."""
-        cls = super(AdminHandlerMeta, mcs).__new__(mcs, name, bases, params)
-        cls.actions = []
-        cls.global_actions = []
-        cls.name = cls.name.replace(' ', '_')
-        cls.columns_formatters = copy.copy(cls.columns_formatters)
-        return cls
+    limit: int = 50
+
+    icon: str = ''
+    label: str = ''
+
+    create: bool = True
+    delete: bool = True
+    edit: bool = True
+    show: bool = True
+
+    columns: t.List[str] = []
+    references: t.Dict[str, str] = {}
+
+    def setup(self, cls: AdminHandler):
+        """Check and build required options."""
+        if not self.limit:
+            raise ValueError("`AdminHandler.Meta.limit` can't be nullable.")
+
+        super(AdminOptions, self).setup(cls)
+
+        if not self.label:
+            self.label = self.name
+
+        if not self.columns:
+            self.columns = [
+                name for name, field in self.Schema._declared_fields.items()
+                if field and not (
+                    field.load_only or
+                    name in self.Schema.opts.load_only or
+                    name in self.Schema.opts.exclude)
+            ]
+
+        if not self.sorting and self.columns:
+            self.sorting = {c: True for c in self.columns}
 
 
-class AdminHandler(Handler, metaclass=AdminHandlerMeta):
-    """Base admin handler. Inherit from this class any other implementation."""
+class AdminHandler(RESTBase):
 
-    # List of columns
-    columns = 'id',
-    columns_labels = {}
-    columns_formatters = {}
-    columns_formatters_csv = {}
-    columns_filters = ()
-    columns_sort = None
-    columns_csv = None
+    """Basic handler class for admin UI."""
 
-    # WTF form class
-    form = None
+    meta_class: t.Type[AdminOptions] = AdminOptions
+    meta: AdminOptions
 
-    # Templates
-    template_list = None
-    template_item = None
+    class Meta:
 
-    # Permissions
-    can_create = True
-    can_edit = True
-    can_delete = True
+        """Tune the handler."""
 
-    # Group
-    group = ''
-
-    limit = 50
-
-    filters_converter = default_converter
-
-    url = None
-
-    def __init__(self):
-        """Define self templates."""
-        self.template_list = self.template_list or self.app.ps.admin.cfg.template_list
-        self.template_item = self.template_item or self.app.ps.admin.cfg.template_item
-
-        # Prepare filters
-        self.columns_filters = list(map(self.filters_converter, self.columns_filters))
-        self.filter_form = Form(prefix=FILTERS_PREFIX)
-        for flt in self.columns_filters:
-            flt.bind(self.filter_form)
+        abc: bool = True
 
     @classmethod
-    def bind(cls, app, *paths, methods=None, name=None, view=None):
-        """Connect to admin interface and application."""
-        # Register self in admin
-        if view is None:
-            app.ps.admin.register(cls)
-            if not paths:
-                paths = ('%s/%s' % (app.ps.admin.cfg.prefix, name or cls.name),)
-            cls.url = paths[0]
-        return super(AdminHandler, cls).bind(app, *paths, methods=methods, name=name, view=view)
+    def to_ra(cls) -> t.Dict:
+        """Get JSON params for react-admin."""
+        fields = cls.to_ra_fields()
+        inputs = cls.to_ra_inputs()
+        return {
+            "name": cls.meta.name,
+            "label": cls.meta.label,
+            "icon": cls.meta.icon,
+            "list": {
+                "perPage": cls.meta.limit,
+                "edit": bool(cls.meta.edit),
+                "show": bool(cls.meta.show),
+                "children": [
+                    (rtype, props) for rtype, props in fields
+                    if props['source'] in cls.meta.columns],
+                "filters": [
+                    info for info in [cls.to_ra_input(f.field, f.name) for f in cls.meta.filters]
+                    if info
+                ],
+            },
+            "show": cls.meta.show and fields,
+            "create": cls.meta.create and inputs,
+            "edit": cls.meta.edit and inputs,
+            "delete": cls.meta.delete,
+        }
 
     @classmethod
-    def action(cls, view):
-        """Register admin view action."""
-        name = "%s:%s" % (cls.name, view.__name__)
-        path = "%s/%s" % (cls.url, view.__name__)
-        cls.actions.append((view.__doc__, path))
-        return cls.register(path, name=name)(view)
+    def to_ra_fields(cls):
+        """Convert self schema to ra fields."""
+        schema = cls.meta.Schema
+        ignore = schema.opts.exclude + schema.opts.load_only
+        return [info for info in [
+            cls.to_ra_field(field, name) for name, field in schema._declared_fields.items()
+            if field and not field.load_only and name not in ignore
+        ] if info]
 
     @classmethod
-    def global_action(cls, view):
-        """Register admin view action."""
-        name = "%s:%s" % (cls.name, view.__name__)
-        path = "%s/%s" % (cls.url, view.__name__)
-        cls.global_actions.append((view.__doc__, path))
-        return cls.register(path, name=name)(view)
+    def to_ra_field(cls, field, name):
+        """Convert self schema field to ra field."""
+        source = field.data_key or name
+        if source in cls.meta.references:
+            ref, _, rfield = cls.meta.references[source].partition('.')
+            return 'ReferenceField', {
+                'children': [('TextField', {'source': rfield or 'id'})],
+                'reference': ref, 'link': 'show',
+                'source': source,
+            }
 
-    async def dispatch(self, request, **kwargs):
-        """Dispatch a request."""
-        # Authorize request
-        self.auth = await self.authorize(request)
-
-        # Load collection
-        self.collection = await self.load_many(request)
-
-        # Load resource
-        self.resource = await self.load_one(request)
-
-        if request.method == 'GET' and self.resource is None:
-
-            # Filter collection
-            self.collection = await self.filter(request)
-
-            # Sort collection
-            self.columns_sort = request.query.get('ap-sort', self.columns_sort)
-            if self.columns_sort:
-                reverse = self.columns_sort.startswith('-')
-                self.columns_sort = self.columns_sort.lstrip('+-')
-                self.collection = await self.sort(request, reverse=reverse)
-
-            if 'csv' in request.query:
-                return await self.render_csv(request)
-
-            # Paginate collection
-            try:
-                self.offset = int(request.query.get('ap-offset', 0))
-                if self.limit:
-                    self.count = await self.count(request)
-                    self.collection = await self.paginate(request)
-            except ValueError:
-                pass
-
-        return await super(AdminHandler, self).dispatch(request, **kwargs)
-
-    async def authorize(self, request):
-        """Base point for authorization."""
-        return await self.app.ps.admin.authorize(request)
-
-    async def load_many(self, request):
-        """Base point for collect data."""
-        return []
-
-    async def count(self, request):
-        """Get count."""
-        return len(self.collection)
-
-    async def load_one(self, request):
-        """Base point load resource."""
-        return request.query.get('pk')
-
-    async def filter(self, request):
-        """Filter collection."""
-        collection = self.collection
-        self.filter_form.process(request.query)
-        data = self.filter_form.data
-        self.filter_form.active = any(o and o is not DEFAULT for o in data.values())
-        for flt in self.columns_filters:
-            try:
-                collection = flt.apply(collection, data)
-            # Invalid filter value
-            except ValueError:
-                continue
-        return collection
-
-    async def sort(self, request, reverse=False):
-        """Sort collection."""
-        return sorted(
-            self.collection, key=lambda o: getattr(o, self.columns_sort, 0), reverse=reverse)
-
-    async def paginate(self, request):
-        """Paginate collection."""
-        return self.collection[self.offset: self.offset + self.limit]
-
-    async def get_form(self, request):
-        """Base point load resource."""
-        if not self.form:
-            return None
-        formdata = await request.post()
-        return self.form(formdata, obj=self.resource)
-
-    async def save_form(self, form, request, **resources):
-        """Save self form."""
-        if not self.can_create and not self.resource:
-            raise muffin.HTTPForbidden()
-
-        if not self.can_edit and self.resource:
-            raise muffin.HTTPForbidden()
-
-        resource = self.resource or self.populate()
-        form.populate_obj(resource)
-        return resource
-
-    def populate(self):
-        """Create object."""
-        return object()
-
-    async def get(self, request):
-        """Get collection of resources."""
-        form = await self.get_form(request)
-        ctx = dict(active=self, form=form, request=request)
-        if self.resource:
-            return self.app.ps.jinja2.render(self.template_item, **ctx)
-        return self.app.ps.jinja2.render(self.template_list, **ctx)
-
-    async def post(self, request):
-        """Create/Edit items."""
-        form = await self.get_form(request)
-        if not form.validate():
-            raise muffin.HTTPBadRequest(
-                text=json.dumps(form.errors), content_type='application/json')
-        await self.save_form(form, request)
-        raise muffin.HTTPFound(self.url)
+        converter = find_ra(field, MA_TO_RAF)
+        if converter:
+            rtype, props = converter(field)
+            props['source'] = source
+            return rtype, props
 
     @classmethod
-    def columns_formatter(cls, colname):
-        """Decorator to mark a function as columns formatter."""
-        def wrapper(func):
-            cls.columns_formatters[colname] = func
-            return func
-        return wrapper
+    def to_ra_inputs(cls):
+        """Convert fields to react-admin."""
+        schema = cls.meta.Schema
+        ignore = schema.opts.exclude + schema.opts.dump_only
+        return [info for info in [
+            cls.to_ra_input(field, name) for name, field in schema._declared_fields.items()
+            if field and not field.dump_only and name not in ignore
+        ] if info]
 
-    def render_value(self, data, column):
-        """Render value."""
-        renderer = self.columns_formatters.get(column, format_value)
-        return renderer(self, data, column)
+    @classmethod
+    def to_ra_input(cls, field, name):
+        """Convert a field to react-admin."""
+        converter = find_ra(field, MA_TO_RAI)
+        if converter:
+            rtype, props = converter(field)
+            props['source'] = field.attribute or name
 
-    def render_value_csv(self, data, column):
-        """Render value for CSV."""
-        renderer = self.columns_formatters_csv.get(column, csv_format_value)
-        return renderer(self, data, column)
+            if isinstance(field.default, (bool, str, int)):
+                props.setdefault('initialValue', field.default)
 
-    def get_pk(self, item):
-        """Get PK field."""
-        return getattr(item, 'pk', item)
+            if field.required:
+                props.setdefault('required', True)
 
-    async def render_csv(self, request):
-        """Render CSV."""
-        res = StreamResponse(headers={
-            "Content-Type": "text/csv",
-            "Content-Disposition": 'attachment; filename="%s.csv"' % self.name,
-        })
-        await res.prepare(request)
-        columns = self.columns_csv or self.columns
-        await res.write(
-            ("%s\n" % ';'.join([
-                self.columns_labels.get(col, col.title()) for col in columns]))
-            .encode('utf-8')
-        )
-        count = await self.count(request)
-        for offset in range(0, count, self.limit):
-            self.offset = offset
-            page = await self.paginate(request)
-            for item in page:
-                await res.write(
-                    ("%s\n" % ';'.join([self.render_value_csv(item, col) for col in columns]))
-                    .encode('utf-8')
-                )
-
-        await res.write_eof()
-        return res
+            return rtype, props
 
 
-def csv_format_value(handler, item, column):
-    """Format CSV."""
-    for attr in column.split('.'):
-        item = getattr(item, attr, None)
-    return str(item)
+MA_TO_RAF = {
+    ma.fields.Boolean: lambda f: ['BooleanField', {}],
+    ma.fields.Date: lambda f: ['DateField', {}],
+    ma.fields.DateTime: lambda f: ['DateField', {'showTime': True}],
+    ma.fields.Number: lambda f: ['NumberField', {}],
+    ma.fields.Field: lambda f: ['TextField', {}],
 
-#  pylama:ignore=C0202,R0201,W0201,E0202,E1102
+    ma.fields.Email: lambda f: ['EmailField', {}],
+    ma.fields.Url: lambda f: ['UrlField', {}],
+}
+
+MA_TO_RAI = {
+    ma.fields.Boolean: lambda f: ['BooleanInput', {}],
+    ma.fields.Date: lambda f: ['DateInput', {}],
+    ma.fields.DateTime: lambda f: ['DateTimeInput', {}],
+    ma.fields.Number: lambda f: ['NumberInput', {}],
+    ma.fields.Field: lambda f: ['TextInput', {}],
+}
+
+
+def find_ra(field, types):
+    """Find a converter for first supported field class."""
+    for fcls in type(field).mro():
+        if fcls in types:
+            return types[fcls]
