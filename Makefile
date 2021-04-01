@@ -91,7 +91,7 @@ frontend-dev:
 
 .PHONY: dev
 dev:
-	make -j example frontend-dev
+	make -j example-peewee frontend-dev
 
 .PHONY: dev
 mypy: $(VIRTUAL_ENV)

@@ -71,6 +71,8 @@ class AdminHandler(RESTBase):
             "icon": cls.meta.icon,
             "list": {
                 "perPage": cls.meta.limit,
+                "edit": bool(cls.meta.edit),
+                "show": bool(cls.meta.show),
                 "children": [
                     (rtype, props) for rtype, props in fields
                     if props['source'] in cls.meta.columns],

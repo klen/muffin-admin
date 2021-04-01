@@ -69,7 +69,10 @@ const admin = {
 
   // Process list view
   "list": checkParams((props, res) => {
-    let {children, filters, pagination, ...listProps } = props;
+    let {children, filters, edit, pagination, show, ...listProps } = props;
+
+    children = processAdmin('list-fields', children, res);
+    if (edit) children.push(<ra.EditButton key="edit-button" />);
 
     return (props) => {
       let Filters = (props) => <ra.Filter { ...props } children={ processAdmin('list-filters', filters, res) } />
@@ -77,7 +80,7 @@ const admin = {
       props = { ...props, ...listProps };
       return (
         <ra.List filters={ <Filters /> } pagination={ pagination || defaultPagination } { ...props }>
-          <ra.Datagrid rowClick="show" children={ [...processAdmin('list-fields', children, res), <ra.EditButton />] } />
+          <ra.Datagrid rowClick={ show && "show" } children={ children } />
         </ra.List>
       )
     };
