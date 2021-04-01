@@ -4,7 +4,7 @@ import { makeRequest, requestHeaders } from './utils';
 
 export default (props) => {
 
-  const {identityURL, loginURL, required, redirectURL, storage, storage_name} = props;
+  const {identityURL, loginURL, required, storage, storage_name} = props;
 
   const authorize = (name, value) => {
     if (value === undefined) {
@@ -23,9 +23,7 @@ export default (props) => {
 
       checkAuth: (data) => {
         const auth = authorize(storage_name);
-        if (auth) return Promise.resolve(auth);
-        if (redirectURL) globalThis.location?.replace(redirectURL);
-        return Promise.reject();
+        return auth ? Promise.resolve(auth) : Promise.reject();
       },
 
       checkError: (error) => {

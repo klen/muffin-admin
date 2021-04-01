@@ -13,7 +13,6 @@ async def test_plugin(app):
     data = json.loads(admin.json)
     assert data['apiUrl']
     assert data['auth'] == {
-        'redirectURL': None,
         'storage': 'localstorage',
         'storage_name': 'muffin_admin_auth',
     }
@@ -108,7 +107,7 @@ async def test_auth(app, client):
     # --------------------------------
 
     @admin.check_auth
-    async def auth(request):
+    async def authorize(request):
         return request.headers.get('authorization')
 
     @admin.get_identity
@@ -126,7 +125,6 @@ async def test_auth(app, client):
     assert auth == {
         'identityURL': '/admin/ident',
         'loginURL': '/admin/login',
-        'redirectURL': None,
         'required': True,
         'storage': 'localstorage',
         'storage_name': 'muffin_admin_auth'
@@ -138,4 +136,12 @@ async def test_auth(app, client):
 
     res = await client.get('/admin/ident', headers={'authorization': 'user'})
     assert res.status_code == 200
-    assert await res.json()
+    assert await res.json() == {"id": "user", "fullName": "User-user"}
+
+    res = await client.get('/admin')
+    assert res.status_code == 200
+
+    admin.cfg.update(auth_redirect_url='/login')
+    res = await client.get('/admin', follow_redirect=False)
+    assert res.status_code == 307
+    assert res.headers['location'] == '/login'

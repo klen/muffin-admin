@@ -4,7 +4,7 @@ from inspect import isclass
 from pathlib import Path
 
 from asgi_tools._compat import json_dumps
-from muffin import Application, ResponseFile, ResponseError
+from muffin import Application, ResponseFile, ResponseError, ResponseRedirect
 from muffin.plugin import BasePlugin
 from muffin_rest.api import API, AUTH
 
@@ -48,10 +48,14 @@ class Plugin(BasePlugin):
 
         self.auth['storage'] = self.cfg.auth_storage
         self.auth['storage_name'] = self.cfg.auth_storage_name
-        self.auth['redirectURL'] = self.cfg.auth_redirect_url
 
         @app.route(self.cfg.prefix)
         async def render_admin(request):
+            if self.cfg.auth_redirect_url and self.api.authorize:
+                auth = await self.api.authorize(request)
+                if not auth:
+                    return ResponseRedirect(self.cfg.auth_redirect_url)
+
             return TEMPLATE.format(admin=self, title=self.app.cfg.name.title())
 
         @app.route(f"{ self.cfg.prefix }/main.js")
