@@ -1,21 +1,22 @@
 """Setup the plugin."""
 
+import typing as t
 from inspect import isclass
 from pathlib import Path
 
 from asgi_tools._compat import json_dumps
-from muffin import Application, ResponseFile, ResponseError, ResponseRedirect
+from muffin import Application, ResponseFile, ResponseError, ResponseRedirect, Request
 from muffin.plugin import BasePlugin
 from muffin_rest.api import API, AUTH
 
 from .handler import AdminHandler
 
 
-PACKAGE_DIR = Path(__file__).parent
-TEMPLATE = (PACKAGE_DIR / 'admin.html').read_text()
+PACKAGE_DIR: Path = Path(__file__).parent
+TEMPLATE: str = (PACKAGE_DIR / 'admin.html').read_text()
 
 
-async def page404(request):
+async def page404(request: Request) -> ResponseError:
     """Default 404 for authorization methods."""
     return ResponseError.NOT_FOUND()
 
@@ -35,9 +36,9 @@ class Plugin(BasePlugin):
     }
 
     def __init__(self, *args, **kwargs):
-        self.api = API()
-        self.auth = {}
-        self.handlers = []
+        self.api: API = API()
+        self.auth: t.Dict = {}
+        self.handlers: t.List = []
         self.__login__ = self.__ident__ = page404
         super(Plugin, self).__init__(*args, **kwargs)
 
@@ -70,7 +71,7 @@ class Plugin(BasePlugin):
         async def ident(request):
             return await self.__ident__(request)
 
-    def route(self, path, *paths, **params):
+    def route(self, path: t.Any, *paths: str, **params) -> t.Callable:
         """Route an handler."""
         if not isinstance(path, str):
             self.register_handler(path)
@@ -84,7 +85,7 @@ class Plugin(BasePlugin):
 
         return wrapper
 
-    def register_handler(self, handler):
+    def register_handler(self, handler: t.Any):
         """Register an handler."""
         if isclass(handler) and issubclass(handler, AdminHandler):
             self.handlers.append(handler)
@@ -114,11 +115,11 @@ class Plugin(BasePlugin):
     # -------------------------
 
     @property
-    def json(self):
+    def json(self) -> str:
         """Jsonify the plugin."""
         return json_dumps(self.to_ra()).decode('utf-8')
 
-    def to_ra(self):
+    def to_ra(self) -> t.Dict:
         """Prepare params for react-admin."""
         return {
             "apiUrl": f"{self.cfg.prefix}/api",

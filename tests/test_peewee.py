@@ -98,7 +98,7 @@ async def test_admin(app):
                 'source': 'status'}),
             ('TextInput', {'source': 'role'})
         ],
-        'icon': None,
+        'icon': '',
         'label': 'user',
         'list': {
             'children': [
@@ -121,7 +121,7 @@ async def test_admin(app):
                     'initialValue': 1,
                     'source': 'status'})
             ],
-            'perPage': 50
+            'perPage': 50, 'show': True, 'edit': True,
         },
         'name': 'user',
         'show': [

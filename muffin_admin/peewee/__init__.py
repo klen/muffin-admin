@@ -33,6 +33,7 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
     """Work with Peewee Models."""
 
     meta_class: t.Type[PWAdminOptions] = PWAdminOptions
+    meta: PWAdminOptions
 
     class Meta:
 

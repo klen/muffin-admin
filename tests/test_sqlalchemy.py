@@ -105,9 +105,9 @@ async def test_admin(app):
     assert UserResource.to_ra() == {
         'name': 'user',
         'label': 'user',
-        'icon': None,
+        'icon': '',
         'list': {
-            'perPage': 50,
+            'perPage': 50, 'show': True, 'edit': True,
             'children': [
                 ('NumberField', {'source': 'id'}),
                 ('TextField', {'source': 'name'}),

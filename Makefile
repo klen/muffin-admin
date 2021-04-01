@@ -48,7 +48,7 @@ major:
 
 .PHONY: upload
 # target: upload - Upload module on PyPi
-upload: clean $(VIRTUAL_ENV)
+upload: clean frontend $(VIRTUAL_ENV)
 	@$(VIRTUAL_ENV)/bin/python setup.py bdist_wheel
 	@$(VIRTUAL_ENV)/bin/twine check dist/*
 	@$(VIRTUAL_ENV)/bin/twine upload dist/*.whl || true

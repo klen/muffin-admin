@@ -1,5 +1,7 @@
 """Basic admin handler."""
 
+from __future__ import annotations
+
 import typing as t
 
 import marshmallow as ma
@@ -10,9 +12,20 @@ class AdminOptions(RESTOptions):
 
     """Prepare admin handler."""
 
+    limit: int = 50
+
+    icon: str = ''
     label: str = ''
 
-    def setup(self, cls):
+    create: bool = True
+    delete: bool = True
+    edit: bool = True
+    show: bool = True
+
+    columns: t.List[str] = []
+    references: t.Dict[str, str] = {}
+
+    def setup(self, cls: AdminHandler):
         """Check and build required options."""
         if not self.limit:
             raise ValueError("`AdminHandler.Meta.limit` can't be nullable.")
@@ -40,28 +53,16 @@ class AdminHandler(RESTBase):
     """Basic handler class for admin UI."""
 
     meta_class: t.Type[AdminOptions] = AdminOptions
+    meta: AdminOptions
 
     class Meta:
 
         """Tune the handler."""
 
-        abc = True
-
-        limit: int = 50
-
-        icon: t.Optional[str] = None
-        label: t.Optional[str] = None
-
-        columns: t.Optional[t.List[str]] = None
-        references: t.Dict[str, str] = {}
-
-        create: bool = True
-        delete: bool = True
-        edit: bool = True
-        show: bool = True
+        abc: bool = True
 
     @classmethod
-    def to_ra(cls):
+    def to_ra(cls) -> t.Dict:
         """Get JSON params for react-admin."""
         fields = cls.to_ra_fields()
         inputs = cls.to_ra_inputs()

@@ -33,6 +33,7 @@ class SAAdminHandler(AdminHandler, SARESTHandler):
     """Work with SQLAlchemy Core."""
 
     meta_class: t.Type[SAAdminOptions] = SAAdminOptions
+    meta: SAAdminOptions
 
     class Meta:
 

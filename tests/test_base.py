@@ -72,7 +72,7 @@ def test_endpoint(app):
             ('TextInput', {'source': 'name'}),
             ('BooleanInput', {'source': 'active'})
         ],
-        'icon': None,
+        'icon': '',
         'label': 'base',
         'list': {
             'children': [
@@ -81,7 +81,7 @@ def test_endpoint(app):
                 ('BooleanField', {'source': 'active'})
             ],
             'filters': [('TextInput', {'source': 'id'}), ('TextInput', {'source': 'name'})],
-            'perPage': 50
+            'perPage': 50, 'show': True, 'edit': True,
         },
         'name': 'base',
         'show': [

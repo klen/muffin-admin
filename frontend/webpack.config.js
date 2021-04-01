@@ -32,8 +32,8 @@ module.exports = {
     new webpack.EnvironmentPlugin({NODE_ENV: 'production'}),
   ],
 
-  mode: "development",
-  devtool: "inline-source-map",
+  mode: process.env.NODE_ENV || "production",
+  devtool: process.env.NODE_ENV == "development" && "inline-source-map",
   devServer: {
     hot: true,
     proxy: [{
