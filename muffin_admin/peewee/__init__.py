@@ -25,7 +25,7 @@ class PWAdminOptions(AdminOptions, PWRESTOptions):
                 break
 
         else:
-            self.filters = [PWFilter('id', mfield=self.model_pk), *self.filters]
+            self.filters = [PWFilter('id', pw_field=self.model_pk), *self.filters]
 
 
 class PWAdminHandler(AdminHandler, PWRESTBase):
@@ -54,3 +54,13 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
                 ])
 
         return res
+
+
+class PWSearchFilter(PWFilter):
+
+    """Search in query by value."""
+
+    def query(self, query, field, filter_, *_, **kwargs):
+        """Apply the filters to Peewee QuerySet.."""
+        _, value = filter_
+        return query.where(field.contains(value))
