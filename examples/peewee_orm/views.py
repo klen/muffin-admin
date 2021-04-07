@@ -14,6 +14,7 @@ async def index(request):
             <h4 class="alert-heading">Well done!</h4>
             <p>Aww yeah, you successfully run this example. Now you can open Admin Interface</p>
             <hr/>
+            <p>Use <i>admin@admin.com:admin</i> to login</p>
             <a href="/admin" class="btn btn-success">Open Admin</a>
         </div>
     </div>
