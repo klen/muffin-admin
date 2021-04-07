@@ -48,7 +48,7 @@ major:
 
 .PHONY: upload
 # target: upload - Upload module on PyPi
-upload: clean frontend $(VIRTUAL_ENV)
+upload: clean front $(VIRTUAL_ENV)
 	@$(VIRTUAL_ENV)/bin/python setup.py bdist_wheel
 	@$(VIRTUAL_ENV)/bin/twine check dist/*
 	@$(VIRTUAL_ENV)/bin/twine upload dist/*.whl || true
@@ -77,21 +77,21 @@ locales: $(VIRTUAL_ENV)/bin/py.test db.sqlite
 	@$(VIRTUAL_ENV)/bin/muffin $(EXAMPLE) extract_messages muffin_admin --locale $(LOCALE)
 	@$(VIRTUAL_ENV)/bin/muffin $(EXAMPLE) compile_messages
 
-.PHONY: frontend
-frontend:
+.PHONY: front
+front:
 	make -C frontend
 
-.PHONY: frontend-watch
-frontend-watch:
-	make -C frontend watch
+.PHONY: front-watch
+front-watch:
+	make -C front watch
 
-.PHONY: frontend-dev
-frontend-dev:
-	make -C frontend dev
+.PHONY: front-dev
+front-dev:
+	make -C front dev
 
 .PHONY: dev
 dev:
-	make -j example-peewee frontend-dev
+	make -j example-peewee front-dev
 
 .PHONY: dev
 mypy: $(VIRTUAL_ENV)

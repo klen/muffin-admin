@@ -30,7 +30,12 @@ class Plugin(BasePlugin):
         'prefix': '/admin',
         'title': 'Muffin Admin',
 
-        'auth_redirect_url': None,
+        'custom_js_url': '',
+        'custom_css_url': '',
+
+        'login_url': None,
+        'logout_url': None,
+
         'auth_storage': 'localstorage',  # localstorage|cookies
         'auth_storage_name': 'muffin_admin_auth',
     }
@@ -49,15 +54,24 @@ class Plugin(BasePlugin):
 
         self.auth['storage'] = self.cfg.auth_storage
         self.auth['storage_name'] = self.cfg.auth_storage_name
+        self.auth['loginURL'] = self.cfg.login_url
+        self.auth['logoutURL'] = self.cfg.logout_url
+
+        custom_js = self.cfg.custom_js_url
+        custom_css = self.cfg.custom_css_url
 
         @app.route(self.cfg.prefix)
         async def render_admin(request):
-            if self.cfg.auth_redirect_url and self.api.authorize:
+            if self.cfg.login_url and self.api.authorize:
                 auth = await self.api.authorize(request)
                 if not auth:
-                    return ResponseRedirect(self.cfg.auth_redirect_url)
+                    return ResponseRedirect(self.cfg.login_url)
 
-            return TEMPLATE.format(admin=self, title=self.app.cfg.name.title())
+            return TEMPLATE.format(
+                admin=self, title=self.app.cfg.name.title(),
+                custom_js=f"<script src={custom_js} />" if custom_js else '',
+                custom_css=f"<link rel='stylesheet' href={custom_css} />" if custom_css else '',
+            )
 
         @app.route(f"{ self.cfg.prefix }/main.js")
         async def render_admin_static(request):
@@ -101,7 +115,7 @@ class Plugin(BasePlugin):
 
     def login(self, fn: AUTH) -> AUTH:
         """Register a function to login current user."""
-        self.auth['loginURL'] = f"{self.cfg.prefix}/login"
+        self.auth['authorizeURL'] = f"{self.cfg.prefix}/login"
         self.__login__ = fn
         return fn
 

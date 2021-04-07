@@ -8,6 +8,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <!-- Reset browser styles -->
     <style type="text/css">
         html {{ box-sizing: border-box; font-size: 16px; }}
         *, *:before, *:after {{ box-sizing: inherit; }}
@@ -15,10 +16,18 @@
         ol, ul {{ list-style: none; }}
         img {{ max-width: 100%; height: auto; }} 
     </style>
+
+    <!-- Custom CSS -->
+    {custom_css}
   </head>
   <body>
     <div id="root"></div>
     <script src="{admin.cfg.prefix}/main.js"></script>
+
+    <!-- Custom JS -->
+    {custom_js}
+
+    <!-- Initialize the admin -->
     <script> initAdmin({admin.json}); </script>
   </body>
 </html>
