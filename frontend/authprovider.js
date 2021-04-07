@@ -4,7 +4,7 @@ import { makeRequest, requestHeaders } from './utils';
 
 export default (props) => {
 
-  const {identityURL, loginURL, required, storage, storage_name} = props;
+  const { identityURL, authorizeURL, loginURL, logoutURL, required, storage, storage_name } = props;
 
   const authorize = (name, value) => {
     if (value === undefined) {
@@ -47,17 +47,19 @@ export default (props) => {
       },
 
       login: (data) => {
-        if (!loginURL) return Promise.reject();
-        return makeRequest(loginURL, {data, method: 'POST'}).then(response => {
+        if (!authorizeURL) return Promise.reject();
+        return makeRequest(authorizeURL, {data, method: 'POST'}).then(response => {
           const token = response.json;
           authorize(storage_name, token);
           return token;
         })
       },
 
-      logout: () => {
+      logout: async () => {
         authorize(storage_name, '');
-        return Promise.resolve();
+        const url = logoutURL || loginURL;
+        if (url) globalThis.location = url;
+        return true;
       },
 
       getPermissions: (data) => {
