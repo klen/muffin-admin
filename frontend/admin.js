@@ -130,7 +130,6 @@ const processAdmin = (type, props, res) => {
   if (admin[`${type}-${res}`]) result = admin[`${type}-${res}`](props, res);
   if (admin[type]) result = admin[type](props, res);
   if (process.env.NODE_ENV == 'development') console.log(`${type}${ res ? '-' + res : ''}`, props);
-  console.log(`${type}${ res ? '-' + res : ''}`, props);
 
   return result;
 }

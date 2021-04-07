@@ -59,7 +59,6 @@ export default (props) => {
         authorize(storage_name, '');
         const url = logoutURL || loginURL;
         if (url) globalThis.location = url;
-        return true;
       },
 
       getPermissions: (data) => {

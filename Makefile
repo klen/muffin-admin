@@ -83,11 +83,11 @@ front:
 
 .PHONY: front-watch
 front-watch:
-	make -C front watch
+	make -C frontend watch
 
 .PHONY: front-dev
 front-dev:
-	make -C front dev
+	make -C frontend dev
 
 .PHONY: dev
 dev:
