@@ -6,7 +6,7 @@ from pathlib import Path
 
 from asgi_tools._compat import json_dumps
 from muffin import Application, ResponseFile, ResponseError, ResponseRedirect, Request
-from muffin.plugin import BasePlugin
+from muffin.plugins import BasePlugin
 from muffin_rest.api import API, AUTH
 
 from .handler import AdminHandler
