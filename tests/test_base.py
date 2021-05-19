@@ -30,8 +30,15 @@ async def test_static(app, client):
     assert res.status_code == 200
     assert await res.text()
 
+    from pathlib import Path
+
+    main_js = Path(muffin_admin.__file__).parent.parent / 'muffin_admin/main.js'
+    main_js.write_text('console.log(111);')
+
     res = await client.get('/admin/main.js')
     assert res.status_code == 200
+
+    main_js.unlink()
 
 
 def test_endpoint(app):

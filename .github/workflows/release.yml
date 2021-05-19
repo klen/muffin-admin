@@ -17,11 +17,16 @@ jobs:
       with:
         fetch-depth: 5
 
+    - uses: actions/setup-node@v2
     - uses: actions/setup-python@v2.2.2
-      with:
-        python-version: 3.9
 
-    - name: Build package
+    - name: Build frontend
+      run: |
+        npm install
+        node_modules/.bin/webpack
+      working-directory: frontend
+
+    - name: Build python package
       run: |
         pip install wheel
         python setup.py bdist_wheel
