@@ -25,7 +25,10 @@ class User(BaseModel):
     """A simple user model."""
 
     email = pw.CharField()
+    first_name = pw.CharField(null=True)
+    last_name = pw.CharField(null=True)
     password = pw.CharField(null=True)  # not secure only for the example
+    picture = pw.CharField(default="https://picsum.photos/100")
 
     is_active = pw.BooleanField(default=True)
     role = pw.CharField(choices=(('user', 'user'), ('manager', 'manager'), ('admin', 'admin')))

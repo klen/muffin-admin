@@ -112,6 +112,45 @@ Connect admin to an Muffin_ application:
 
    admin.setup(app, **options)
 
+
+Authentication
+--------------
+
+Decorate an authentication function with ``admin.check_auth``:
+
+.. code-block:: python
+
+    @admin.check_auth
+    async def auth(request):
+        """Fake authorization method. Just checks for an auth token exists in request."""
+        return request.headers.get('authorization')
+
+
+Register a function to return user's information:
+
+.. code-block:: python
+
+    @admin.get_identity
+    async def ident(request):
+        """Get current user information."""
+        pk = request.headers.get('authorization')
+        user = User.select().where(User.id == pk).first()
+        if user:
+            return {"id": user.id, "fullName": user.email}
+
+Implement a login handler for standart react-admin auth page:
+
+.. code-block:: python
+
+    @admin.login
+    async def login(request):
+        """Login a user."""
+        data = await request.data()
+        user = User.select().where(
+            User.email == data['username'], User.password == data['password']).first()
+        return ResponseJSON(user and user.id)
+
+
 For futher reference check `https://github.com/klen/muffin-admin/tree/develop/examples <examples>` in the repository.
 
 Configuration options

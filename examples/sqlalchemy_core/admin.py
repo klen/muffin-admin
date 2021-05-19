@@ -1,3 +1,4 @@
+import marshmallow as ma
 from muffin_admin import SAAdminHandler, Plugin
 from muffin import ResponseJSON
 
@@ -5,7 +6,7 @@ from . import app
 from .database import User, Message, db
 
 
-admin = Plugin(app)
+admin = Plugin(app, custom_css_url='/admin.css')
 
 
 # Setup authorization
@@ -56,13 +57,26 @@ class UserResource(SAAdminHandler):
         database = db
         table = User
         filters = 'email', 'created', 'is_active', 'role'
+        sorting = 'id', 'created', 'email', 'is_active', 'role'
         schema_meta = {
             'load_only': ('password',),
             'dump_only': ('created',),
         }
+        schema_fields = {
+            'name': ma.fields.Function(
+                lambda user: "{first_name} {last_name}".format(**user)
+            )
+        }
 
-        columns = 'id', 'email', 'is_active', 'role', 'created'
+        columns = 'id', 'picture', 'email', 'name', 'is_active', 'role'
         icon = 'People'
+
+    @classmethod
+    def to_ra_field(cls, field, name):
+        if name == 'picture':
+            return 'ImageField', {'source': name, 'title': name, 'sortable': False}
+
+        return super().to_ra_field(field, name)
 
 
 @admin.route

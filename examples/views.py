@@ -1,9 +1,10 @@
-"""Application views."""
+"""Common views."""
 
-from . import app
+from pathlib import Path
+
+from muffin import ResponseFile
 
 
-@app.route('/')
 async def index(request):
     """Just a main page."""
     return """
@@ -20,3 +21,7 @@ async def index(request):
     </div>
 
     """
+
+
+async def admin_css(request):
+    return ResponseFile(Path(__file__).parent / 'admin.css')
