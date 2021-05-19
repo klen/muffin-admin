@@ -2,7 +2,7 @@
 
 import marshmallow as ma
 from muffin import ResponseJSON
-from muffin_admin import PWAdminHandler, Plugin
+from muffin_admin import Plugin, PWAdminHandler, PWFilter
 
 from . import app
 from .database import User, Message
@@ -52,7 +52,7 @@ class UserResource(PWAdminHandler):
         """Tune the resource."""
 
         model = User
-        filters = 'email', 'created', 'is_active', 'role'
+        filters = 'created', 'is_active', 'role', PWFilter('email', operator='$contains')
         sorting = 'id', 'created', 'email', 'is_active', 'role'
         schema_meta = {
             'load_only': ('password',),
@@ -69,6 +69,8 @@ class UserResource(PWAdminHandler):
 
     @classmethod
     def to_ra_field(cls, field, name):
+        """Format columns."""
+        # Customize picture column
         if name == 'picture':
             return 'ImageField', {
                 'source': name, 'title': name, 'sortable': False, 'className': 'user-picture'}

@@ -5,7 +5,7 @@ from .plugin import Plugin # noqa
 # Package information
 # ===================
 
-__version__ = "1.2.0"
+__version__ = "1.3.0"
 __project__ = "muffin-admin"
 __author__ = "Kirill Klenov <horneds@gmail.com>"
 __license__ = "MIT"
@@ -14,12 +14,12 @@ __license__ = "MIT"
 from .handler import AdminHandler
 
 try:
-    from .peewee import PWAdminHandler
+    from .peewee import PWAdminHandler, PWFilter
 except ImportError:
     pass
 
 try:
-    from .sqlalchemy import SAAdminHandler
+    from .sqlalchemy import SAAdminHandler, SAFilter
 except ImportError:
     pass
 
