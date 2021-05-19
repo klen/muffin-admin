@@ -1,8 +1,11 @@
-all:
+all: node_modules
 	$(CURDIR)/node_modules/.bin/webpack
 
-watch:
+node_modules: package.json
+	npm install
+
+watch: node_modules
 	$(CURDIR)/node_modules/.bin/webpack --watch
 
-dev:
+dev: node_modules
 	NODE_ENV=development $(CURDIR)/node_modules/.bin/webpack serve
