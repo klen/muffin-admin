@@ -46,6 +46,7 @@ def test_endpoint(app):
         class Meta:
 
             filters = 'id', 'name'
+            sorting = 'id', 'name'
 
             class Schema(ma.Schema):
 
@@ -53,14 +54,16 @@ def test_endpoint(app):
                 name = ma.fields.String(validate=ma.validate.Length(3, 100))
                 active = ma.fields.Boolean()
 
+            columns = 'id', 'active', 'name'
+
     assert admin.api.router.routes()
     assert admin.handlers
 
     handler = admin.handlers[0]
     assert handler.meta.limit == 50
     assert handler.meta.label == 'base'
-    assert handler.meta.columns == ['id', 'name', 'active']
-    assert handler.meta.sorting == {'id': True, 'name': True, 'active': True}
+    assert handler.meta.columns == ('id', 'active', 'name')
+    assert handler.meta.sorting == {'id': True, 'name': True}
 
     assert handler.to_ra() == {
         'create': [
@@ -78,9 +81,9 @@ def test_endpoint(app):
         'label': 'base',
         'list': {
             'children': [
-                ('TextField', {'source': 'id'}),
-                ('TextField', {'source': 'name'}),
-                ('BooleanField', {'source': 'active'})
+                ('TextField', {'source': 'id', 'sortable': True}),
+                ('BooleanField', {'source': 'active', 'sortable': False}),
+                ('TextField', {'source': 'name', 'sortable': True}),
             ],
             'filters': [('TextInput', {'source': 'id'}), ('TextInput', {'source': 'name'})],
             'perPage': 50, 'show': True, 'edit': True,
@@ -125,8 +128,8 @@ async def test_auth(app, client):
     auth = admin.to_ra()['auth']
     assert auth
     assert auth == {
-        'identityURL': '/admin/ident',
         'authorizeURL': '/admin/login',
+        'identityURL': '/admin/ident',
         'loginURL': None,
         'logoutURL': None,
         'required': True,

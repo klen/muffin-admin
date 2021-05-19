@@ -109,12 +109,12 @@ async def test_admin(app):
         'list': {
             'perPage': 50, 'show': True, 'edit': True,
             'children': [
-                ('NumberField', {'source': 'id'}),
-                ('TextField', {'source': 'name'}),
-                ('BooleanField', {'source': 'is_active'}),
-                ('TextField', {'source': 'status'}),
-                ('BooleanField', {'source': 'is_super'}),
-                ('NumberField', {'source': 'role_id'})
+                ('NumberField', {'source': 'id', 'sortable': True}),
+                ('TextField', {'source': 'name', 'sortable': True}),
+                ('BooleanField', {'source': 'is_active', 'sortable': True}),
+                ('TextField', {'source': 'status', 'sortable': True}),
+                ('BooleanField', {'source': 'is_super', 'sortable': True}),
+                ('NumberField', {'source': 'role_id', 'sortable': True})
             ],
             'filters': [
                 ('TextInput', {'source': 'id'}),

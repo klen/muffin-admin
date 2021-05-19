@@ -23,15 +23,20 @@ def devdata():
 
     # Generate admin user if not exists
     mixer.guard(User.email == 'admin@admin.com').blend(
-        User, email='admin@admin.com', password='admin', role='admin')
+        User, email='admin@admin.com', password='admin', role='admin',
+        first_name='Admin', last_name='General', picture="https://picsum.photos/id/10/100")
 
     # Generate manager user if not exists
     mixer.guard(User.email == 'manager@admin.com').blend(
-        User, email='admin@manager.com', password='manager', role='manager')
+        User, email='manager@admin.com', password='manager', role='manager', first_name='Manager',
+        picture="https://picsum.photos/id/20/100"
+    )
 
     # Generate 100 users
     if User.select().count() < 100:
-        mixer.cycle(100).blend(User, role='user')
+        mixer.cycle(98).blend(
+            User, role='user', first_name=mixer.FAKE, last_name=mixer.FAKE,
+            picture=mixer.sequence("https://picsum.photos/id/2{}/100"))
 
     # Generate 100 messages
     statuses = [choice[0] for choice in Message.status.choices]

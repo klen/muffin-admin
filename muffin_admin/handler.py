@@ -66,6 +66,9 @@ class AdminHandler(RESTBase):
         """Get JSON params for react-admin."""
         fields = cls.to_ra_fields()
         inputs = cls.to_ra_inputs()
+        fields_hash = {props['source']: (
+            ra_type, dict(props, sortable=props['source'] in cls.meta.sorting))
+            for (ra_type, props) in fields}
         return {
             "name": cls.meta.name,
             "label": cls.meta.label,
@@ -74,9 +77,7 @@ class AdminHandler(RESTBase):
                 "perPage": cls.meta.limit,
                 "edit": bool(cls.meta.edit),
                 "show": bool(cls.meta.show),
-                "children": [
-                    (rtype, props) for rtype, props in fields
-                    if props['source'] in cls.meta.columns],
+                "children": [fields_hash.get(name) for name in cls.meta.columns],
                 "filters": [
                     info for info in [cls.to_ra_input(f.field, f.name) for f in cls.meta.filters]
                     if info

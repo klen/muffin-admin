@@ -25,7 +25,10 @@ User = sa.Table(
     sa.Column('id', sa.Integer, primary_key=True),
     sa.Column('created', sa.DateTime, default=dt.datetime.utcnow, nullable=False),
     sa.Column('email', sa.String(255), nullable=False),
-    sa.Column('password', sa.String(255), nullable=True),
+    sa.Column('first_name', sa.String(255)),
+    sa.Column('last_name', sa.String(255)),
+    sa.Column('password', sa.String(255)),
+    sa.Column('picture', sa.String(255), default="https://picsum.photos/200"),
     sa.Column('is_active', sa.Boolean, default=True),
     sa.Column('role', sa.Enum(Roles), default=Roles.user, nullable=False),
 )

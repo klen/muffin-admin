@@ -102,14 +102,15 @@ async def test_admin(app):
         'label': 'user',
         'list': {
             'children': [
-                ('TextField', {'source': 'id'}),
-                ('TextField', {'source': 'name'}),
-                ('BooleanField', {'source': 'is_active'}),
-                ('NumberField', {'source': 'status'}),
-                ('BooleanField', {'source': 'is_super'}),
+                ('TextField', {'source': 'id', 'sortable': True}),
+                ('TextField', {'source': 'name', 'sortable': True}),
+                ('BooleanField', {'source': 'is_active', 'sortable': True}),
+                ('NumberField', {'source': 'status', 'sortable': True}),
+                ('BooleanField', {'source': 'is_super', 'sortable': True}),
                 ('ReferenceField', {
                     'link': 'show',
                     'source': 'role',
+                    'sortable': True,
                     'reference': 'role',
                     'children': [('TextField', {'source': 'name'})]
                 })
