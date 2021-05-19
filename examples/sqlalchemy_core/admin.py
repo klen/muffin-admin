@@ -1,5 +1,5 @@
 import marshmallow as ma
-from muffin_admin import SAAdminHandler, Plugin
+from muffin_admin import Plugin, SAAdminHandler, SAFilter
 from muffin import ResponseJSON
 
 from . import app
@@ -56,7 +56,7 @@ class UserResource(SAAdminHandler):
 
         database = db
         table = User
-        filters = 'email', 'created', 'is_active', 'role'
+        filters = 'created', 'is_active', 'role', SAFilter('email', operator='$contains')
         sorting = 'id', 'created', 'email', 'is_active', 'role'
         schema_meta = {
             'load_only': ('password',),

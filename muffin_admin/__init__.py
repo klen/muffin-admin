@@ -14,12 +14,12 @@ __license__ = "MIT"
 from .handler import AdminHandler
 
 try:
-    from .peewee import PWAdminHandler
+    from .peewee import PWAdminHandler, PWFilter
 except ImportError:
     pass
 
 try:
-    from .sqlalchemy import SAAdminHandler
+    from .sqlalchemy import SAAdminHandler, SAFilter
 except ImportError:
     pass
 
