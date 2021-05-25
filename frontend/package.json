@@ -3,7 +3,7 @@
   "dependencies": {
     "js-cookie": "2.2.1",
     "react": "17.0.2",
-    "react-admin": "3.15.1",
+    "react-admin": "3.15.2",
     "react-dom": "17.0.2"
   },
   "devDependencies": {
