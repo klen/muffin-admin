@@ -61,7 +61,7 @@ def test_endpoint(app):
                 name = ma.fields.String(validate=ma.validate.Length(3, 100))
                 active = ma.fields.Boolean()
 
-            columns = 'id', 'active', 'name'
+            columns = 'id', 'active', 'name', 'unknown'
 
     assert admin.api.router.routes()
     assert admin.handlers
@@ -69,7 +69,7 @@ def test_endpoint(app):
     handler = admin.handlers[0]
     assert handler.meta.limit == 50
     assert handler.meta.label == 'base'
-    assert handler.meta.columns == ('id', 'active', 'name')
+    assert handler.meta.columns == ('id', 'active', 'name', 'unknown')
     assert handler.meta.sorting == {'id': True, 'name': True}
 
     assert handler.to_ra() == {

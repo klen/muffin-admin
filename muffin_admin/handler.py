@@ -77,7 +77,8 @@ class AdminHandler(RESTBase):
                 "perPage": cls.meta.limit,
                 "edit": bool(cls.meta.edit),
                 "show": bool(cls.meta.show),
-                "children": [fields_hash.get(name) for name in cls.meta.columns],
+                "children": [
+                    fields_hash[name] for name in cls.meta.columns if name in fields_hash],
                 "filters": [
                     info for info in [cls.to_ra_input(f.field, f.name) for f in cls.meta.filters]
                     if info
