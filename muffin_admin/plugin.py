@@ -116,7 +116,10 @@ class Plugin(BasePlugin):
         return fn
 
     def get_identity(self, fn: AUTH) -> AUTH:
-        """Register a function to identificate current user."""
+        """Register a function to identificate current user.
+
+        User data: {id, fullName, avatar}
+        """
         self.auth['identityURL'] = f"{ self.cfg.prefix }/ident"
         self.__ident__ = fn
         return fn
