@@ -5,7 +5,7 @@ from inspect import isclass
 from pathlib import Path
 
 from asgi_tools._compat import json_dumps
-from muffin import Application, ResponseFile, ResponseError, ResponseRedirect, Request
+from muffin import Application, ResponseFile, ResponseError, Request
 from muffin.plugins import BasePlugin
 from muffin_rest.api import API, AUTH
 
@@ -33,7 +33,6 @@ class Plugin(BasePlugin):
         'custom_js_url': '',
         'custom_css_url': '',
 
-        'login_url': None,
         'logout_url': None,
 
         'auth_storage': 'localstorage',  # localstorage|cookies
@@ -54,7 +53,6 @@ class Plugin(BasePlugin):
 
         self.auth['storage'] = self.cfg.auth_storage
         self.auth['storage_name'] = self.cfg.auth_storage_name
-        self.auth['loginURL'] = self.cfg.login_url
         self.auth['logoutURL'] = self.cfg.logout_url
 
         custom_js = self.cfg.custom_js_url
@@ -62,10 +60,8 @@ class Plugin(BasePlugin):
 
         @app.route(self.cfg.prefix)
         async def render_admin(request):
-            if self.cfg.login_url and self.api.authorize:
-                auth = await self.api.authorize(request)
-                if not auth:
-                    return ResponseRedirect(self.cfg.login_url)
+            if self.api.authorize:
+                await self.api.authorize(request)
 
             return TEMPLATE.format(
                 admin=self, title=self.app.cfg.name.title(),
