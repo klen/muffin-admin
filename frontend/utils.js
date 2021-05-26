@@ -1,5 +1,5 @@
-import { stringify } from 'query-string';
 import { fetchUtils } from 'ra-core';
+import { stringify } from 'query-string';
 
 
 export const requestHeaders = {};

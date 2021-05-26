@@ -122,7 +122,7 @@ async def test_admin(app):
                     'initialValue': 1,
                     'source': 'status'})
             ],
-            'perPage': 50, 'show': True, 'edit': True,
+            'perPage': 20, 'show': True, 'edit': True,
         },
         'name': 'user',
         'show': [

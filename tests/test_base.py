@@ -15,7 +15,6 @@ async def test_plugin(app):
     assert data['auth'] == {
         'storage': 'localstorage',
         'storage_name': 'muffin_admin_auth',
-        'loginURL': None,
         'logoutURL': None,
     }
 
@@ -67,7 +66,7 @@ def test_endpoint(app):
     assert admin.handlers
 
     handler = admin.handlers[0]
-    assert handler.meta.limit == 50
+    assert handler.meta.limit == 20
     assert handler.meta.label == 'base'
     assert handler.meta.columns == ('id', 'active', 'name', 'unknown')
     assert handler.meta.sorting == {'id': True, 'name': True}
@@ -93,7 +92,7 @@ def test_endpoint(app):
                 ('TextField', {'source': 'name', 'sortable': True}),
             ],
             'filters': [('TextInput', {'source': 'id'}), ('TextInput', {'source': 'name'})],
-            'perPage': 50, 'show': True, 'edit': True,
+            'perPage': 20, 'show': True, 'edit': True,
         },
         'name': 'base',
         'show': [
@@ -106,6 +105,7 @@ def test_endpoint(app):
 
 async def test_auth(app, client):
     from muffin_admin import Plugin
+    from muffin_rest import APIError
 
     admin = Plugin(app)
 
@@ -120,7 +120,11 @@ async def test_auth(app, client):
 
     @admin.check_auth
     async def authorize(request):
-        return request.headers.get('authorization')
+        auth = request.headers.get('authorization')
+        if not auth:
+            raise APIError.FORBIDDEN()
+
+        return auth
 
     @admin.get_identity
     async def ident(request):
@@ -137,7 +141,6 @@ async def test_auth(app, client):
     assert auth == {
         'authorizeURL': '/admin/login',
         'identityURL': '/admin/ident',
-        'loginURL': None,
         'logoutURL': None,
         'required': True,
         'storage': 'localstorage',
@@ -153,9 +156,4 @@ async def test_auth(app, client):
     assert await res.json() == {"id": "user", "fullName": "User-user"}
 
     res = await client.get('/admin')
-    assert res.status_code == 200
-
-    admin.cfg.update(login_url='/login')
-    res = await client.get('/admin', follow_redirect=False)
-    assert res.status_code == 307
-    assert res.headers['location'] == '/login'
+    assert res.status_code == 403

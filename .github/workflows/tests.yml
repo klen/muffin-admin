@@ -28,21 +28,18 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Get pip cache dir
-      id: pip-cache
-      run: |
-        echo "::set-output name=dir::$(pip cache dir)"
-
-    - name: Cache pip
-      uses: actions/cache@v2.1.5
+    - name: Cache env
+      id: cache-env
+      uses: actions/cache@v2
       with:
-        path: ${{ steps.pip-cache.outputs.dir }}
+        path: env
         key: ${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('setup.cfg') }}
 
-    - name: Install dependencies
+    - name: Install requirements
       run: |
-        python -m pip install .[tests]
+        python -m venv env
+        env/bin/pip install -e .[tests]
+      if: steps.cache-env.outputs.cache-hit != 'true'
 
     - name: Test with pytest
-      run: |
-        pytest tests
+      run: env/bin/pytest tests

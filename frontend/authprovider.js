@@ -4,7 +4,7 @@ import { makeRequest, requestHeaders } from './utils';
 
 export default (props) => {
 
-  const { identityURL, authorizeURL, loginURL, logoutURL, required, storage, storage_name } = props;
+  const { identityURL, authorizeURL, logoutURL, required, storage, storage_name } = props;
 
   const authorize = (name, value) => {
     if (value === undefined) {
@@ -57,8 +57,7 @@ export default (props) => {
 
       logout: async () => {
         authorize(storage_name, '');
-        const url = logoutURL || loginURL;
-        if (url) globalThis.location = url;
+        if (logoutURL) globalThis.location = logoutURL;
       },
 
       getPermissions: (data) => {

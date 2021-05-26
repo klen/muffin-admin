@@ -163,7 +163,6 @@ Name                        Default value                           Description
 **title**                   ``"Muffin Admin"``                      Admin's title
 **custom_js_url**           ``""``                                  A link to custom JS file
 **custom_css_url**          ``""``                                  A link to custom CSS file
-**login_url**               ``None``                                An HTTP URL for your custom authorization page
 **logout_url**              ``None``                                An HTTP URL for your custom logout page
 **auth_storage**            ``"localstorage"``                      Where to keep authorization information (localstorage|cookies)
 **auth_storage_name**       ``muffin_admin_auth``                   Localstorage/Cookie name for authentication info

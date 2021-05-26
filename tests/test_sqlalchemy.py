@@ -107,7 +107,7 @@ async def test_admin(app):
         'label': 'user',
         'icon': '',
         'list': {
-            'perPage': 50, 'show': True, 'edit': True,
+            'perPage': 20, 'show': True, 'edit': True,
             'children': [
                 ('NumberField', {'source': 'id', 'sortable': True}),
                 ('TextField', {'source': 'name', 'sortable': True}),

@@ -12,7 +12,7 @@ class AdminOptions(RESTOptions):
 
     """Prepare admin handler."""
 
-    limit: int = 50
+    limit: int = 20
 
     icon: str = ''
     label: str = ''
