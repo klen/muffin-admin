@@ -1,9 +1,6 @@
 Muffin-Admin
 #############
 
-.. image:: https://raw.github.com/klen/muffin-admin/develop/.github/muffin-admin.png
-   :height: 200px
-
 .. _description:
 
 **Muffin-Admin** -- an extension to Muffin_ that implements admin-interfaces
@@ -23,6 +20,9 @@ Muffin-Admin
     :alt: Python Versions
 
 ----------
+
+.. image:: https://raw.github.com/klen/muffin-admin/develop/.github/muffin-admin.png
+   :height: 200px
 
 .. _features:
 
