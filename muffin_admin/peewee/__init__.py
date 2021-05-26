@@ -3,10 +3,12 @@
 import typing as t
 
 
+import peewee as pw
 import marshmallow as ma
 from muffin_rest.peewee import PWRESTBase, PWRESTOptions, PWFilter, Filter
 
 from ..handler import AdminHandler, AdminOptions
+from ..typing import RA_INFO
 
 
 class PWAdminOptions(AdminOptions, PWRESTOptions):
@@ -42,7 +44,7 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
         abc = True
 
     @classmethod
-    def to_ra_input(cls, field: ma.fields.Field, name: str) -> t.Optional[t.Tuple[str, t.Dict]]:
+    def to_ra_input(cls, field: ma.fields.Field, name: str) -> t.Optional[RA_INFO]:
         """Convert self schema field to ra field."""
         res = super(PWAdminHandler, cls).to_ra_input(field, name)
         if res:
@@ -60,7 +62,7 @@ class PWSearchFilter(PWFilter):
 
     """Search in query by value."""
 
-    def query(self, query, field, filter_, *_, **kwargs):
+    def query(self, query: pw.Query, column: pw.Field, *ops: t.Tuple, **kwargs) -> pw.Query:
         """Apply the filters to Peewee QuerySet.."""
-        _, value = filter_
-        return query.where(field.contains(value))
+        _, value = ops[0]
+        return query.where(column.contains(value))

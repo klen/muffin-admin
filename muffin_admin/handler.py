@@ -7,6 +7,8 @@ import typing as t
 import marshmallow as ma
 from muffin_rest.handler import RESTBase, RESTOptions
 
+from .typing import RA_INFO, RA_CONVERTER
+
 
 class AdminOptions(RESTOptions):
 
@@ -62,7 +64,7 @@ class AdminHandler(RESTBase):
         abc: bool = True
 
     @classmethod
-    def to_ra(cls) -> t.Dict:
+    def to_ra(cls) -> t.Dict[str, t.Any]:
         """Get JSON params for react-admin."""
         fields = cls.to_ra_fields()
         inputs = cls.to_ra_inputs()
@@ -91,7 +93,7 @@ class AdminHandler(RESTBase):
         }
 
     @classmethod
-    def to_ra_fields(cls):
+    def to_ra_fields(cls) -> t.List[RA_INFO]:
         """Convert self schema to ra fields."""
         schema = cls.meta.Schema
         ignore = schema.opts.exclude + schema.opts.load_only
@@ -101,7 +103,7 @@ class AdminHandler(RESTBase):
         ] if info]
 
     @classmethod
-    def to_ra_field(cls, field, name):
+    def to_ra_field(cls, field: ma.fields.Field, name: str) -> t.Optional[RA_INFO]:
         """Convert self schema field to ra field."""
         source = field.data_key or name
         if source in cls.meta.references:
@@ -113,13 +115,15 @@ class AdminHandler(RESTBase):
             }
 
         converter = find_ra(field, MA_TO_RAF)
-        if converter:
-            rtype, props = converter(field)
-            props['source'] = source
-            return rtype, props
+        if not converter:
+            return None
+
+        rtype, props = converter(field)
+        props['source'] = source
+        return rtype, props
 
     @classmethod
-    def to_ra_inputs(cls):
+    def to_ra_inputs(cls) -> t.List[RA_INFO]:
         """Convert fields to react-admin."""
         schema = cls.meta.Schema
         ignore = schema.opts.exclude + schema.opts.dump_only
@@ -129,44 +133,49 @@ class AdminHandler(RESTBase):
         ] if info]
 
     @classmethod
-    def to_ra_input(cls, field, name):
+    def to_ra_input(cls, field: ma.fields.Field, name: str) -> t.Optional[RA_INFO]:
         """Convert a field to react-admin."""
         converter = find_ra(field, MA_TO_RAI)
-        if converter:
-            rtype, props = converter(field)
-            props['source'] = field.attribute or name
+        if not converter:
+            return None
 
-            if isinstance(field.default, (bool, str, int)):
-                props.setdefault('initialValue', field.default)
+        rtype, props = converter(field)
+        props['source'] = field.attribute or name
 
-            if field.required:
-                props.setdefault('required', True)
+        if isinstance(field.default, (bool, str, int)):
+            props.setdefault('initialValue', field.default)
 
-            return rtype, props
+        if field.required:
+            props.setdefault('required', True)
+
+        return rtype, props
 
 
-MA_TO_RAF = {
-    ma.fields.Boolean: lambda f: ['BooleanField', {}],
-    ma.fields.Date: lambda f: ['DateField', {}],
-    ma.fields.DateTime: lambda f: ['DateField', {'showTime': True}],
-    ma.fields.Number: lambda f: ['NumberField', {}],
-    ma.fields.Field: lambda f: ['TextField', {}],
+MA_TO_RAF: t.Dict[type, RA_CONVERTER] = {
+    ma.fields.Boolean: lambda f: ('BooleanField', {}),
+    ma.fields.Date: lambda f: ('DateField', {}),
+    ma.fields.DateTime: lambda f: ('DateField', {'showTime': True}),
+    ma.fields.Number: lambda f: ('NumberField', {}),
+    ma.fields.Field: lambda f: ('TextField', {}),
 
-    ma.fields.Email: lambda f: ['EmailField', {}],
-    ma.fields.Url: lambda f: ['UrlField', {}],
+    ma.fields.Email: lambda f: ('EmailField', {}),
+    ma.fields.Url: lambda f: ('UrlField', {}),
 }
 
-MA_TO_RAI = {
-    ma.fields.Boolean: lambda f: ['BooleanInput', {}],
-    ma.fields.Date: lambda f: ['DateInput', {}],
-    ma.fields.DateTime: lambda f: ['DateTimeInput', {}],
-    ma.fields.Number: lambda f: ['NumberInput', {}],
-    ma.fields.Field: lambda f: ['TextInput', {}],
+MA_TO_RAI: t.Dict[type, RA_CONVERTER] = {
+    ma.fields.Boolean: lambda f: ('BooleanInput', {}),
+    ma.fields.Date: lambda f: ('DateInput', {}),
+    ma.fields.DateTime: lambda f: ('DateTimeInput', {}),
+    ma.fields.Number: lambda f: ('NumberInput', {}),
+    ma.fields.Field: lambda f: ('TextInput', {}),
 }
 
 
-def find_ra(field, types):
+def find_ra(field: ma.fields.Field,
+            types: t.Dict[type, RA_CONVERTER]) -> t.Optional[RA_CONVERTER]:
     """Find a converter for first supported field class."""
     for fcls in type(field).mro():
         if fcls in types:
             return types[fcls]
+
+    return None
