@@ -6,6 +6,13 @@ import * as icons from "@material-ui/icons"
 import authProvider from "./authprovider";
 import dataProvider from "./dataprovider";
 
+// Support JSON fields
+import { JsonField, JsonInput } from "react-admin-json-view";
+
+ra.JsonField = JsonField
+ra.JsonInput = JsonInput
+
+
 
 const defaultPagination = <ra.Pagination rowsPerPageOptions={[10, 25, 50, 100]} />;
 
