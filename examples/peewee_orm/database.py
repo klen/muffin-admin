@@ -4,7 +4,7 @@ import datetime as dt
 from pathlib import Path
 
 import peewee as pw
-from muffin_peewee import Plugin
+from muffin_peewee import Plugin, JSONField
 
 from . import app
 
@@ -29,6 +29,7 @@ class User(BaseModel):
     last_name = pw.CharField(null=True)
     password = pw.CharField(null=True)  # not secure only for the example
     picture = pw.CharField(default="https://picsum.photos/100")
+    meta = JSONField(default={})
 
     is_active = pw.BooleanField(default=True)
     role = pw.CharField(choices=(('user', 'user'), ('manager', 'manager'), ('admin', 'admin')))

@@ -30,6 +30,7 @@ User = sa.Table(
     sa.Column('password', sa.String(255)),
     sa.Column('picture', sa.String(255), default="https://picsum.photos/200"),
     sa.Column('is_active', sa.Boolean, default=True),
+    sa.Column('meta', sa.JSON, default={}),
     sa.Column('role', sa.Enum(Roles), default=Roles.user, nullable=False),
 )
 

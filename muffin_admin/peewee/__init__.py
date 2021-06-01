@@ -5,6 +5,7 @@ import typing as t
 
 import peewee as pw
 import marshmallow as ma
+from muffin_peewee import JSONField
 from muffin_rest.peewee import PWRESTBase, PWRESTOptions, PWFilter, Filter
 
 from ..handler import AdminHandler, AdminOptions
@@ -45,17 +46,37 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
 
     @classmethod
     def to_ra_input(cls, field: ma.fields.Field, name: str) -> t.Optional[RA_INFO]:
-        """Convert self schema field to ra field."""
-        res = super(PWAdminHandler, cls).to_ra_input(field, name)
-        if res:
+        """Setup RA inputs."""
+        info = super(PWAdminHandler, cls).to_ra_input(field, name)
+        if info:
             mfield = getattr(cls.meta.model, field.attribute or name, None)
-            if mfield and mfield.choices:
-                rtype, props = res
-                return 'SelectInput', dict(props, choices=[
-                    {"id": c[0], "name": c[1]} for c in mfield.choices
-                ])
+            if mfield:
+                rtype, props = info
+                if mfield.choices:
+                    return 'SelectInput', dict(props, choices=[
+                        {"id": c[0], "name": c[1]} for c in mfield.choices
+                    ])
 
-        return res
+                # Support textfield
+                if isinstance(mfield, pw.TextField):
+                    props.setdefault('multiline', True)
+
+                elif isinstance(mfield, JSONField):
+                    return 'JsonInput', props
+
+        return info
+
+    @classmethod
+    def to_ra_field(cls, field: ma.fields.Field, name: str) -> t.Optional[RA_INFO]:
+        """Setup RA fields."""
+        info = super(PWAdminHandler, cls).to_ra_field(field, name)
+        if info:
+            mfield = getattr(cls.meta.model, field.attribute or name, None)
+            if mfield:
+                if isinstance(mfield, JSONField):
+                    return 'JsonField', info[1]
+
+        return info
 
 
 class PWSearchFilter(PWFilter):

@@ -4,7 +4,7 @@ import typing as t
 
 import marshmallow as ma
 from muffin_rest.sqlalchemy import SARESTOptions, SARESTHandler, SAFilter, Filter
-from sqlalchemy import Enum
+from sqlalchemy import Enum, Text, JSON
 
 from ..handler import AdminHandler, AdminOptions
 
@@ -43,14 +43,33 @@ class SAAdminHandler(AdminHandler, SARESTHandler):
 
     @classmethod
     def to_ra_input(cls, field: ma.fields.Field, name: str) -> t.Optional[t.Tuple[str, t.Dict]]:
-        """Convert self schema field to ra field."""
-        res = super(SAAdminHandler, cls).to_ra_input(field, name)
-        if res:
+        """Setup RA inputs."""
+        info = super(SAAdminHandler, cls).to_ra_input(field, name)
+        if info:
             column = getattr(cls.meta.table.c, field.attribute or name, None)
-            if isinstance(column.type, Enum):
-                rtype, props = res
-                return 'SelectInput', dict(props, choices=[
-                    {"id": c.value, "name": c.name} for c in column.type.enum_class
-                ])
+            if column is not None:
+                rtype, props = info
+                if isinstance(column.type, Enum):
+                    return 'SelectInput', dict(props, choices=[
+                        {"id": c.value, "name": c.name} for c in column.type.enum_class
+                    ])
 
-        return res
+                elif isinstance(column.type, Text):
+                    props['multiline'] = True
+
+                elif isinstance(column.type, JSON):
+                    return 'JsonInput', props
+
+        return info
+
+    @classmethod
+    def to_ra_field(cls, field: ma.fields.Field, name: str) -> t.Optional[t.Tuple[str, t.Dict]]:
+        """Setup RA fields."""
+        info = super(SAAdminHandler, cls).to_ra_field(field, name)
+        if info:
+            column = getattr(cls.meta.table.c, field.attribute or name, None)
+            if column is not None:
+                if isinstance(column.type, JSON):
+                    return 'JsonField', info[1]
+
+        return info
