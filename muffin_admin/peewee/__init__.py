@@ -61,7 +61,7 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
                 if isinstance(mfield, pw.TextField):
                     props.setdefault('multiline', True)
 
-                elif isinstance(mfield, JSONField):
+                elif isinstance(mfield, JSONField) or mfield.field_type.lower() == 'json':
                     return 'JsonInput', props
 
         return info
