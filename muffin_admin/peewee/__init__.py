@@ -73,7 +73,7 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
         if info:
             mfield = getattr(cls.meta.model, field.attribute or name, None)
             if mfield:
-                if isinstance(mfield, JSONField):
+                if isinstance(mfield, JSONField) or mfield.field_type.lower() == 'json':
                     return 'JsonField', info[1]
 
         return info
