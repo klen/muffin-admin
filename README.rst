@@ -156,18 +156,18 @@ For futher reference check `https://github.com/klen/muffin-admin/tree/develop/ex
 Configuration options
 ----------------------
 
-=========================== ================================================== =========================== 
-Name                        Default value                           Description
---------------------------- -------------------------------------------------- ---------------------------
-**prefix**                  ``"/admin"``                                       Admin's HTTP URL prefix
-**title**                   ``"Muffin Admin"``                                 Admin's title
-**custom_js_url**           ``""``                                             A link to custom JS file
-**custom_css_url**          ``""``                                             A link to custom CSS file
-**logout_url**              ``None``                                           An HTTP URL for your custom logout page
-**auth_storage**            ``"localstorage"``                                 Where to keep authorization information (localstorage|cookies)
-**auth_storage_name**       ``muffin_admin_auth``                              Localstorage/Cookie name for authentication info
-**app_bar_links**           ``[{'url': '/', 'icon': 'Home', 'title': 'Home'}]  Appbar links
-=========================== ================================================== =========================== 
+=========================== ==================================================== =========================== 
+Name                        Default value                                        Description
+--------------------------- ---------------------------------------------------- ---------------------------
+**prefix**                  ``"/admin"``                                         Admin's HTTP URL prefix
+**title**                   ``"Muffin Admin"``                                   Admin's title
+**custom_js_url**           ``""``                                               A link to custom JS file
+**custom_css_url**          ``""``                                               A link to custom CSS file
+**logout_url**              ``None``                                             An HTTP URL for your custom logout page
+**auth_storage**            ``"localstorage"``                                   Where to keep authorization information (localstorage|cookies)
+**auth_storage_name**       ``muffin_admin_auth``                                Localstorage/Cookie name for authentication info
+**app_bar_links**           ``[{'url': '/', 'icon': 'Home', 'title': 'Home'}]``  Appbar links
+=========================== ==================================================== =========================== 
 
 .. _bugtracker:
 
