@@ -90,72 +90,71 @@ def test_admin(app):
         'id': True, 'name': True, 'is_super': True,
         'is_active': True, 'role': True, 'status': True, 'meta': True}
 
-    assert UserResource.to_ra() == {
-        'create': [
-            ('TextInput', {'required': True, 'source': 'name'}),
-            ('TextInput', {'required': True, 'source': 'password'}),
-            ('BooleanInput', {'initialValue': True, 'source': 'is_active'}),
-            ('SelectInput', {
-                'choices': [{'id': 1, 'name': 'new'}, {'id': 2, 'name': 'old'}],
-                'initialValue': 1,
-                'source': 'status'}),
-            ('JsonInput', {'source': 'meta'}),
-            ('TextInput', {'source': 'role'}),
-        ],
-        'delete': True,
-        'edit': [
-            ('TextInput', {'required': True, 'source': 'name'}),
-            ('TextInput', {'required': True, 'source': 'password'}),
-            ('BooleanInput', {'initialValue': True, 'source': 'is_active'}),
-            ('SelectInput', {
-                'choices': [{'id': 1, 'name': 'new'}, {'id': 2, 'name': 'old'}],
-                'initialValue': 1,
-                'source': 'status'}),
-            ('JsonInput', {'source': 'meta'}),
-            ('TextInput', {'source': 'role'}),
-        ],
-        'icon': '',
-        'label': 'user',
-        'list': {
-            'children': [
-                ('TextField', {'source': 'id', 'sortable': True}),
-                ('TextField', {'source': 'name', 'sortable': True}),
-                ('BooleanField', {'source': 'is_active', 'sortable': True}),
-                ('NumberField', {'source': 'status', 'sortable': True}),
-                ('JsonField', {'source': 'meta', 'sortable': True}),
-                ('BooleanField', {'source': 'is_super', 'sortable': True}),
-                ('ReferenceField', {
-                    'link': 'show',
-                    'source': 'role',
-                    'sortable': True,
-                    'reference': 'role',
-                    'children': [('TextField', {'source': 'name'})]
-                })
-            ],
-            'filters': [
-                ('TextInput', {'source': 'id'}),
-                ('SelectInput', {
-                    'choices': [{'id': 1, 'name': 'new'}, {'id': 2, 'name': 'old'}],
-                    'initialValue': 1,
-                    'source': 'status'})
-            ],
-            'perPage': 20, 'show': True, 'edit': True,
-        },
-        'name': 'user',
-        'show': [
-            ('TextField', {'source': 'id'}),
-            ('TextField', {'source': 'name'}),
-            ('BooleanField', {'source': 'is_active'}),
-            ('NumberField', {'source': 'status'}),
-            ('JsonField', {'source': 'meta'}),
-            ('BooleanField', {'source': 'is_super'}),
+    ra = UserResource.to_ra()
+    assert ra['delete'] is True
+    assert ra['icon'] == ''
+    assert ra['name'] == 'user'
+    assert ra['label'] == 'user'
+    assert ra['create'] == [
+        ('TextInput', {'required': True, 'source': 'name'}),
+        ('TextInput', {'required': True, 'source': 'password'}),
+        ('BooleanInput', {'initialValue': True, 'source': 'is_active'}),
+        ('SelectInput', {
+            'choices': [{'id': 1, 'name': 'new'}, {'id': 2, 'name': 'old'}],
+            'initialValue': 1,
+            'source': 'status'}),
+        ('JsonInput', {'source': 'meta'}),
+        ('TextInput', {'source': 'role'}),
+    ]
+    assert ra['edit'] == [
+        ('TextInput', {'required': True, 'source': 'name'}),
+        ('TextInput', {'required': True, 'source': 'password'}),
+        ('BooleanInput', {'initialValue': True, 'source': 'is_active'}),
+        ('SelectInput', {
+            'choices': [{'id': 1, 'name': 'new'}, {'id': 2, 'name': 'old'}],
+            'initialValue': 1,
+            'source': 'status'}),
+        ('JsonInput', {'source': 'meta'}),
+        ('TextInput', {'source': 'role'}),
+    ]
+    assert ra['show'] == [
+        ('TextField', {'source': 'id'}),
+        ('TextField', {'source': 'name'}),
+        ('BooleanField', {'source': 'is_active'}),
+        ('NumberField', {'source': 'status'}),
+        ('JsonField', {'source': 'meta'}),
+        ('BooleanField', {'source': 'is_super'}),
+        ('ReferenceField', {
+            'link': 'show',
+            'source': 'role',
+            'reference': 'role',
+            'children': [('TextField', {'source': 'name'})]
+        }),
+    ]
+    assert ra['list'] == {
+        'children': [
+            ('TextField', {'source': 'id', 'sortable': True}),
+            ('TextField', {'source': 'name', 'sortable': True}),
+            ('BooleanField', {'source': 'is_active', 'sortable': True}),
+            ('NumberField', {'source': 'status', 'sortable': True}),
+            ('JsonField', {'source': 'meta', 'sortable': True}),
+            ('BooleanField', {'source': 'is_super', 'sortable': True}),
             ('ReferenceField', {
                 'link': 'show',
                 'source': 'role',
+                'sortable': True,
                 'reference': 'role',
                 'children': [('TextField', {'source': 'name'})]
-            }),
-        ]
+            })
+        ],
+        'filters': [
+            ('TextInput', {'source': 'id'}),
+            ('SelectInput', {
+                'choices': [{'id': 1, 'name': 'new'}, {'id': 2, 'name': 'old'}],
+                'initialValue': 1,
+                'source': 'status'})
+        ],
+        'perPage': 20, 'show': True, 'edit': True,
     }
 
     MessageResource = admin.handlers[2]

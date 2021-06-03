@@ -45,38 +45,32 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
         abc = True
 
     @classmethod
-    def to_ra_input(cls, field: ma.fields.Field, name: str) -> t.Optional[RA_INFO]:
+    def to_ra_input(cls, field: ma.fields.Field, source: str) -> RA_INFO:
         """Setup RA inputs."""
-        info = super(PWAdminHandler, cls).to_ra_input(field, name)
-        if info:
-            mfield = getattr(cls.meta.model, field.attribute or name, None)
-            if mfield:
-                rtype, props = info
-                if mfield.choices:
-                    return 'SelectInput', dict(props, choices=[
-                        {"id": c[0], "name": c[1]} for c in mfield.choices
-                    ])
+        model_field = getattr(cls.meta.model, field.attribute or source, None)
+        ra_type, props = super(PWAdminHandler, cls).to_ra_input(field, source)
+        if model_field:
+            if model_field.choices:
+                return 'SelectInput', dict(props, choices=[{
+                    "id": c[0], "name": c[1]} for c in model_field.choices])
 
-                # Support textfield
-                if isinstance(mfield, pw.TextField):
-                    props.setdefault('multiline', True)
+            if isinstance(model_field, pw.TextField):
+                return 'TextInput', dict(props, multiline=True)
 
-                elif isinstance(mfield, JSONField) or mfield.field_type.lower() == 'json':
-                    return 'JsonInput', props
+            if isinstance(model_field, JSONField) or model_field.field_type.lower() == 'json':
+                return 'JsonInput', props
 
-        return info
+        return ra_type, props
 
     @classmethod
-    def to_ra_field(cls, field: ma.fields.Field, name: str) -> t.Optional[RA_INFO]:
+    def to_ra_field(cls, field: ma.fields.Field, source: str) -> RA_INFO:
         """Setup RA fields."""
-        info = super(PWAdminHandler, cls).to_ra_field(field, name)
-        if info:
-            mfield = getattr(cls.meta.model, field.attribute or name, None)
-            if mfield:
-                if isinstance(mfield, JSONField) or mfield.field_type.lower() == 'json':
-                    return 'JsonField', info[1]
+        model_field = getattr(cls.meta.model, field.attribute or source, None)
+        if model_field and \
+                (isinstance(model_field, JSONField) or model_field.field_type.lower() == 'json'):
+            return 'JsonField', {}
 
-        return info
+        return super(PWAdminHandler, cls).to_ra_field(field, source)
 
 
 class PWSearchFilter(PWFilter):

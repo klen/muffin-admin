@@ -1,20 +1,32 @@
 import React from "react";
 
-import * as ra from "react-admin";
+import { 
+  Admin,
+  AppBar,
+  Create,
+  Datagrid,
+  Edit,
+  EditButton,
+  Filter,
+  Layout,
+  List,
+  Login,
+  Pagination,
+  Resource,
+  Show,
+  SimpleForm,
+  SimpleShowLayout,
+  required,
+} from "react-admin";
 import * as icons from "@material-ui/icons"
+import { IconButton, Typography, SvgIcon, Tooltip } from "@material-ui/core"
 
 import authProvider from "./authprovider";
 import dataProvider from "./dataprovider";
-
-// Support JSON fields
-import { JsonField, JsonInput } from "react-admin-json-view";
-
-ra.JsonField = JsonField
-ra.JsonInput = JsonInput
+import ui from "./ui";
 
 
-
-const defaultPagination = <ra.Pagination rowsPerPageOptions={[10, 25, 50, 100]} />;
+const defaultPagination = <Pagination rowsPerPageOptions={[10, 25, 50, 100]} />;
 
 const checkParams = (fn) => (props, res) => {
   if (!props || React.isValidElement(props)) return props;
@@ -22,11 +34,11 @@ const checkParams = (fn) => (props, res) => {
 }
 
 const initItems = itemsProps => itemsProps.map((item) => {
-    const Item = ra[item[0]],
+    const Item = ui[item[0]],
           props = {...item[1]};
 
     if (props.required) {
-        props.validate = ra.required();
+        props.validate = required();
         delete props.required
     }
 
@@ -41,13 +53,37 @@ const admin = {
 
   // Process Admin
   "admin": (props) => {
-    const { apiUrl, auth, adminProps, resources } = props;
+    const { apiUrl, auth, adminProps, appBarLinks, resources } = props;
 
-    return <ra.Admin  authProvider={ processAdmin('auth', auth) }
-                      children={ processAdmin('resources', resources) }
-                      dataProvider={ processAdmin('data', apiUrl) }
-                      loginPage={ processAdmin('login', auth) }
-                      { ...adminProps } />
+    let appBar = props => (
+        <AppBar {...props}>
+            <Typography
+                variant="h6"
+                color="inherit"
+                id="react-admin-title"
+                style={{
+                  flex: 1,
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                }}
+            />
+          { appBarLinks.map( info => (
+            <Tooltip key={ info.url } title={ info.title }>
+              <IconButton color="inherit" href={ info.url }>
+                <SvgIcon component={ icons[info.icon] }/>
+              </IconButton>
+            </Tooltip>
+          ))}
+        </AppBar>
+    )
+
+    return <Admin authProvider={ processAdmin('auth', auth) }
+                  dataProvider={ processAdmin('data', apiUrl) }
+                  loginPage={ processAdmin('login', auth) }
+                  layout={ props => <Layout appBar={appBar} {...props} /> }
+                  children={ processAdmin('resources', resources) }
+                  { ...adminProps } />
   },
 
   // Process Auth
@@ -57,7 +93,7 @@ const admin = {
   "data": apiUrl => dataProvider(apiUrl),
 
   // Process Login Page
-  "login": checkParams((params, res) => (props) => <ra.Login {...props}  />),
+  "login": checkParams((params, res) => (props) => <Login {...props}  />),
 
   // Process Resources
   "resources": resources => resources.map(res => processAdmin('resource', res, res.name)),
@@ -66,7 +102,7 @@ const admin = {
   "resource": checkParams((props, res) => {
     let {name, list, create, edit, show, icon, ...resProps } = props;
 
-    return <ra.Resource key={ name } name={ name } icon={ icons[icon] }
+    return <Resource key={ name } name={ name } icon={ icons[icon] }
                         create={ processAdmin('create', create, res) }
                         edit={ processAdmin('edit', edit, res) }
                         list={ processAdmin('list', list, res) }
@@ -79,16 +115,16 @@ const admin = {
     let {children, filters, edit, pagination, show, ...listProps } = props;
 
     children = processAdmin('list-fields', children, res);
-    if (edit) children.push(<ra.EditButton key="edit-button" />);
+    if (edit) children.push(<EditButton key="edit-button" />);
 
     return (props) => {
-      let Filters = (props) => <ra.Filter { ...props } children={ processAdmin('list-filters', filters, res) } />
+      let Filters = (props) => <Filter { ...props } children={ processAdmin('list-filters', filters, res) } />
 
       props = { ...props, ...listProps };
       return (
-        <ra.List filters={ <Filters /> } pagination={ pagination || defaultPagination } { ...props }>
-          <ra.Datagrid rowClick={ show && "show" } children={ children } />
-        </ra.List>
+        <List filters={ <Filters /> } pagination={ pagination || defaultPagination } { ...props }>
+          <Datagrid rowClick={ show && "show" } children={ children } />
+        </List>
       )
     };
 
@@ -100,27 +136,27 @@ const admin = {
 
   // Process show view
   "show": checkParams((fields, res) => (props) =>
-      <ra.Show {...props}>
-        <ra.SimpleShowLayout children={ processAdmin('show-fields', fields, res) } />
-      </ra.Show>
+      <Show {...props}>
+        <SimpleShowLayout children={ processAdmin('show-fields', fields, res) } />
+      </Show>
   ),
 
   "show-fields": checkParams((fields, res) => initItems(fields)),
 
   // Process create view
   "create": checkParams((inputs, res) => (props) =>
-    <ra.Create {...props}>
-      <ra.SimpleForm children={ processAdmin('create-inputs', inputs, res) } />
-    </ra.Create>
+    <Create {...props}>
+      <SimpleForm children={ processAdmin('create-inputs', inputs, res) } />
+    </Create>
   ),
 
   "create-inputs": checkParams((inputs, res) => initItems(inputs)),
 
   // Process edit view
   "edit": checkParams((inputs, res) => (props) =>
-    <ra.Edit { ...props }>
-      <ra.SimpleForm children={ processAdmin('edit-inputs', inputs, res) } />
-    </ra.Edit>
+    <Edit { ...props }>
+      <SimpleForm children={ processAdmin('edit-inputs', inputs, res) } />
+    </Edit>
   ),
 
   "edit-inputs": checkParams((inputs, res) => initItems(inputs)),
