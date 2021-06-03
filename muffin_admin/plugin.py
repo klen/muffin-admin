@@ -37,6 +37,9 @@ class Plugin(BasePlugin):
 
         'auth_storage': 'localstorage',  # localstorage|cookies
         'auth_storage_name': 'muffin_admin_auth',
+        'app_bar_links': [
+            {'url': '/', 'icon': 'Home', 'title': 'Home'},
+        ]
     }
 
     def __init__(self, *args, **kwargs):
@@ -137,6 +140,7 @@ class Plugin(BasePlugin):
         return {
             "apiUrl": f"{self.cfg.prefix}/api",
             "auth": self.auth,
+            "appBarLinks": self.cfg.app_bar_links,
             "adminProps": {
                 "title": self.cfg.title,
                 "disableTelemetry": True,
