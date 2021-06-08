@@ -5,6 +5,7 @@ from inspect import isclass
 from pathlib import Path
 
 from asgi_tools._compat import json_dumps
+from asgi_tools.utils import to_awaitable
 from muffin import Application, ResponseFile, ResponseRedirect, ResponseError, Request
 from muffin.plugins import BasePlugin
 from muffin_rest.api import API, AUTH
@@ -41,8 +42,6 @@ class Plugin(BasePlugin):
         'app_bar_links': [
             {'url': '/', 'icon': 'Home', 'title': 'Home'},
         ],
-
-        'dashboard': None,
     }
 
     def __init__(self, *args, **kwargs):
@@ -50,6 +49,7 @@ class Plugin(BasePlugin):
         self.auth: t.Dict = {}
         self.handlers: t.List = []
         self.__login__ = self.__ident__ = page404
+        self.__dashboard__ = None
         super(Plugin, self).__init__(*args, **kwargs)
 
     def setup(self, app: Application, **options):
@@ -64,6 +64,8 @@ class Plugin(BasePlugin):
 
         custom_js = self.cfg.custom_js_url
         custom_css = self.cfg.custom_css_url
+        title = self.cfg.title
+        prefix = self.cfg.prefix
 
         @app.route(self.cfg.prefix)
         async def render_admin(request):
@@ -74,8 +76,13 @@ class Plugin(BasePlugin):
                     if self.cfg.login_url:
                         return ResponseRedirect(self.cfg.login_url)
 
+            data = self.to_ra()
+
+            if self.__dashboard__:
+                data['dashboard'] = await self.__dashboard__(request)
+
             return TEMPLATE.format(
-                admin=self, title=self.app.cfg.name.title(),
+                prefix=prefix, title=title, ra_data=json_dumps(data).decode('utf-8'),
                 custom_js=f"<script src={custom_js} />" if custom_js else '',
                 custom_css=f"<link rel='stylesheet' href={custom_css} />" if custom_css else '',
             )
@@ -123,7 +130,12 @@ class Plugin(BasePlugin):
     def login(self, fn: AUTH) -> AUTH:
         """Register a function to login current user."""
         self.auth['authorizeURL'] = f"{self.cfg.prefix}/login"
-        self.__login__ = fn
+        self.__login__ = to_awaitable(fn)
+        return fn
+
+    def dashboard(self, fn: AUTH) -> AUTH:
+        """Register a function to render dashboard."""
+        self.__dashboard__ = to_awaitable(fn)
         return fn
 
     def get_identity(self, fn: AUTH) -> AUTH:
@@ -132,16 +144,11 @@ class Plugin(BasePlugin):
         User data: {id, fullName, avatar}
         """
         self.auth['identityURL'] = f"{ self.cfg.prefix }/ident"
-        self.__ident__ = fn
+        self.__ident__ = to_awaitable(fn)
         return fn
 
     # Serialize to react-admin
     # -------------------------
-
-    @property
-    def json(self) -> str:
-        """Jsonify the plugin."""
-        return json_dumps(self.to_ra()).decode('utf-8')
 
     def to_ra(self) -> t.Dict:
         """Prepare params for react-admin."""
@@ -152,7 +159,6 @@ class Plugin(BasePlugin):
                 "title": self.cfg.title,
                 "disableTelemetry": True,
             },
-            "dashboard": self.cfg.dashboard,
             "appBarLinks": self.cfg.app_bar_links,
             "resources": [res.to_ra() for res in self.handlers],
         }
