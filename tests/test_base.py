@@ -1,5 +1,4 @@
 import marshmallow as ma
-import json
 
 
 async def test_plugin(app):
@@ -8,9 +7,9 @@ async def test_plugin(app):
     assert app
 
     admin = muffin_admin.Plugin(app)
-    assert admin.json
+    assert admin
 
-    data = json.loads(admin.json)
+    data = admin.to_ra()
     assert data['apiUrl']
     assert data['auth'] == {
         'storage': 'localstorage',
@@ -186,3 +185,24 @@ def test_custom_fields_inputs(app):
         ('TextInput', {'source': 'name'}),
         ('BooleanInput', {'source': 'active'})
     ]
+
+
+async def test_dashboard(app, client):
+    import muffin_admin
+
+    admin = muffin_admin.Plugin(app)
+
+    @admin.dashboard
+    async def dashboard(request):
+        """Render admin dashboard cards."""
+        return [
+            {'name': 'application config', 'value': {k: str(v) for k, v in app.cfg}},
+            {'name': 'request headers', 'value': dict(request.headers)},
+        ]
+
+    res = await client.get('/admin')
+    assert res.status_code == 200
+    text = await res.text()
+    assert "dashboard" in text
+    assert "application config" in text
+    assert "request headers" in text

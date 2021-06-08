@@ -6,19 +6,19 @@ from . import app
 from .database import User, Message, db
 
 
-admin = Plugin(app, custom_css_url='/admin.css', dashboard=[
-    [
-        {
-            'title': 'App config (Table view)',
-            'value': [(k, str(v)) for k, v in app.cfg],
-        },
-        {
-            'title': 'Some config (JSON view)',
-            'value': {'test': 42},
-        },
+admin = Plugin(app, custom_css_url='/admin.css')
 
+
+@admin.dashboard
+async def dashboard(request):
+    """Render dashboard cards."""
+    return [
+        [
+            {'title': 'App config (Table view)', 'value': [(k, str(v)) for k, v in app.cfg]},
+            {'title': 'Request headers (JSON view)', 'value': {
+                k: v for k, v in request.headers.items() if k != 'cookie'}},
+        ]
     ]
-])
 
 
 # Setup authorization
