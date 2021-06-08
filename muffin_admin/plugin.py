@@ -5,7 +5,7 @@ from inspect import isclass
 from pathlib import Path
 
 from asgi_tools._compat import json_dumps
-from muffin import Application, ResponseFile, ResponseError, Request
+from muffin import Application, ResponseFile, ResponseRedirect, ResponseError, Request
 from muffin.plugins import BasePlugin
 from muffin_rest.api import API, AUTH
 
@@ -33,13 +33,16 @@ class Plugin(BasePlugin):
         'custom_js_url': '',
         'custom_css_url': '',
 
+        'login_url': None,
         'logout_url': None,
 
         'auth_storage': 'localstorage',  # localstorage|cookies
         'auth_storage_name': 'muffin_admin_auth',
         'app_bar_links': [
             {'url': '/', 'icon': 'Home', 'title': 'Home'},
-        ]
+        ],
+
+        'dashboard': None,
     }
 
     def __init__(self, *args, **kwargs):
@@ -56,6 +59,7 @@ class Plugin(BasePlugin):
 
         self.auth['storage'] = self.cfg.auth_storage
         self.auth['storage_name'] = self.cfg.auth_storage_name
+        self.auth['loginURL'] = self.cfg.login_url
         self.auth['logoutURL'] = self.cfg.logout_url
 
         custom_js = self.cfg.custom_js_url
@@ -63,8 +67,12 @@ class Plugin(BasePlugin):
 
         @app.route(self.cfg.prefix)
         async def render_admin(request):
+            """Render admin page."""
             if self.api.authorize:
-                await self.api.authorize(request)
+                auth = await self.api.authorize(request)
+                if not auth:
+                    if self.cfg.login_url:
+                        return ResponseRedirect(self.cfg.login_url)
 
             return TEMPLATE.format(
                 admin=self, title=self.app.cfg.name.title(),
@@ -140,10 +148,11 @@ class Plugin(BasePlugin):
         return {
             "apiUrl": f"{self.cfg.prefix}/api",
             "auth": self.auth,
-            "appBarLinks": self.cfg.app_bar_links,
             "adminProps": {
                 "title": self.cfg.title,
                 "disableTelemetry": True,
             },
+            "dashboard": self.cfg.dashboard,
+            "appBarLinks": self.cfg.app_bar_links,
             "resources": [res.to_ra() for res in self.handlers],
         }

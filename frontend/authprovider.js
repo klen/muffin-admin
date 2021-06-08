@@ -19,45 +19,49 @@ export default (props) => {
   // Initialize request headers
   authorize(storage_name, authorize(storage_name));
 
+  let getIdentity = async () => {
+      if (identityURL) {
+        let {json} = await makeRequest(identityURL);
+        return json;
+      }
+  }
+
   if (required) return {
 
-      checkAuth: (data) => {
+      getIdentity,
+
+      checkAuth: async (data) => {
         const auth = authorize(storage_name);
-        return auth ? Promise.resolve(auth) : Promise.reject();
+        if (!auth) throw {redirectTo: logoutURL, message: 'Authorization required'}
+
+        if (!identityURL) return auth;
+
+        let user = await getIdentity();
+        if (!user)  throw {redirectTo: logoutURL, message: 'Authorization required'};
+
+        return user;
       },
 
-      checkError: (error) => {
+      checkError: async (error) => {
         const {message, status, body} = error;
 
         if (status == 401 || status == 403) {
           authorize(storage_name, '');
-          return Promise.reject();
+          throw {redirectTo: logoutURL, message: 'Invalid authorization'};
         }
 
-        return Promise.resolve();
       },
 
-      getIdentity: async () => {
-        let user = {};
-        if (identityURL) {
-          const {json} = await makeRequest(identityURL);
-          user = json;
-        }
-        return user;
-      },
+      login: async (data) => {
+        if (!authorizeURL) throw {message: 'Authorization is not supported'}
 
-      login: (data) => {
-        if (!authorizeURL) return Promise.reject();
-        return makeRequest(authorizeURL, {data, method: 'POST'}).then(response => {
-          const token = response.json;
-          authorize(storage_name, token);
-          return token;
-        })
+        let {json} = await makeRequest(authorizeURL, {data, method: 'POST'})
+        authorize(storage_name, json);
       },
 
       logout: async () => {
         authorize(storage_name, '');
-        if (logoutURL) globalThis.location = logoutURL;
+        return logoutURL;
       },
 
       getPermissions: (data) => {

@@ -16,6 +16,7 @@ async def test_plugin(app):
         'storage': 'localstorage',
         'storage_name': 'muffin_admin_auth',
         'logoutURL': None,
+        'loginURL': None,
     }
 
 
@@ -74,7 +75,7 @@ def test_endpoint(app):
     assert ra['name'] == 'base'
     assert ra['label'] == 'base'
     assert ra['icon'] == ''
-    assert ra['delete'] == True
+    assert ra['delete'] is True
     assert ra['create'] == [
         ('TextInput', {'source': 'id'}),
         ('TextInput', {'source': 'name'}),
@@ -139,6 +140,7 @@ async def test_auth(app, client):
     assert auth == {
         'authorizeURL': '/admin/login',
         'identityURL': '/admin/ident',
+        'loginURL': None,
         'logoutURL': None,
         'required': True,
         'storage': 'localstorage',
