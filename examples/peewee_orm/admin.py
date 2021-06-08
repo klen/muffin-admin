@@ -8,30 +8,42 @@ from . import app
 from .database import User, Message
 
 
-admin = Plugin(app, custom_css_url='/admin.css')
+admin = Plugin(app, custom_css_url='/admin.css', dashboard=[
+    [
+        {
+            'title': 'App config (Table view)',
+            'value': [(k, str(v)) for k, v in app.cfg],
+        },
+        {
+            'title': 'Some config (JSON view)',
+            'value': {'test': 42},
+        },
+
+    ]
+])
 
 
 # Setup authorization
 # -------------------
 
 @admin.check_auth
-async def auth(request):
-    """Fake authorization method. Just checks for an auth token exists in request."""
-    return request.headers.get('authorization')
+async def auth(request, redirect=True):
+    """Fake authorization method. Do not use in production."""
+    pk = request.headers.get('authorization')
+    return User.select().where(User.id == pk).first()
 
 
 @admin.get_identity
 async def ident(request):
     """Get current user information."""
-    pk = request.headers.get('authorization')
-    user = User.select().where(User.id == pk).first()
+    user = await auth(request, redirect=False)
     if user:
         return {"id": user.id, "fullName": user.email}
 
 
 @admin.login
 async def login(request):
-    """Login a user."""
+    """Login an user."""
     data = await request.data()
     user = User.select().where(
         User.email == data['username'], User.password == data['password']).first()
@@ -64,18 +76,11 @@ class UserResource(PWAdminHandler):
             )
         }
 
-        columns = 'id', 'picture', 'email', 'name', 'is_active', 'role'
         icon = 'People'
-
-    @classmethod
-    def to_ra_field(cls, field, name):
-        """Format columns."""
-        # Customize picture column
-        if name == 'picture':
-            return 'ImageField', {
-                'source': name, 'title': name, 'sortable': False, 'className': 'user-picture'}
-
-        return super().to_ra_field(field, name)
+        columns = 'id', 'picture', 'email', 'name', 'is_active', 'role'
+        ra_fields = {'picture': (
+            'ImageField', {'title': 'picture', 'sortable': False, 'className': 'user-picture'}
+        )}
 
 
 @admin.route

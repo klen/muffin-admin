@@ -6,7 +6,19 @@ from . import app
 from .database import User, Message, db
 
 
-admin = Plugin(app, custom_css_url='/admin.css')
+admin = Plugin(app, custom_css_url='/admin.css', dashboard=[
+    [
+        {
+            'title': 'App config (Table view)',
+            'value': [(k, str(v)) for k, v in app.cfg],
+        },
+        {
+            'title': 'Some config (JSON view)',
+            'value': {'test': 42},
+        },
+
+    ]
+])
 
 
 # Setup authorization
@@ -14,7 +26,7 @@ admin = Plugin(app, custom_css_url='/admin.css')
 
 @admin.check_auth
 async def auth(request):
-    """Fake authorization method. Just checks for an auth token exists in request."""
+    """Fake authorization method. Do not use in production."""
     pk = request.headers.get('authorization')
     qs = User.select().where(User.columns.id == pk)
     user = await db.fetch_one(qs)
@@ -31,7 +43,7 @@ async def ident(request):
 
 @admin.login
 async def login(request):
-    """Login a user."""
+    """Login an user."""
     data = await request.data()
     qs = User.select().where(
         (User.columns.email == data['username']) &
@@ -68,15 +80,11 @@ class UserResource(SAAdminHandler):
             )
         }
 
-        columns = 'id', 'picture', 'email', 'name', 'is_active', 'role'
         icon = 'People'
-
-    @classmethod
-    def to_ra_field(cls, field, name):
-        if name == 'picture':
-            return 'ImageField', {'source': name, 'title': name, 'sortable': False}
-
-        return super().to_ra_field(field, name)
+        columns = 'id', 'picture', 'email', 'name', 'is_active', 'role'
+        ra_fields = {'picture': (
+            'ImageField', {'title': 'picture', 'sortable': False, 'className': 'user-picture'}
+        )}
 
 
 @admin.route
