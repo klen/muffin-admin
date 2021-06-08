@@ -7,6 +7,7 @@ from muffin_rest.sqlalchemy import SARESTOptions, SARESTHandler, SAFilter, Filte
 from sqlalchemy import Enum, Text, JSON
 
 from ..handler import AdminHandler, AdminOptions
+from ..typing import RA_INFO
 
 
 class SAAdminOptions(AdminOptions, SARESTOptions):
@@ -42,34 +43,29 @@ class SAAdminHandler(AdminHandler, SARESTHandler):
         abc = True
 
     @classmethod
-    def to_ra_input(cls, field: ma.fields.Field, name: str) -> t.Optional[t.Tuple[str, t.Dict]]:
+    def to_ra_input(cls, field: ma.fields.Field, source: str) -> RA_INFO:
         """Setup RA inputs."""
-        info = super(SAAdminHandler, cls).to_ra_input(field, name)
-        if info:
-            column = getattr(cls.meta.table.c, field.attribute or name, None)
-            if column is not None:
-                rtype, props = info
-                if isinstance(column.type, Enum):
-                    return 'SelectInput', dict(props, choices=[
-                        {"id": c.value, "name": c.name} for c in column.type.enum_class
-                    ])
+        column = getattr(cls.meta.table.c, field.attribute or source, None)
+        ra_type, props = super(SAAdminHandler, cls).to_ra_input(field, source)
+        if column is not None:
+            if isinstance(column.type, Enum):
+                return 'SelectInput', dict(props, choices=[
+                    {"id": c.value, "name": c.name} for c in column.type.enum_class
+                ])
 
-                elif isinstance(column.type, Text):
-                    props['multiline'] = True
+            if isinstance(column.type, Text):
+                return 'TextInput', dict(props, multiline=True)
 
-                elif isinstance(column.type, JSON):
-                    return 'JsonInput', props
+            if isinstance(column.type, JSON):
+                return 'JsonInput', props
 
-        return info
+        return ra_type, props
 
     @classmethod
-    def to_ra_field(cls, field: ma.fields.Field, name: str) -> t.Optional[t.Tuple[str, t.Dict]]:
+    def to_ra_field(cls, field: ma.fields.Field, source: str) -> RA_INFO:
         """Setup RA fields."""
-        info = super(SAAdminHandler, cls).to_ra_field(field, name)
-        if info:
-            column = getattr(cls.meta.table.c, field.attribute or name, None)
-            if column is not None:
-                if isinstance(column.type, JSON):
-                    return 'JsonField', info[1]
+        column = getattr(cls.meta.table.c, field.attribute or source, None)
+        if column is not None and isinstance(column.type, JSON):
+            return 'JsonField', {}
 
-        return info
+        return super(SAAdminHandler, cls).to_ra_field(field, source)
