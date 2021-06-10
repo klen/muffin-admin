@@ -78,9 +78,11 @@ class UserResource(PWAdminHandler):
 
         icon = 'People'
         columns = 'id', 'picture', 'email', 'name', 'is_active', 'role'
-        ra_fields = {'picture': (
-            'ImageField', {'title': 'picture', 'sortable': False, 'className': 'user-picture'}
-        )}
+        ra_fields = {
+            'picture': ('AvatarField', {
+                'alt': 'picture', 'nameProp': 'name', 'sortable': False
+            })
+        }
 
 
 @admin.route
