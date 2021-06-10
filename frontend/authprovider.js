@@ -32,12 +32,12 @@ export default (props) => {
 
       checkAuth: async (data) => {
         const auth = authorize(storage_name);
-        if (!auth) throw {redirectTo: logoutURL, message: 'Authorization required'}
+        if (!auth) throw {message: 'Authorization required'}
 
         if (!identityURL) return auth;
 
         let user = await getIdentity();
-        if (!user)  throw {redirectTo: logoutURL, message: 'Authorization required'};
+        if (!user)  throw {message: 'Authorization required'};
 
         return user;
       },
@@ -47,7 +47,7 @@ export default (props) => {
 
         if (status == 401 || status == 403) {
           authorize(storage_name, '');
-          throw {redirectTo: logoutURL, message: 'Invalid authorization'};
+          throw {message: 'Invalid authorization'};
         }
 
       },
@@ -61,7 +61,7 @@ export default (props) => {
 
       logout: async () => {
         authorize(storage_name, '');
-        return logoutURL;
+        if (logoutURL) window.location = logoutURL;
       },
 
       getPermissions: (data) => {
