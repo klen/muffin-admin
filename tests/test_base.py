@@ -231,9 +231,9 @@ async def test_dashboard(app, client):
             {'name': 'request headers', 'value': dict(request.headers)},
         ]
 
-    res = await client.get('/admin')
+    res = await client.get('/admin/ra.json')
     assert res.status_code == 200
-    text = await res.text()
-    assert "dashboard" in text
-    assert "application config" in text
-    assert "request headers" in text
+    data = await res.json()
+    assert data['dashboard']
+    assert data['dashboard'][0]['name'] == 'application config'
+    assert data['dashboard'][1]['name'] == 'request headers'
