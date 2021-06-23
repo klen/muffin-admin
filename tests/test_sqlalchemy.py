@@ -109,7 +109,7 @@ def test_admin_schemas(app):
     assert ra['name'] == 'user'
     assert ra['label'] == 'user'
     assert ra['icon'] == ''
-    assert ra['delete'] == True
+    assert ra['delete'] is True
     assert ra['create'] == [
         ('NumberInput', {'source': 'id'}),
         ('TextInput', {'required': True, 'source': 'name'}),
@@ -121,18 +121,24 @@ def test_admin_schemas(app):
         ('JsonInput', {'source': 'meta'}),
         ('NumberInput', {'required': True, 'source': 'role_id'})
     ]
-    assert ra['edit'] == [
-        ('NumberInput', {'source': 'id'}),
-        ('TextInput', {'required': True, 'source': 'name'}),
-        ('TextInput', {'source': 'password'}),
-        ('BooleanInput', {'source': 'is_active'}),
-        ('SelectInput',
-         {'choices': [{'id': 1, 'name': 'new'}, {'id': 2, 'name': 'old'}],
-          'source': 'status'}),
-        ('JsonInput', {'source': 'meta'}),
-        ('NumberInput', {'required': True, 'source': 'role_id'})
-    ]
-    assert ra['show'] == [
+    assert ra['edit'] == {
+        'actions': [],
+        'inputs': [
+            ('NumberInput', {'source': 'id'}),
+            ('TextInput', {'required': True, 'source': 'name'}),
+            ('TextInput', {'source': 'password'}),
+            ('BooleanInput', {'source': 'is_active'}),
+            ('SelectInput', {
+                'choices': [{'id': 1, 'name': 'new'}, {'id': 2, 'name': 'old'}],
+                'source': 'status'
+            }),
+            ('JsonInput', {'source': 'meta'}),
+            ('NumberInput', {'required': True, 'source': 'role_id'})
+        ]
+    }
+    assert ra['show'] == {
+        'actions': [],
+        'fields': [
             ('NumberField', {'source': 'id'}),
             ('TextField', {'source': 'name'}),
             ('BooleanField', {'source': 'is_active'}),
@@ -140,8 +146,10 @@ def test_admin_schemas(app):
             ('BooleanField', {'source': 'is_super'}),
             ('JsonField', {'source': 'meta'}),
             ('NumberField', {'source': 'role_id'})
-    ]
+        ]
+    }
     assert ra['list'] == {
+        'actions': [],
         'perPage': 20, 'show': True, 'edit': True,
         'children': [
             ('NumberField', {'source': 'id', 'sortable': True}),
@@ -160,7 +168,10 @@ def test_admin_schemas(app):
     }
 
     MessageResource = admin.handlers[2]
-    assert MessageResource.to_ra()['edit'] == [
-        ('TextInput', {'source': 'body', 'required': True, 'multiline': True}),
-        ('NumberInput', {'source': 'user_id', 'required': True})
-    ]
+    assert MessageResource.to_ra()['edit'] == {
+        'actions': [],
+        'inputs': [
+            ('TextInput', {'source': 'body', 'required': True, 'multiline': True}),
+            ('NumberInput', {'source': 'user_id', 'required': True})
+        ]
+    }

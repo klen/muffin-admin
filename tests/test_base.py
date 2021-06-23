@@ -80,17 +80,25 @@ def test_endpoint(app):
         ('TextInput', {'source': 'name'}),
         ('BooleanInput', {'source': 'active'})
     ]
-    assert ra['edit'] == [
-        ('TextInput', {'source': 'id'}),
-        ('TextInput', {'source': 'name'}),
-        ('BooleanInput', {'source': 'active'})
-    ]
-    assert ra['show'] == [
+    assert ra['edit'] == {
+        'actions': [],
+        'inputs': [
+            ('TextInput', {'source': 'id'}),
+            ('TextInput', {'source': 'name'}),
+            ('BooleanInput', {'source': 'active'})
+        ]
+    }
+    assert ra['show'] == {
+        'actions': [],
+        'fields': [
             ('TextField', {'source': 'id'}),
             ('TextField', {'source': 'name'}),
             ('BooleanField', {'source': 'active'})
-    ]
+        ]
+
+    }
     assert ra['list'] == {
+        'actions': [],
         'children': [
             ('TextField', {'source': 'id', 'sortable': True}),
             ('BooleanField', {'source': 'active', 'sortable': False}),
@@ -99,6 +107,29 @@ def test_endpoint(app):
         'filters': [('TextInput', {'source': 'id'}), ('TextInput', {'source': 'name'})],
         'perPage': 20, 'show': True, 'edit': True,
     }
+
+
+async def test_endpoint_action(app):
+    from muffin_admin import AdminHandler, Plugin
+
+    admin = Plugin(app)
+    assert admin
+
+    @admin.route
+    class Handler(AdminHandler):
+
+        class Meta:
+
+            filters = 'id', 'name'
+            sorting = 'id', 'name'
+
+        @AdminHandler.action('/base')
+        async def base_action(self, request, response=None):
+            pass
+
+    ra = Handler.to_ra()
+    assert ra['list']['actions'] == [
+        {'view': 'list', 'icon': None, 'action': '/base', 'title': None, 'label': 'base_action'}]
 
 
 async def test_auth(app, client):

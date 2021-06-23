@@ -106,32 +106,39 @@ def test_admin(app):
         ('JsonInput', {'source': 'meta'}),
         ('TextInput', {'source': 'role'}),
     ]
-    assert ra['edit'] == [
-        ('TextInput', {'required': True, 'source': 'name'}),
-        ('TextInput', {'required': True, 'source': 'password'}),
-        ('BooleanInput', {'initialValue': True, 'source': 'is_active'}),
-        ('SelectInput', {
-            'choices': [{'id': 1, 'name': 'new'}, {'id': 2, 'name': 'old'}],
-            'initialValue': 1,
-            'source': 'status'}),
-        ('JsonInput', {'source': 'meta'}),
-        ('TextInput', {'source': 'role'}),
-    ]
-    assert ra['show'] == [
-        ('TextField', {'source': 'id'}),
-        ('TextField', {'source': 'name'}),
-        ('BooleanField', {'source': 'is_active'}),
-        ('NumberField', {'source': 'status'}),
-        ('JsonField', {'source': 'meta'}),
-        ('BooleanField', {'source': 'is_super'}),
-        ('ReferenceField', {
-            'link': 'show',
-            'source': 'role',
-            'reference': 'role',
-            'children': [('TextField', {'source': 'name'})]
-        }),
-    ]
+    assert ra['edit'] == {
+        'actions': [],
+        'inputs': [
+            ('TextInput', {'required': True, 'source': 'name'}),
+            ('TextInput', {'required': True, 'source': 'password'}),
+            ('BooleanInput', {'initialValue': True, 'source': 'is_active'}),
+            ('SelectInput', {
+                'choices': [{'id': 1, 'name': 'new'}, {'id': 2, 'name': 'old'}],
+                'initialValue': 1,
+                'source': 'status'}),
+            ('JsonInput', {'source': 'meta'}),
+            ('TextInput', {'source': 'role'}),
+        ]
+    }
+    assert ra['show'] == {
+        'actions': [],
+        'fields': [
+            ('TextField', {'source': 'id'}),
+            ('TextField', {'source': 'name'}),
+            ('BooleanField', {'source': 'is_active'}),
+            ('NumberField', {'source': 'status'}),
+            ('JsonField', {'source': 'meta'}),
+            ('BooleanField', {'source': 'is_super'}),
+            ('ReferenceField', {
+                'link': 'show',
+                'source': 'role',
+                'reference': 'role',
+                'children': [('TextField', {'source': 'name'})]
+            }),
+        ]
+    }
     assert ra['list'] == {
+        'actions': [],
         'children': [
             ('TextField', {'source': 'id', 'sortable': True}),
             ('TextField', {'source': 'name', 'sortable': True}),
@@ -158,7 +165,10 @@ def test_admin(app):
     }
 
     MessageResource = admin.handlers[2]
-    assert MessageResource.to_ra()['edit'] == [
-        ('TextInput', {'source': 'body', 'required': True, 'multiline': True}),
-        ('TextInput', {'source': 'user', 'required': True})
-    ]
+    assert MessageResource.to_ra()['edit'] == {
+        'actions': [],
+        'inputs': [
+            ('TextInput', {'source': 'body', 'required': True, 'multiline': True}),
+            ('TextInput', {'source': 'user', 'required': True})
+        ]
+    }
