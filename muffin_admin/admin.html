@@ -28,7 +28,9 @@
     {custom_js}
 
     <!-- Initialize the admin -->
-    <script> initAdmin({ra_data}); </script>
+    <script>
+        fetch('{prefix}/ra.json').then(response => response.json()).then(data => initAdmin(data));
+    </script>
   </body>
 </html>
 
