@@ -2,6 +2,7 @@
 
 import marshmallow as ma
 from muffin import ResponseJSON
+from muffin_rest import APIError
 from muffin_admin import Plugin, PWAdminHandler, PWFilter
 
 from . import app
@@ -84,6 +85,21 @@ class UserResource(PWAdminHandler):
             })
         }
 
+    @PWAdminHandler.action('/user/error', label='Broken Action', icon='Error')
+    async def just_raise_an_error(self, request, resource=None):
+        """Just show an error."""
+        raise APIError.BAD_REQUEST(message='The action is broken')
+
+    @PWAdminHandler.action('/user/disable', label='Disable Users', icon='Clear')
+    async def disable_users(self, request, resource=None):
+        """Mark selected users as inactive."""
+        import asyncio
+
+        ids = request.query.getall('ids')
+        User.update(is_active=False).where(User.id << ids).execute()
+        await asyncio.sleep(1)
+        return {'status': True, 'ids': ids, 'message': 'Users is disabled'}
+
 
 @admin.route
 class MessageResource(PWAdminHandler):
@@ -99,3 +115,13 @@ class MessageResource(PWAdminHandler):
 
         icon = 'Message'
         references = {'user': 'user.email'}
+
+    @PWAdminHandler.action('/message/{id}/publish', label='Publish', icon='Publish', view='show')
+    async def publish_message(self, request, resource=None):
+        if resource is None:
+            raise APIError.NOT_FOUND()
+
+        resource.status = 'published'
+        resource.save()
+
+        return {'status': True, 'message': 'Message is published'}

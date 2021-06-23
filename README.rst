@@ -153,6 +153,27 @@ Implement a login handler for standart react-admin auth page:
 
 For futher reference check `https://github.com/klen/muffin-admin/tree/develop/examples <examples>` in the repository.
 
+Custom Actions
+---------------
+
+.. code-block:: python
+
+   from muffin_admin import PWAdminHandler
+
+    @admin.route
+    class UserResource(PWAdminHandler):
+
+        # ...
+
+        @PWAdminHandler.action('users/disable', view='list')
+        async def disable_users(self, request, resource=None):
+            # ...
+
+        @PWAdminHandler.action('users/{id}/admin', view='show')
+        async def mark_admin(self, request, resource=None):
+            # ...
+
+
 Configuration options
 ----------------------
 

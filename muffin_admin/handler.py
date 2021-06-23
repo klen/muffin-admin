@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import typing as t
+import inspect
 
 import marshmallow as ma
 from muffin_rest.handler import RESTBase, RESTOptions
@@ -28,6 +29,7 @@ class AdminOptions(RESTOptions):
     references: t.Dict[str, str] = {}
     ra_fields: t.Dict[str, RA_INFO] = {}
     ra_inputs: t.Dict[str, RA_INFO] = {}
+    actions: t.Sequence = ()
 
     def setup(self, cls: AdminHandler):
         """Check and build required options."""
@@ -35,6 +37,11 @@ class AdminOptions(RESTOptions):
             raise ValueError("`AdminHandler.Meta.limit` can't be nullable.")
 
         super(AdminOptions, self).setup(cls)
+
+        self.actions = [
+            method.__action__
+            for _, method in inspect.getmembers(cls, lambda m: hasattr(m, '__action__'))
+        ]
 
         if not self.label:
             self.label = self.name
@@ -66,6 +73,23 @@ class AdminHandler(RESTBase):
         abc: bool = True
 
     @classmethod
+    def action(
+            cls, path: str, *, icon: str = None, label: str = None, view: str = 'list', **params):
+        """Decorate any function as an action."""
+        def decorator(method):
+            method.__route__ = (path,), params
+            method.__action__ = {
+                'view': view,
+                'icon': icon,
+                'action': path,
+                'title': method.__doc__,
+                'label': label or method.__name__,
+            }
+            return method
+
+        return decorator
+
+    @classmethod
     def to_ra(cls) -> t.Dict[str, t.Any]:
         """Get JSON params for react-admin."""
         Schema = cls.meta.Schema
@@ -93,6 +117,7 @@ class AdminHandler(RESTBase):
         fields_hash = {props['source']: (
             ra_type, dict(props, sortable=props['source'] in cls.meta.sorting))
             for (ra_type, props) in fields}
+
         return {
             "name": cls.meta.name,
             "label": cls.meta.label,
@@ -101,6 +126,7 @@ class AdminHandler(RESTBase):
                 "perPage": cls.meta.limit,
                 "edit": bool(cls.meta.edit),
                 "show": bool(cls.meta.show),
+                "actions": [action for action in cls.meta.actions if action['view'] == 'list'],
                 "children": [
                     fields_hash[name] for name in cls.meta.columns if name in fields_hash],
                 "filters": [
@@ -110,9 +136,15 @@ class AdminHandler(RESTBase):
                     ]
                 ],
             },
-            "show": cls.meta.show and fields,
+            "show": {
+                "actions": [action for action in cls.meta.actions if action['view'] == 'show'],
+                "fields": fields,
+            },
+            "edit": {
+                "actions": [action for action in cls.meta.actions if action['view'] == 'edit'],
+                "inputs": inputs,
+            },
             "create": cls.meta.create and inputs,
-            "edit": cls.meta.edit and inputs,
             "delete": cls.meta.delete,
         }
 
