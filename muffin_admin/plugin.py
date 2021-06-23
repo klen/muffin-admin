@@ -4,7 +4,6 @@ import typing as t
 from inspect import isclass
 from pathlib import Path
 
-from asgi_tools._compat import json_dumps
 from asgi_tools.utils import to_awaitable
 from muffin import Application, ResponseFile, ResponseRedirect, ResponseError, Request
 from muffin.plugins import BasePlugin
@@ -67,25 +66,39 @@ class Plugin(BasePlugin):
         title = self.cfg.title
         prefix = self.cfg.prefix
 
+        def authorize(view):
+            """Authorization."""
+            async def decorator(request):
+                """Authorize an user."""
+                if self.api.authorize:
+                    auth = await self.api.authorize(request)
+                    if not auth:
+                        if self.cfg.login_url:
+                            return ResponseRedirect(self.cfg.login_url)
+
+                return await view(request)
+
+            return decorator
+
         @app.route(self.cfg.prefix)
+        @authorize
         async def render_admin(request):
             """Render admin page."""
-            if self.api.authorize:
-                auth = await self.api.authorize(request)
-                if not auth:
-                    if self.cfg.login_url:
-                        return ResponseRedirect(self.cfg.login_url)
+            return TEMPLATE.format(
+                prefix=prefix, title=title,
+                custom_js=f"<script src={custom_js} />" if custom_js else '',
+                custom_css=f"<link rel='stylesheet' href={custom_css} />" if custom_css else '',
+            )
 
+        @app.route(f"{self.cfg.prefix}/ra.json")
+        @authorize
+        async def ra(request):
             data = self.to_ra()
 
             if self.__dashboard__:
                 data['dashboard'] = await self.__dashboard__(request)
 
-            return TEMPLATE.format(
-                prefix=prefix, title=title, ra_data=json_dumps(data).decode('utf-8'),
-                custom_js=f"<script src={custom_js} />" if custom_js else '',
-                custom_css=f"<link rel='stylesheet' href={custom_css} />" if custom_css else '',
-            )
+            return data
 
         @app.route(f"{ self.cfg.prefix }/main.js")
         async def render_admin_static(request):
@@ -152,6 +165,8 @@ class Plugin(BasePlugin):
 
     def to_ra(self) -> t.Dict:
         """Prepare params for react-admin."""
+        from . import __version__
+
         return {
             "apiUrl": f"{self.cfg.prefix}/api",
             "auth": self.auth,
@@ -161,4 +176,5 @@ class Plugin(BasePlugin):
             },
             "appBarLinks": self.cfg.app_bar_links,
             "resources": [res.to_ra() for res in self.handlers],
+            "version": __version__,
         }
