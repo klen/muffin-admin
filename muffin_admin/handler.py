@@ -27,9 +27,10 @@ class AdminOptions(RESTOptions):
 
     columns: t.List[str] = []
     references: t.Dict[str, str] = {}
+    actions: t.Sequence = ()
+
     ra_fields: t.Dict[str, RA_INFO] = {}
     ra_inputs: t.Dict[str, RA_INFO] = {}
-    actions: t.Sequence = ()
 
     def setup(self, cls: AdminHandler):
         """Check and build required options."""
