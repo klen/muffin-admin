@@ -25,7 +25,10 @@ VERSION?=minor
 # target: release - Bump version
 release: $(VIRTUAL_ENV)
 	@$(VIRTUAL_ENV)/bin/bump2version $(VERSION)
+	@git checkout develop
+	@git pull
 	@git checkout master
+	@git pull
 	@git merge develop
 	@git checkout develop
 	@git push origin develop master
