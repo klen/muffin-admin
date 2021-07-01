@@ -66,7 +66,7 @@ class UserResource(PWAdminHandler):
 
         model = User
         filters = 'created', 'is_active', 'role', PWFilter('email', operator='$contains')
-        sorting = 'id', 'created', 'email', 'is_active', 'role'
+        sorting = ('id', {'default': 'desc'}), 'created', 'email', 'is_active', 'role'
         schema_meta = {
             'load_only': ('password',),
             'dump_only': ('created',),

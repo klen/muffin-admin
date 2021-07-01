@@ -6,7 +6,8 @@ import typing as t
 import peewee as pw
 import marshmallow as ma
 from muffin_peewee import JSONField
-from muffin_rest.peewee import PWRESTBase, PWRESTOptions, PWFilter, Filter
+from muffin_rest.peewee import PWRESTBase, PWRESTOptions
+from muffin_rest.peewee.filters import PWFilter
 
 from ..handler import AdminHandler, AdminOptions
 from ..typing import RA_INFO
@@ -20,15 +21,20 @@ class PWAdminOptions(AdminOptions, PWRESTOptions):
         """Auto insert filter by id."""
         super(PWAdminOptions, self).setup(cls)
 
-        for f in self.filters:
-            if isinstance(f, Filter):
-                f = f.name
+        for flt in self.filters:
+            name = flt
 
-            if f == 'id':
+            if isinstance(flt, PWFilter):
+                name = flt.name
+
+            elif isinstance(flt, tuple):
+                name = flt[0]
+
+            if name == 'id':
                 break
 
         else:
-            self.filters = [PWFilter('id', pw_field=self.model_pk), *self.filters]
+            self.filters = [PWFilter('id', field=self.model_pk), *self.filters]
 
 
 class PWAdminHandler(AdminHandler, PWRESTBase):

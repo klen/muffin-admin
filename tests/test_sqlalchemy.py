@@ -101,9 +101,6 @@ def test_admin_schemas(app):
     assert UserResource.meta.limit
     assert UserResource.meta.columns
     assert UserResource.meta.sorting
-    assert UserResource.meta.sorting == {
-        'id': True, 'name': True, 'is_super': True,
-        'is_active': True, 'role_id': True, 'status': True, 'meta': True}
 
     ra = UserResource.to_ra()
     assert ra['name'] == 'user'
@@ -151,6 +148,7 @@ def test_admin_schemas(app):
     assert ra['list'] == {
         'actions': [],
         'perPage': 20, 'show': True, 'edit': True,
+        'sort': {'field': 'id', 'order': 'DESC'},
         'children': [
             ('NumberField', {'source': 'id', 'sortable': True}),
             ('TextField', {'source': 'name', 'sortable': True}),

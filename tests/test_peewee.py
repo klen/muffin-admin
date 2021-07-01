@@ -43,7 +43,7 @@ def setup_db(app):
     Message.create_table()
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def setup_admin(app):
     from muffin_admin import Plugin, PWAdminHandler
 
@@ -75,7 +75,7 @@ def setup_admin(app):
             model = Message
 
 
-def test_admin(app):
+def test_admin(app, setup_admin):
     admin = app.plugins['admin']
     assert admin.to_ra()
 
@@ -86,9 +86,6 @@ def test_admin(app):
     assert UserResource.meta.limit
     assert UserResource.meta.columns
     assert UserResource.meta.sorting
-    assert UserResource.meta.sorting == {
-        'id': True, 'name': True, 'is_super': True,
-        'is_active': True, 'role': True, 'status': True, 'meta': True}
 
     ra = UserResource.to_ra()
     assert ra['delete'] is True
@@ -161,6 +158,7 @@ def test_admin(app):
                 'initialValue': 1,
                 'source': 'status'})
         ],
+        'sort': {'field': 'id', 'order': 'DESC'},
         'perPage': 20, 'show': True, 'edit': True,
     }
 

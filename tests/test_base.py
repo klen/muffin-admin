@@ -68,7 +68,9 @@ def test_endpoint(app):
     assert BaseHandler.meta.limit == 20
     assert BaseHandler.meta.label == 'base'
     assert BaseHandler.meta.columns == ('id', 'active', 'name', 'unknown')
-    assert BaseHandler.meta.sorting == {'id': True, 'name': True}
+    assert BaseHandler.meta.sorting
+    assert 'id' in BaseHandler.meta.sorting.mutations
+    assert 'name' in BaseHandler.meta.sorting.mutations
 
     ra = BaseHandler.to_ra()
     assert ra['name'] == 'base'

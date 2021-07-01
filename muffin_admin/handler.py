@@ -57,7 +57,8 @@ class AdminOptions(RESTOptions):
             ]
 
         if not self.sorting and self.columns:
-            self.sorting = {c: True for c in self.columns}
+            self.sorting = [name for name in self.columns]
+            self.sorting[0] = (self.sorting[0], {'default': 'desc'})
 
 
 class AdminHandler(RESTBase):
@@ -119,7 +120,7 @@ class AdminHandler(RESTBase):
             ra_type, dict(props, sortable=props['source'] in cls.meta.sorting))
             for (ra_type, props) in fields}
 
-        return {
+        data = {
             "name": cls.meta.name,
             "label": cls.meta.label,
             "icon": cls.meta.icon,
@@ -131,9 +132,10 @@ class AdminHandler(RESTBase):
                 "children": [
                     fields_hash[name] for name in cls.meta.columns if name in fields_hash],
                 "filters": [
-                    (ra_type, dict(source=f.name, **props))
-                    for f, (ra_type, props) in [
-                        (f, cls.to_ra_input(f.field, f.name)) for f in cls.meta.filters
+                    (ra_type, dict(source=flt.name, **props))
+                    for flt, (ra_type, props) in [
+                        (flt, cls.to_ra_input(flt.schema_field, flt.name))
+                        for flt in cls.meta.filters.mutations.values()
                     ]
                 ],
             },
@@ -148,6 +150,15 @@ class AdminHandler(RESTBase):
             "create": cls.meta.create and inputs,
             "delete": cls.meta.delete,
         }
+
+        default_sort = cls.meta.sorting.default and cls.meta.sorting.default[0]
+        if default_sort:
+            data['list']['sort'] = {
+                'field': default_sort.name,
+                'order': default_sort.meta['default'].upper(),
+            }
+
+        return data
 
     @classmethod
     def to_ra_field(cls, field: ma.fields.Field, source: str) -> RA_INFO:
