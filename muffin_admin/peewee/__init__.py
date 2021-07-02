@@ -51,6 +51,16 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
         abc = True
 
     @classmethod
+    def to_ra_field(cls, field: ma.fields.Field, source: str) -> RA_INFO:
+        """Setup RA fields."""
+        model_field = getattr(cls.meta.model, field.attribute or source, None)
+        if model_field and \
+                (isinstance(model_field, JSONField) or model_field.field_type.lower() == 'json'):
+            return 'JsonField', {}
+
+        return super(PWAdminHandler, cls).to_ra_field(field, source)
+
+    @classmethod
     def to_ra_input(cls, field: ma.fields.Field, source: str) -> RA_INFO:
         """Setup RA inputs."""
         model_field = getattr(cls.meta.model, field.attribute or source, None)
@@ -66,17 +76,17 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
             if isinstance(model_field, JSONField) or model_field.field_type.lower() == 'json':
                 return 'JsonInput', props
 
+            if isinstance(model_field, pw.ForeignKeyField):
+                ref = model_field.rel_model._meta.name
+                if ref in cls.meta.references:
+                    props = dict(
+                        props, reference=ref, allowEmpty=model_field.null,
+                        refProp=cls.meta.references[ref],
+                        refSource=model_field.rel_field.name,
+                    )
+                    return 'FKInput', props
+
         return ra_type, props
-
-    @classmethod
-    def to_ra_field(cls, field: ma.fields.Field, source: str) -> RA_INFO:
-        """Setup RA fields."""
-        model_field = getattr(cls.meta.model, field.attribute or source, None)
-        if model_field and \
-                (isinstance(model_field, JSONField) or model_field.field_type.lower() == 'json'):
-            return 'JsonField', {}
-
-        return super(PWAdminHandler, cls).to_ra_field(field, source)
 
 
 class PWSearchFilter(PWFilter):

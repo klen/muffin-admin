@@ -69,7 +69,7 @@ def setup_admin(app):
                 'load_only': ('password',),
                 'exclude': ('created',),
             }
-            references = {"role": "role.name"}
+            references = {"role": "name"}
             filters = 'status',
 
     @admin.route
@@ -85,6 +85,7 @@ def setup_admin(app):
         class Meta:
             table = Message
             database = db
+            references = {'user': 'email'}
 
 
 def test_admin(app):
@@ -116,7 +117,8 @@ def test_admin_schemas(app):
             'choices': [{'id': 1, 'name': 'new'}, {'id': 2, 'name': 'old'}],
             'source': 'status'}),
         ('JsonInput', {'source': 'meta'}),
-        ('NumberInput', {'required': True, 'source': 'role_id'})
+        ('FKInput', {'required': True, 'reference': 'role', 'allowEmpty': False,
+                     'refProp': 'name', 'refSource': 'id', 'source': 'role_id'}),
     ]
     assert ra['edit'] == {
         'actions': [],
@@ -130,7 +132,8 @@ def test_admin_schemas(app):
                 'source': 'status'
             }),
             ('JsonInput', {'source': 'meta'}),
-            ('NumberInput', {'required': True, 'source': 'role_id'})
+            ('FKInput', {'required': True, 'reference': 'role', 'allowEmpty': False,
+                        'refProp': 'name', 'refSource': 'id', 'source': 'role_id'}),
         ]
     }
     assert ra['show'] == {
@@ -142,34 +145,50 @@ def test_admin_schemas(app):
             ('TextField', {'source': 'status'}),
             ('BooleanField', {'source': 'is_super'}),
             ('JsonField', {'source': 'meta'}),
-            ('NumberField', {'source': 'role_id'})
+            ('FKField', {
+                'link': 'show',
+                'source': 'role_id',
+                'refSource': 'name',
+                'reference': 'role',
+            }),
         ]
     }
-    assert ra['list'] == {
-        'actions': [],
-        'perPage': 20, 'show': True, 'edit': True,
-        'sort': {'field': 'id', 'order': 'DESC'},
-        'children': [
-            ('NumberField', {'source': 'id', 'sortable': True}),
-            ('TextField', {'source': 'name', 'sortable': True}),
-            ('BooleanField', {'source': 'is_active', 'sortable': True}),
-            ('TextField', {'source': 'status', 'sortable': True}),
-            ('BooleanField', {'source': 'is_super', 'sortable': True}),
-            ('JsonField', {'source': 'meta', 'sortable': True}),
-            ('NumberField', {'source': 'role_id', 'sortable': True})
-        ],
-        'filters': [
-            ('TextInput', {'source': 'id'}),
-            ('SelectInput', {'source': 'status', 'choices': [
-                {'id': 1, 'name': 'new'}, {'id': 2, 'name': 'old'}]})
-        ]
-    }
+    assert ra['list']
+    assert ra['list']['actions'] == []
+    assert ra['list']['sort'] == {'field': 'id', 'order': 'DESC'}
+    assert ra['list']['perPage'] == 20
+    assert ra['list']['show'] == True
+    assert ra['list']['edit'] == True
+    assert ra['list']['filters'] == [
+        ('TextInput', {'source': 'id'}),
+        ('SelectInput', {'source': 'status', 'choices': [
+            {'id': 1, 'name': 'new'}, {'id': 2, 'name': 'old'}]})
+    ]
+    assert ra['list']['children'] == [
+        ('NumberField', {'source': 'id', 'sortable': True}),
+        ('TextField', {'source': 'name', 'sortable': True}),
+        ('BooleanField', {'source': 'is_active', 'sortable': True}),
+        ('TextField', {'source': 'status', 'sortable': True}),
+        ('BooleanField', {'source': 'is_super', 'sortable': True}),
+        ('JsonField', {'source': 'meta', 'sortable': True}),
+        ('FKField', {
+            'link': 'show',
+            'source': 'role_id',
+            'refSource': 'name',
+            'reference': 'role',
+            'sortable': True,
+        }),
+    ]
 
+
+def test_admin_schemas2(app):
+    admin = app.plugins['admin']
     MessageResource = admin.handlers[2]
     assert MessageResource.to_ra()['edit'] == {
         'actions': [],
         'inputs': [
             ('TextInput', {'source': 'body', 'required': True, 'multiline': True}),
-            ('NumberInput', {'source': 'user_id', 'required': True})
+            ('FKInput', {'required': True, 'reference': 'user', 'allowEmpty': False,
+                        'refProp': 'email', 'refSource': 'id', 'source': 'user_id'}),
         ]
     }

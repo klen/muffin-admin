@@ -164,10 +164,8 @@ class AdminHandler(RESTBase):
     def to_ra_field(cls, field: ma.fields.Field, source: str) -> RA_INFO:
         """Convert self schema field to ra field."""
         if source in cls.meta.references:
-            ref, _, rfield = cls.meta.references[source].partition('.')
-            return 'ReferenceField', {
-                'children': [('TextField', {'source': rfield or 'id'})],
-                'reference': ref, 'link': 'show',
+            return 'FKField', {
+                'reference': source, 'link': 'show', 'refSource': cls.meta.references[source]
             }
 
         converter = find_ra(field, MA_TO_RAF)

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Edit, ShowButton, SimpleForm, TopToolbar } from "react-admin";
+import { Edit, ListButton, ShowButton, SimpleForm, TopToolbar } from "react-admin";
 import { checkParams, processAdmin, initRAItems, setupAdmin } from '../utils'
 
 import { ActionButton } from '../buttons/ActionButton'
@@ -17,6 +17,7 @@ setupAdmin('edit', checkParams(({actions, inputs}, res) => props => {
             return <ActionButton key={ idx } {...aProps} />
           })
         }
+        <ListButton basePath={ basePath } />
         <ShowButton basePath={basePath} record={data} />
       </TopToolbar>
     )

@@ -65,7 +65,7 @@ class UserResource(PWAdminHandler):
         """Tune the resource."""
 
         model = User
-        filters = 'created', 'is_active', 'role', PWFilter('email', operator='$contains')
+        filters = 'created', 'is_active', 'role', ('email', {'operator': '$contains'})
         sorting = ('id', {'default': 'desc'}), 'created', 'email', 'is_active', 'role'
         schema_meta = {
             'load_only': ('password',),
@@ -112,9 +112,10 @@ class MessageResource(PWAdminHandler):
 
         model = Message
         filters = 'status', 'user'
+        schema_meta = {'dump_only': ('created',)}
 
         icon = 'Message'
-        references = {'user': 'user.email'}
+        references = {'user': 'email'}
 
     @PWAdminHandler.action('/message/{id}/publish', label='Publish', icon='Publish', view='show')
     async def publish_message(self, request, resource=None):

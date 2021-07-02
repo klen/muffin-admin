@@ -59,7 +59,7 @@ def setup_admin(app):
                 'load_only': ('password',),
                 'exclude': ('created',),
             }
-            references = {"role": "role.name"}
+            references = {"role": "name"}
             filters = 'status',
 
     @admin.route
@@ -101,7 +101,9 @@ def test_admin(app, setup_admin):
             'initialValue': 1,
             'source': 'status'}),
         ('JsonInput', {'source': 'meta'}),
-        ('TextInput', {'source': 'role'}),
+        ('FKInput', {
+            'reference': 'role', 'allowEmpty': True, 'refProp': 'name',
+            'refSource': 'id', 'source': 'role'}),
     ]
     assert ra['edit'] == {
         'actions': [],
@@ -114,7 +116,9 @@ def test_admin(app, setup_admin):
                 'initialValue': 1,
                 'source': 'status'}),
             ('JsonInput', {'source': 'meta'}),
-            ('TextInput', {'source': 'role'}),
+            ('FKInput', {
+                'reference': 'role', 'allowEmpty': True, 'refProp': 'name',
+                'refSource': 'id', 'source': 'role'}),
         ]
     }
     assert ra['show'] == {
@@ -126,41 +130,43 @@ def test_admin(app, setup_admin):
             ('NumberField', {'source': 'status'}),
             ('JsonField', {'source': 'meta'}),
             ('BooleanField', {'source': 'is_super'}),
-            ('ReferenceField', {
+            ('FKField', {
                 'link': 'show',
                 'source': 'role',
+                'refSource': 'name',
                 'reference': 'role',
-                'children': [('TextField', {'source': 'name'})]
             }),
         ]
     }
-    assert ra['list'] == {
-        'actions': [],
-        'children': [
-            ('TextField', {'source': 'id', 'sortable': True}),
-            ('TextField', {'source': 'name', 'sortable': True}),
-            ('BooleanField', {'source': 'is_active', 'sortable': True}),
-            ('NumberField', {'source': 'status', 'sortable': True}),
-            ('JsonField', {'source': 'meta', 'sortable': True}),
-            ('BooleanField', {'source': 'is_super', 'sortable': True}),
-            ('ReferenceField', {
-                'link': 'show',
-                'source': 'role',
-                'sortable': True,
-                'reference': 'role',
-                'children': [('TextField', {'source': 'name'})]
-            })
-        ],
-        'filters': [
-            ('TextInput', {'source': 'id'}),
-            ('SelectInput', {
-                'choices': [{'id': 1, 'name': 'new'}, {'id': 2, 'name': 'old'}],
-                'initialValue': 1,
-                'source': 'status'})
-        ],
-        'sort': {'field': 'id', 'order': 'DESC'},
-        'perPage': 20, 'show': True, 'edit': True,
-    }
+    assert ra['list']
+    assert ra['list']['actions'] == []
+    assert ra['list']['sort'] == {'field': 'id', 'order': 'DESC'}
+    assert ra['list']['perPage'] == 20
+    assert ra['list']['show'] == True
+    assert ra['list']['edit'] == True
+    assert ra['list']['filters'] == [
+        ('TextInput', {'source': 'id'}),
+        ('SelectInput', {
+            'choices': [{'id': 1, 'name': 'new'}, {'id': 2, 'name': 'old'}],
+            'initialValue': 1,
+            'source': 'status'})
+    ]
+
+    assert ra['list']['children'] == [
+        ('TextField', {'source': 'id', 'sortable': True}),
+        ('TextField', {'source': 'name', 'sortable': True}),
+        ('BooleanField', {'source': 'is_active', 'sortable': True}),
+        ('NumberField', {'source': 'status', 'sortable': True}),
+        ('JsonField', {'source': 'meta', 'sortable': True}),
+        ('BooleanField', {'source': 'is_super', 'sortable': True}),
+        ('FKField', {
+            'link': 'show',
+            'source': 'role',
+            'refSource': 'name',
+            'reference': 'role',
+            'sortable': True,
+        }),
+    ]
 
     MessageResource = admin.handlers[2]
     assert MessageResource.to_ra()['edit'] == {
