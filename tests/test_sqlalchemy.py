@@ -133,7 +133,7 @@ def test_admin_schemas(app):
             }),
             ('JsonInput', {'source': 'meta'}),
             ('FKInput', {'required': True, 'reference': 'role', 'allowEmpty': False,
-                        'refProp': 'name', 'refSource': 'id', 'source': 'role_id'}),
+                         'refProp': 'name', 'refSource': 'id', 'source': 'role_id'}),
         ]
     }
     assert ra['show'] == {
@@ -146,7 +146,6 @@ def test_admin_schemas(app):
             ('BooleanField', {'source': 'is_super'}),
             ('JsonField', {'source': 'meta'}),
             ('FKField', {
-                'link': 'show',
                 'source': 'role_id',
                 'refSource': 'name',
                 'reference': 'role',
@@ -158,8 +157,8 @@ def test_admin_schemas(app):
     assert ra['list']['sort'] == {'field': 'id', 'order': 'DESC'}
     assert ra['list']['limit'] == 25
     assert ra['list']['limitMax'] == 100
-    assert ra['list']['show'] == True
-    assert ra['list']['edit'] == True
+    assert ra['list']['show'] is True
+    assert ra['list']['edit'] is True
     assert ra['list']['filters'] == [
         ('TextInput', {'source': 'id'}),
         ('SelectInput', {'source': 'status', 'choices': [
@@ -173,7 +172,6 @@ def test_admin_schemas(app):
         ('BooleanField', {'source': 'is_super', 'sortable': True}),
         ('JsonField', {'source': 'meta', 'sortable': True}),
         ('FKField', {
-            'link': 'show',
             'source': 'role_id',
             'refSource': 'name',
             'reference': 'role',
@@ -190,6 +188,6 @@ def test_admin_schemas2(app):
         'inputs': [
             ('TextInput', {'source': 'body', 'required': True, 'multiline': True}),
             ('FKInput', {'required': True, 'reference': 'user', 'allowEmpty': False,
-                        'refProp': 'email', 'refSource': 'id', 'source': 'user_id'}),
+                         'refProp': 'email', 'refSource': 'id', 'source': 'user_id'}),
         ]
     }

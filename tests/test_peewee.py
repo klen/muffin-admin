@@ -131,7 +131,6 @@ def test_admin(app, setup_admin):
             ('JsonField', {'source': 'meta'}),
             ('BooleanField', {'source': 'is_super'}),
             ('FKField', {
-                'link': 'show',
                 'source': 'role',
                 'refSource': 'name',
                 'reference': 'role',
@@ -143,8 +142,8 @@ def test_admin(app, setup_admin):
     assert ra['list']['sort'] == {'field': 'id', 'order': 'DESC'}
     assert ra['list']['limit'] == 25
     assert ra['list']['limitMax'] == 100
-    assert ra['list']['show'] == True
-    assert ra['list']['edit'] == True
+    assert ra['list']['show'] is True
+    assert ra['list']['edit'] is True
     assert ra['list']['filters'] == [
         ('TextInput', {'source': 'id'}),
         ('SelectInput', {
@@ -161,7 +160,6 @@ def test_admin(app, setup_admin):
         ('JsonField', {'source': 'meta', 'sortable': True}),
         ('BooleanField', {'source': 'is_super', 'sortable': True}),
         ('FKField', {
-            'link': 'show',
             'source': 'role',
             'refSource': 'name',
             'reference': 'role',
