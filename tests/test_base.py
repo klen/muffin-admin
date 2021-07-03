@@ -65,7 +65,7 @@ def test_endpoint(app):
     assert admin.api.router.routes()
     assert admin.handlers
 
-    assert BaseHandler.meta.limit == 20
+    assert BaseHandler.meta.limit == 25
     assert BaseHandler.meta.label == 'base'
     assert BaseHandler.meta.columns == ('id', 'active', 'name', 'unknown')
     assert BaseHandler.meta.sorting
@@ -107,7 +107,7 @@ def test_endpoint(app):
             ('TextField', {'source': 'name', 'sortable': True}),
         ],
         'filters': [('TextInput', {'source': 'id'}), ('TextInput', {'source': 'name'})],
-        'perPage': 20, 'show': True, 'edit': True,
+        'limit': 25, 'limitMax': 100, 'show': True, 'edit': True,
     }
 
 

@@ -141,7 +141,8 @@ def test_admin(app, setup_admin):
     assert ra['list']
     assert ra['list']['actions'] == []
     assert ra['list']['sort'] == {'field': 'id', 'order': 'DESC'}
-    assert ra['list']['perPage'] == 20
+    assert ra['list']['limit'] == 25
+    assert ra['list']['limitMax'] == 100
     assert ra['list']['show'] == True
     assert ra['list']['edit'] == True
     assert ra['list']['filters'] == [
