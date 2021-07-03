@@ -53,9 +53,7 @@ class SAAdminHandler(AdminHandler, SARESTHandler):
                 ref = fk.column.table.name
                 if ref in cls.meta.references:
                     return 'FKField', {
-                        'reference': ref, 'link': 'show',
-                        'source': source, 'refSource': cls.meta.references[ref]
-                    }
+                        'reference': ref, 'source': source, 'refSource': cls.meta.references[ref]}
 
             if isinstance(column.type, JSON):
                 return 'JsonField', {}

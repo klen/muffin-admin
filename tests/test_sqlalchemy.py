@@ -152,6 +152,7 @@ def test_admin_schemas(app):
             }),
         ]
     }
+
     assert ra['list']
     assert ra['list']['actions'] == []
     assert ra['list']['sort'] == {'field': 'id', 'order': 'DESC'}
