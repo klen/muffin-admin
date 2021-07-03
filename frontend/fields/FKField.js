@@ -2,14 +2,14 @@ import React from "react";
 
 import { ReferenceField, TextField } from 'react-admin'
 
-const FKField = ({refSource, refID, ...props}) => {
+const FKField = ({refSource, refID, link, ...props}) => {
   return (
-    <ReferenceField { ...props }>
+    <ReferenceField link={ link || 'show' } { ...props }>
       <>
-        { "#" }
-        <TextField source={ refID || 'id' } />
-        { " " }
         <TextField source={ refSource } />
+        { " (#" }
+        <TextField source={ refID || 'id' } />
+        { ")" }
       </>
     </ReferenceField>
   )
