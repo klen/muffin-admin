@@ -11,9 +11,15 @@ const FKInput = ({refProp, refSource, ...props}) => {
     return filters;
   }
 
+  refSource = refSource || 'id';
+
+  let renderText = record => {
+      return `#${record[refSource]} ${record[refProp]}`;
+  }
+
   return (
     <ReferenceInput { ...props } filterToQuery={ filterToQuery }>
-      <AutocompleteInput source={ refSource || 'id' } optionText={ refProp } />
+      <AutocompleteInput source={ refSource } optionText={ renderText } />
     </ReferenceInput>
   )
 
