@@ -14,7 +14,8 @@ const FKInput = ({refProp, refSource, ...props}) => {
   refSource = refSource || 'id';
 
   let renderText = record => {
-      return `#${record[refSource]} ${record[refProp]}`;
+      let pk = record[refSource];
+      return pk && `#${pk} ${record[refProp]}` || "";
   }
 
   return (
