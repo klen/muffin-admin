@@ -15,7 +15,8 @@ class AdminOptions(RESTOptions):
 
     """Prepare admin handler."""
 
-    limit: int = 20
+    limit: int = 25
+    limit_max: int = 100
 
     icon: str = ''
     label: str = ''
@@ -125,7 +126,8 @@ class AdminHandler(RESTBase):
             "label": cls.meta.label,
             "icon": cls.meta.icon,
             "list": {
-                "perPage": cls.meta.limit,
+                "limit": cls.meta.limit,
+                "limitMax": cls.meta.limit_max,
                 "edit": bool(cls.meta.edit),
                 "show": bool(cls.meta.show),
                 "actions": [action for action in cls.meta.actions if action['view'] == 'list'],
