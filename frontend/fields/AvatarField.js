@@ -11,7 +11,7 @@ const AvatarField = ({ source, record, alt, style, nameProp, ...props }) => {
       letters = null,
       name = record[nameProp];
 
-  if (name) letters = name.trim(' ').split(' ').slice(0, 2).map( n => n[0].toUpperCase() ).join('');
+  if (name) letters = name.trim(' ').split(/\s+/).slice(0, 2).map( n => n[0].toUpperCase() ).join('');
 
   return <Avatar src={ record[source] } alt={ alt } style={ style }>{ letters }</Avatar>
 
