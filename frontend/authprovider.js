@@ -46,8 +46,10 @@ export default (props) => {
         const {message, status, body} = error;
 
         if (status == 401 || status == 403) {
+          // Clean storage
           authorize(storage_name, '');
-          throw {message: 'Invalid authorization'};
+
+          throw {message: 'Invalid authorization', redirectTo: logoutURL, logoutUser: !logoutURL};
         }
 
       },
@@ -60,7 +62,10 @@ export default (props) => {
       },
 
       logout: async () => {
+
+          // Clean storage
         authorize(storage_name, '');
+
         if (logoutURL) window.location = logoutURL;
       },
 
