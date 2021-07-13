@@ -101,4 +101,4 @@ class MessageResource(SAAdminHandler):
         filters = 'status', 'user_id'
 
         icon = 'Message'
-        references = {'user': 'email'}
+        references = {'user_id': 'user.email'}

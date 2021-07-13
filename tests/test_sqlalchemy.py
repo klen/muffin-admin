@@ -69,7 +69,7 @@ def setup_admin(app):
                 'load_only': ('password',),
                 'exclude': ('created',),
             }
-            references = {"role": "name"}
+            references = {"role_id": "role.name"}
             filters = 'status',
 
     @admin.route
@@ -85,7 +85,7 @@ def setup_admin(app):
         class Meta:
             table = Message
             database = db
-            references = {'user': 'email'}
+            references = {'user_id': 'user.email'}
 
 
 def test_admin(app):

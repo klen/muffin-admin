@@ -209,7 +209,7 @@ def test_custom_fields_inputs(app):
 
             columns = 'id', 'active', 'name', 'unknown'
             ra_inputs = {
-                'id': ('NumberInput', {}),
+                'id': 'NumberInput'
             }
 
     ra = BaseHandler.to_ra()

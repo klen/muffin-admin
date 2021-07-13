@@ -58,8 +58,9 @@ class AdminOptions(RESTOptions):
             ]
 
         if not self.sorting and self.columns:
-            self.sorting = [name for name in self.columns]
-            self.sorting[0] = (self.sorting[0], {'default': 'desc'})
+            sorting: t.List = [name for name in self.columns]
+            sorting[0] = (sorting[0], {'default': 'desc'})
+            self.sorting = sorting  # type: ignore
 
 
 class AdminHandler(RESTBase):
@@ -110,10 +111,17 @@ class AdminHandler(RESTBase):
             source = field.data_key or name
             if not field.load_only and name not in load_only:
                 field_info = fields_customize[source] if source in fields_customize else cls.to_ra_field(field, source)  # noqa
+                if isinstance(field_info, str):
+                    field_info = field_info, {}
+
                 field_info[1].setdefault('source', source)
                 fields.append(field_info)
+
             if not field.dump_only and name not in dump_only:
                 input_info = inputs_customize[source] if source in inputs_customize else cls.to_ra_input(field, source)  # noqa
+                if isinstance(input_info, str):
+                    input_info = input_info, {}
+
                 input_info[1].setdefault('source', source)
                 inputs.append(input_info)
 
@@ -155,7 +163,7 @@ class AdminHandler(RESTBase):
 
         default_sort = cls.meta.sorting.default and cls.meta.sorting.default[0]
         if default_sort:
-            data['list']['sort'] = {
+            data['list']['sort'] = {  # type: ignore
                 'field': default_sort.name,
                 'order': default_sort.meta['default'].upper(),
             }
@@ -166,7 +174,9 @@ class AdminHandler(RESTBase):
     def to_ra_field(cls, field: ma.fields.Field, source: str) -> RA_INFO:
         """Convert self schema field to ra field."""
         if source in cls.meta.references:
-            return 'FKField', {'reference': source, 'refSource': cls.meta.references[source]}
+            ref, _, ref_source = cls.meta.references[source].partition('.')
+            return 'FKField', {
+                'reference': ref_source and ref or source, 'refSource': ref_source or ref}
 
         converter = find_ra(field, MA_TO_RAF)
         return converter(field)

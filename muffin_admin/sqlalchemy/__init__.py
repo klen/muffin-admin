@@ -66,15 +66,15 @@ class SAAdminHandler(AdminHandler, SARESTHandler):
         column = getattr(cls.meta.table.c, field.attribute or source, None)
         ra_type, props = super(SAAdminHandler, cls).to_ra_input(field, source)
         if column is not None:
-            if column.foreign_keys:
+            if column.foreign_keys and (source in cls.meta.references):
+                ref, _, ref_source = cls.meta.references[source].partition('.')
                 fk = list(column.foreign_keys)[0]
-                ref = fk.column.table.name
-                if ref in cls.meta.references:
-                    props = dict(
-                        props, reference=ref, allowEmpty=column.nullable,
-                        refProp=cls.meta.references[ref], refSource=fk.column.name,
-                    )
-                    return 'FKInput', props
+                return 'FKInput', dict(
+                    props, allowEmpty=column.nullable,
+                    refSource=fk.column.name,
+                    refProp=ref_source or ref,
+                    reference=ref_source and ref or fk.column.table.name,
+                )
 
             if isinstance(column.type, Enum):
                 return 'SelectInput', dict(props, choices=[
