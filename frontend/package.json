@@ -1,6 +1,7 @@
 {
   "private": true,
   "dependencies": {
+    "@material-ui/core": "4.11.4",
     "js-cookie": "2.2.1",
     "react": "17.0.2",
     "react-admin": "3.17.0",
