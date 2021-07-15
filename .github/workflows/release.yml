@@ -20,11 +20,14 @@ jobs:
     - uses: actions/setup-node@v2
     - uses: actions/setup-python@v2.2.2
 
-    - name: Build frontend
+    - name: Build/Publish frontend
       run: |
         npm install
+        npm publish
         node_modules/.bin/webpack
       working-directory: frontend
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
     - name: Build python package
       run: |

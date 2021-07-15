@@ -1,5 +1,21 @@
 {
-  "private": true,
+  "name": "muffin-admin",
+  "version": "1.21.1",
+  "description": "NPM package for https://github.com/klen/muffin-admin",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/klen/muffin-admin.git"
+  },
+  "author": "Kirill Klenov <horneds@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/klen/muffin-admin/issues"
+  },
+  "homepage": "https://github.com/klen/muffin-admin#readme",
   "dependencies": {
     "@material-ui/core": "4.11.4",
     "js-cookie": "2.2.1",
