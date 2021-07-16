@@ -86,7 +86,7 @@ class Plugin(BasePlugin):
             """Render admin page."""
             return TEMPLATE.format(
                 prefix=prefix, title=title,
-                custom_js=f"<script src={custom_js} />" if custom_js else '',
+                custom_js=f"<script src={custom_js}></script>" if custom_js else '',
                 custom_css=f"<link rel='stylesheet' href={custom_css} />" if custom_css else '',
             )
 
