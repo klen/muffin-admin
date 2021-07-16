@@ -182,6 +182,7 @@ Name                        Default value                                       
 --------------------------- ---------------------------------------------------- ---------------------------
 **prefix**                  ``"/admin"``                                         Admin's HTTP URL prefix
 **title**                   ``"Muffin Admin"``                                   Admin's title
+**main_js_url**             ``"{prefix}/main.js"``                               A link to main JS file
 **custom_js_url**           ``""``                                               A link to custom JS file
 **custom_css_url**          ``""``                                               A link to custom CSS file
 **logout_url**              ``None``                                             An HTTP URL for your custom logout page

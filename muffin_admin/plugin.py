@@ -30,6 +30,7 @@ class Plugin(BasePlugin):
         'prefix': '/admin',
         'title': 'Muffin Admin',
 
+        'main_js_url': '{prefix}/main.js',
         'custom_js_url': '',
         'custom_css_url': '',
 
@@ -80,12 +81,12 @@ class Plugin(BasePlugin):
 
             return decorator
 
-        @app.route(self.cfg.prefix)
+        @app.route(prefix)
         @authorize
         async def render_admin(request):
             """Render admin page."""
             return TEMPLATE.format(
-                prefix=prefix, title=title,
+                prefix=prefix, title=title, main_js_url=self.cfg.main_js_url.format(prefix=prefix),
                 custom_js=f"<script src={custom_js}></script>" if custom_js else '',
                 custom_css=f"<link rel='stylesheet' href={custom_css} />" if custom_css else '',
             )

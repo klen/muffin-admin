@@ -2,7 +2,7 @@ const path = require('path'), webpack = require('webpack'), mode = process.env.N
 
 module.exports = {
 
-  entry: './frontend.js',
+  entry: '.',
 
   output: {
     filename: 'main.js',
