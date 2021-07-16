@@ -1,27 +1,16 @@
 import React from "react";
 import ReactDOM from 'react-dom';
 
-import { 
-  Admin,
-  AppBar,
-  Layout,
-  Login,
-} from "react-admin";
-import {
-  IconButton,
-  SvgIcon,
-  Tooltip,
-  Typography,
-} from "@material-ui/core"
+import { Admin, AppBar, Layout, Login } from "react-admin";
+import { IconButton, SvgIcon, Tooltip, Typography } from "@material-ui/core"
 import * as icons from "@material-ui/icons"
 
-import { processAdmin, setupAdmin } from './utils'
+import { processAdmin, setupAdmin } from './utils.js'
 import authProvider from "./authprovider";
 import dataProvider from "./dataprovider";
-import ui from "./ui";
 
-import './dashboard';
-import './resources';
+import './dashboard.jsx';
+import './resources.jsx';
 
 
 // Initialize the admin

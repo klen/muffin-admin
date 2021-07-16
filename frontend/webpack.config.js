@@ -1,16 +1,19 @@
-const path = require('path'), webpack = require('webpack');
+const path = require('path'), webpack = require('webpack'), mode = process.env.NODE_ENV;
 
 module.exports = {
+
   entry: './frontend.js',
+
   output: {
     filename: 'main.js',
     path: path.resolve(__dirname, '../muffin_admin'),
+    publicPath: '/admin',
   },
+
   module: {
     rules: [
       {
-        test: /\.js$/,
-        exclude: /node_modules/,
+        test: /\.jsx$/,
         use: {
           loader: "babel-loader",
           options: {
@@ -26,14 +29,15 @@ module.exports = {
     new webpack.EnvironmentPlugin({NODE_ENV: 'production'}),
   ],
 
-  mode: process.env.NODE_ENV || "production",
-  devtool: process.env.NODE_ENV == "development" && "inline-source-map",
+  mode: mode || "production",
+  devtool: mode == "development" && "inline-source-map",
+
   devServer: {
     hot: true,
     proxy: [{
       context: ['!*.js'],
       target: 'http://localhost:5000',
     }]
-
   }
+
 };

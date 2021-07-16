@@ -11,8 +11,10 @@ import {
 } from "react-admin";
 import uniq from "lodash/uniq";
 import sortBy from "lodash/sortBy";
-import { checkParams, processAdmin, initRAItems, setupAdmin } from '../utils'
-import { BulkActionButton } from '../buttons/ActionButton'
+
+import initRAItems from '../ui.jsx'
+import { checkParams, processAdmin, setupAdmin } from '../utils'
+import { BulkActionButton } from '../buttons/ActionButton.jsx'
 
 
 const defaultPagination = <Pagination rowsPerPageOptions={[10, 25, 50, 100]} />;

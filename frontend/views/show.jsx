@@ -1,9 +1,11 @@
 import React from "react";
 
 import { ListButton, EditButton, Show, SimpleShowLayout, TopToolbar } from "react-admin";
-import { checkParams, processAdmin, initRAItems, setupAdmin } from '../utils'
 
-import { ActionButton } from '../buttons/ActionButton'
+import initRAItems from '../ui.jsx'
+import { checkParams, processAdmin, setupAdmin } from '../utils'
+
+import { ActionButton } from '../buttons/ActionButton.jsx'
 
 
 // Initiliaze a show component

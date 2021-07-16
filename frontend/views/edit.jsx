@@ -1,9 +1,11 @@
 import React from "react";
 
 import { Edit, ListButton, ShowButton, SimpleForm, TopToolbar } from "react-admin";
-import { checkParams, processAdmin, initRAItems, setupAdmin } from '../utils'
 
-import { ActionButton } from '../buttons/ActionButton'
+import initRAItems from '../ui.jsx'
+import { checkParams, processAdmin, setupAdmin } from '../utils'
+
+import { ActionButton } from '../buttons/ActionButton.jsx'
 
 
 // Initialize an edit component

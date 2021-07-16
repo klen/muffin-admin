@@ -5,10 +5,10 @@ import * as icons from "@material-ui/icons"
 
 import { checkParams, processAdmin, initRAItems, setupAdmin } from './utils'
 
-import './views/list'
-import './views/show'
-import './views/edit'
-import './views/create'
+import './views/list.jsx'
+import './views/show.jsx'
+import './views/edit.jsx'
+import './views/create.jsx'
 
 
 // Initialize Resources Components

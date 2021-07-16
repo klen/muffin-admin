@@ -4,8 +4,6 @@ import { fetchUtils } from 'ra-core';
 import { stringify } from 'query-string';
 import { required } from 'react-admin';
 
-import ui from "./ui";
-
 
 export const admin = {}
 export const setupAdmin = globalThis.setupAdmin = (type, fn) => admin[type] = fn
@@ -22,21 +20,6 @@ export const processAdmin = (type, props, res) => {
 
   return result;
 }
-export const initRAItems = itemsProps => itemsProps.map((item) => {
-    const Item = ui[item[0]],
-          props = {...item[1]};
-
-    if (props.required) {
-        props.validate = required();
-        delete props.required
-    }
-
-    props.fullWidth = props.fullWidth ?? true
-
-    if (props.children) props.children = initRAItems(props.children)[0];
-  
-    return <Item key={ props.source } { ...props } />
-})
 
 export const requestHeaders = {};
 
