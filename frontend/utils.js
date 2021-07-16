@@ -15,11 +15,10 @@ export const checkParams = (fn) => (props, res) => {
 export const processAdmin = (type, props, res) => {
   let callbacks = [], result = props;
 
-  if (admin[`${type}-${res}`]) result = admin[`${type}-${res}`](props, res);
-  if (admin[type]) result = admin[type](props, res);
   if (process.env.NODE_ENV == 'development') console.log(`${type}${ res ? '-' + res : ''}`, props);
 
-  return result;
+  if (admin[`${type}-${res}`]) return admin[`${type}-${res}`](props, res);
+  if (admin[type]) return admin[type](props, res);
 }
 
 export const requestHeaders = {};
