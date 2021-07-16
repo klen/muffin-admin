@@ -1,13 +1,12 @@
-import React from "react";
-import ReactDOM from 'react-dom';
+import React from "react"
 
-import { Admin, AppBar, Layout, Login } from "react-admin";
+import { Admin, AppBar, Layout, Login } from "react-admin"
 import { IconButton, SvgIcon, Tooltip, Typography } from "@material-ui/core"
 import * as icons from "@material-ui/icons"
 
-import { processAdmin, setupAdmin } from './utils.js'
-import authProvider from "./authprovider";
-import dataProvider from "./dataprovider";
+import authProvider from "./authprovider"
+import dataProvider from "./dataprovider"
+import { processAdmin, setupAdmin } from './utils'
 
 import './dashboard.jsx';
 import './resources.jsx';
@@ -55,9 +54,3 @@ setupAdmin('data', dataProvider);
 
 // Initialize login page
 setupAdmin('login', (params, res) => (props) => <Login {...props}  />);
-
-
-let initAdmin = (props) => ReactDOM.render(processAdmin('admin', props), document.getElementById('root'))
-
-export { setupAdmin, processAdmin }
-export default initAdmin

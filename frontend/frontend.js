@@ -1,4 +1,4 @@
-import initAdmin from './index.jsx'
+import initAdmin from './index'
 
 
 globalThis.initAdmin = initAdmin
