@@ -5,7 +5,8 @@ import { stringify } from 'query-string';
 import { required } from 'react-admin';
 
 
-export const admin = {}
+const admin = globalThis.admin = globalThis.admin || {};
+
 export const setupAdmin = globalThis.setupAdmin = (type, fn) => admin[type] = fn
 export const checkParams = (fn) => (props, res) => {
   if (!props || React.isValidElement(props)) return props;
