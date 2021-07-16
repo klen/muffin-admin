@@ -68,4 +68,7 @@ setupAdmin('data', dataProvider);
 setupAdmin('login', (params, res) => (props) => <Login {...props}  />);
 
 
-globalThis.initAdmin = (props) => ReactDOM.render(processAdmin('admin', props), document.getElementById('root'))
+let initAdmin = (props) => ReactDOM.render(processAdmin('admin', props), document.getElementById('root'))
+
+export { setupAdmin, processAdmin }
+export default initAdmin

@@ -1,12 +1,10 @@
 const path = require('path'), webpack = require('webpack');
 
 module.exports = {
-  entry: './index.js',
+  entry: './frontend.js',
   output: {
     filename: 'main.js',
     path: path.resolve(__dirname, '../muffin_admin'),
-    publicPath: '/admin',
-    // clean: true,
   },
   module: {
     rules: [
@@ -20,10 +18,6 @@ module.exports = {
             plugins: ["@babel/plugin-transform-runtime"],
           },
         },
-      },
-      {
-        test: /\.css$/i,
-        use: ['style-loader', 'css-loader']
       },
     ]
   },
