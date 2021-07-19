@@ -61,7 +61,7 @@ export default (apiUrl) => {
     },
 
     getManyReference: async (resource, {target, id, filter, ...opts}) => {
-      filter = filter ?? {};
+      filter = filter || {};
       filter[target] = id;
       return await methods.getList(resource, {filter, ...opts});
     },

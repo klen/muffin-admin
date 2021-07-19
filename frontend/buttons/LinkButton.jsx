@@ -8,7 +8,7 @@ import * as icons from "@material-ui/icons"
 // <LinkButton label="Messages" icon="Message" resource="message" filters={{ user: data.id }} />
 //
 const LinkButton = ({label, icon, title, resource, filters, ...props}) => {
-  let Icon = icons[icon], linkParams = {pathname: `/${resource}`};
+  let Icon = icons[icon] || icon, linkParams = {pathname: `/${resource}`};
   if (filters) linkParams.search = `filter=${JSON.stringify(filters)}`;
 
   return (

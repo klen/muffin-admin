@@ -60,3 +60,5 @@ export const ActionButton = ({icon, label, title, record, resource, action}) => 
   )
 
 }
+
+export default ActionButton
