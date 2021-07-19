@@ -28,7 +28,7 @@ class Plugin(BasePlugin):
     name = 'admin'
     defaults = {
         'prefix': '/admin',
-        'title': 'Muffin Admin',
+        'title': 'Muffin-Admin',
 
         'main_js_url': '{prefix}/main.js',
         'custom_js_url': '',
@@ -55,6 +55,7 @@ class Plugin(BasePlugin):
     def setup(self, app: Application, **options):
         """Initialize the application."""
         super().setup(app, **options)
+        self.cfg.update(prefix=self.cfg.prefix.rstrip('/'))
         self.api.setup(app, prefix=f"{self.cfg.prefix}/api", openapi=False)
 
         self.auth['storage'] = self.cfg.auth_storage
@@ -81,7 +82,7 @@ class Plugin(BasePlugin):
 
             return decorator
 
-        @app.route(prefix)
+        @app.route(f"/{prefix.lstrip('/')}")
         @authorize
         async def render_admin(request):
             """Render admin page."""
@@ -91,7 +92,7 @@ class Plugin(BasePlugin):
                 custom_css=f"<link rel='stylesheet' href={custom_css} />" if custom_css else '',
             )
 
-        @app.route(f"{self.cfg.prefix}/ra.json")
+        @app.route(f"{prefix}/ra.json")
         @authorize
         async def ra(request):
             data = self.to_ra()
@@ -101,15 +102,15 @@ class Plugin(BasePlugin):
 
             return data
 
-        @app.route(f"{ self.cfg.prefix }/main.js")
+        @app.route(f"{prefix}/main.js")
         async def render_admin_static(request):
             return ResponseFile(PACKAGE_DIR / 'main.js')
 
-        @app.route(f"{self.cfg.prefix}/login")
+        @app.route(f"{prefix}/login")
         async def login(request):
             return await self.__login__(request)
 
-        @app.route(f"{self.cfg.prefix}/ident")
+        @app.route(f"{prefix}/ident")
         async def ident(request):
             return await self.__ident__(request)
 
@@ -157,7 +158,7 @@ class Plugin(BasePlugin):
 
         User data: {id, fullName, avatar}
         """
-        self.auth['identityURL'] = f"{ self.cfg.prefix }/ident"
+        self.auth['identityURL'] = f"{self.cfg.prefix}/ident"
         self.__ident__ = to_awaitable(fn)
         return fn
 
