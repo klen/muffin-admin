@@ -44,7 +44,11 @@ export const ActionButton = ({icon, label, title, record, resource, action}) => 
         payload: {action, record},
       }, {
         onSuccess: res => {
-            if (res && res.data && res.data.message) notify(res.data.message, 'success');
+            let data = res && res.data;
+
+            if (data && data.redirectTo) window.location = redirectTo;
+            if (data && data.message) notify(data.message, 'success');
+
             refresh();
         },
         onFailure: err => {
