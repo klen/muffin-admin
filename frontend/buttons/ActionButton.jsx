@@ -46,7 +46,7 @@ export const ActionButton = ({icon, label, title, record, resource, action}) => 
         onSuccess: res => {
             let data = res && res.data;
 
-            if (data && data.redirectTo) window.location = redirectTo;
+            if (data && data.redirectTo) window.location = data.redirectTo;
             if (data && data.message) notify(data.message, 'success');
 
             refresh();
