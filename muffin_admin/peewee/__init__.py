@@ -44,12 +44,6 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
     meta_class: t.Type[PWAdminOptions] = PWAdminOptions
     meta: PWAdminOptions
 
-    class Meta:
-
-        """Mark the class as abc base."""
-
-        abc = True
-
     @classmethod
     def to_ra_field(cls, field: ma.fields.Field, source: str) -> RA_INFO:
         """Setup RA fields."""

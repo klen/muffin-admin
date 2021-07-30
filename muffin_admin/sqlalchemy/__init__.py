@@ -37,12 +37,6 @@ class SAAdminHandler(AdminHandler, SARESTHandler):
     meta_class: t.Type[SAAdminOptions] = SAAdminOptions
     meta: SAAdminOptions
 
-    class Meta:
-
-        """Mark the class as abc base."""
-
-        abc = True
-
     @classmethod
     def to_ra_field(cls, field: ma.fields.Field, source: str) -> RA_INFO:
         """Setup RA fields."""

@@ -70,12 +70,6 @@ class AdminHandler(RESTBase):
     meta_class: t.Type[AdminOptions] = AdminOptions
     meta: AdminOptions
 
-    class Meta:
-
-        """Tune the handler."""
-
-        abc: bool = True
-
     @classmethod
     def action(
             cls, path: str, *, icon: str = None, label: str = None, view: str = 'list', **params):

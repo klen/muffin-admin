@@ -12,6 +12,7 @@ def test_endpoint(app):
 
         class Meta:
 
+            name = 'base'
             filters = 'id', 'name'
             sorting = 'id', 'name'
 
@@ -83,6 +84,7 @@ async def test_endpoint_action(app):
 
         class Meta:
 
+            name = 'handler'
             filters = 'id', 'name'
             sorting = 'id', 'name'
 
@@ -102,6 +104,7 @@ def test_custom_fields_inputs(app):
 
         class Meta:
 
+            name = 'name'
             filters = 'id', 'name'
             sorting = 'id', 'name'
 
