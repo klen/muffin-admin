@@ -46,7 +46,7 @@ class AdminOptions(RESTOptions):
         ]
 
         if not self.label:
-            self.label = self.name
+            self.label = t.cast(str, self.name)
 
         if not self.columns:
             self.columns = [
