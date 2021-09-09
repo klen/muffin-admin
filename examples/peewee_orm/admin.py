@@ -31,7 +31,7 @@ async def dashboard(request):
 async def auth(request, redirect=True):
     """Fake authorization method. Do not use in production."""
     pk = request.headers.get('authorization')
-    return User.select().where(User.id == pk).first()
+    return await User.select().where(User.id == pk).first()
 
 
 @admin.get_identity
@@ -46,7 +46,7 @@ async def ident(request):
 async def login(request):
     """Login an user."""
     data = await request.data()
-    user = User.select().where(
+    user = await User.select().where(
         User.email == data['username'], User.password == data['password']).first()
     return ResponseJSON(user and user.id)
 
@@ -96,7 +96,7 @@ class UserResource(PWAdminHandler):
         import asyncio
 
         ids = request.query.getall('ids')
-        User.update(is_active=False).where(User.id << ids).execute()
+        await User.update(is_active=False).where(User.id << ids)
         await asyncio.sleep(1)
         return {'status': True, 'ids': ids, 'message': 'Users is disabled'}
 
@@ -123,6 +123,6 @@ class MessageResource(PWAdminHandler):
             raise APIError.NOT_FOUND()
 
         resource.status = 'published'
-        resource.save()
+        await resource.save()
 
         return {'status': True, 'message': 'Message is published'}

@@ -34,13 +34,18 @@ class Message(pw.Model):
     user = pw.ForeignKeyField(Role)
 
 
-@pytest.fixture(autouse=True)
-def setup_db(app):
-    db.setup(app)
+@pytest.fixture(params=[pytest.param(('asyncio', {'use_uvloop': False}), id='asyncio')])
+def aiolib(request):
+    return request.param
 
-    Role.create_table()
-    User.create_table()
-    Message.create_table()
+
+@pytest.fixture(autouse=True)
+async def setup_db(app):
+    db.setup(app)
+    async with db:
+        await db.create_tables()
+        yield db
+        await db.drop_tables()
 
 
 @pytest.fixture
@@ -75,7 +80,7 @@ def setup_admin(app):
             model = Message
 
 
-def test_admin(app, setup_admin):
+async def test_admin(app, setup_admin):
     admin = app.plugins['admin']
     assert admin.to_ra()
 

@@ -12,7 +12,7 @@ from . import app
 db = Plugin(app, connection=f"sqlite:///{ Path(__file__).parent.parent / 'db.sqlite' }")
 
 
-class BaseModel(pw.Model):
+class BaseModel(db.Model):
 
     """Automatically keep the model's creation time."""
 

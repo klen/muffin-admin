@@ -68,7 +68,8 @@ export default (apiUrl) => {
 
     runAction: async (resource, props) => {
       let {action, payload, ids, record} = props;
-      if (record) { action = action.replace(/\{([^}]+)\}/, (_, field) => record[field]).replace(/^\/+/, '') }
+      action = action.replace(/^\/+/, '')
+      if (record) { action = action.replace(/\{([^}]+)\}/, (_, field) => record[field]) }
       const {json} = await makeRequest(`${apiUrl}/${action}`, {query: {ids}, method: 'POST', data: payload});
       return {data: json};
     },
