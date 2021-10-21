@@ -33,7 +33,7 @@ jobs:
       uses: actions/cache@main
       with:
         path: env
-        key: ${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('setup.cfg') }}
+        key: ${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/requirements.txt', 'requirements/requirements-tests.txt') }}
 
     - name: Install requirements
       run: |
