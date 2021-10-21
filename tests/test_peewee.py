@@ -43,9 +43,10 @@ def aiolib(request):
 async def setup_db(app):
     db.setup(app)
     async with db:
-        await db.create_tables()
-        yield db
-        await db.drop_tables()
+        async with db.connection():
+            await db.create_tables()
+            yield db
+            await db.drop_tables()
 
 
 @pytest.fixture
@@ -91,6 +92,9 @@ async def test_admin(app, setup_admin):
     assert UserResource.meta.limit
     assert UserResource.meta.columns
     assert UserResource.meta.sorting
+
+    assert UserResource.meta.Schema
+    assert UserResource.meta.Schema._declared_fields['is_active'].load_default is True
 
     ra = UserResource.to_ra()
     assert ra['delete'] is True

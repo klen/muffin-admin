@@ -1,0 +1,2 @@
+muffin              >= 0.86
+muffin-rest         >= 3.5.1

@@ -11,7 +11,7 @@ updates:
 
   # Maintain dependencies for Python
   - package-ecosystem: "pip"
-    directory: "/"
+    directory: "/requirements"
     labels:
       - dependencies
     schedule:

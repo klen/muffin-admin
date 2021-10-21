@@ -181,8 +181,8 @@ class AdminHandler(RESTBase):
         converter = find_ra(field, MA_TO_RAI)
         rtype, props = converter(field)
 
-        if isinstance(field.default, (bool, str, int)):
-            props.setdefault('initialValue', field.default)
+        if isinstance(field.load_default, (bool, str, int)):
+            props.setdefault('initialValue', field.load_default)
 
         if field.required:
             props.setdefault('required', True)
