@@ -87,7 +87,7 @@ class PWSearchFilter(PWFilter):
 
     """Search in query by value."""
 
-    def query(self, query: pw.Query, column: pw.Field, *ops: t.Tuple, **kwargs) -> pw.Query:
+    def query(self, query: pw.Query, column: pw.Field, *ops: t.Tuple, **_) -> pw.Query:
         """Apply the filters to Peewee QuerySet.."""
         _, value = ops[0]
-        return query.where(column.contains(value))
+        return query.where(column.contains(value))  # type: ignore

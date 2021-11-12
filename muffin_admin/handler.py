@@ -58,7 +58,7 @@ class AdminOptions(RESTOptions):
             ]
 
         if not self.sorting and self.columns:
-            sorting: t.List = [name for name in self.columns]
+            sorting: t.List[t.Union[str, t.Tuple]] = [name for name in self.columns]
             sorting[0] = (sorting[0], {'default': 'desc'})
             self.sorting = sorting  # type: ignore
 
@@ -176,7 +176,7 @@ class AdminHandler(RESTBase):
         return converter(field)
 
     @classmethod
-    def to_ra_input(cls, field: ma.fields.Field, source: str) -> RA_INFO:
+    def to_ra_input(cls, field: ma.fields.Field, _: str) -> RA_INFO:
         """Convert a field to react-admin."""
         converter = find_ra(field, MA_TO_RAI)
         rtype, props = converter(field)
@@ -191,28 +191,28 @@ class AdminHandler(RESTBase):
 
 
 MA_TO_RAF: t.Dict[type, RA_CONVERTER] = {
-    ma.fields.Boolean: lambda f: ('BooleanField', {}),
-    ma.fields.Date: lambda f: ('DateField', {}),
-    ma.fields.DateTime: lambda f: ('DateField', {'showTime': True}),
-    ma.fields.Number: lambda f: ('NumberField', {}),
-    ma.fields.Field: lambda f: ('TextField', {}),
+    ma.fields.Boolean: lambda _: ('BooleanField', {}),
+    ma.fields.Date: lambda _: ('DateField', {}),
+    ma.fields.DateTime: lambda _: ('DateField', {'showTime': True}),
+    ma.fields.Number: lambda _: ('NumberField', {}),
+    ma.fields.Field: lambda _: ('TextField', {}),
 
-    ma.fields.Email: lambda f: ('EmailField', {}),
-    ma.fields.Url: lambda f: ('UrlField', {}),
+    ma.fields.Email: lambda _: ('EmailField', {}),
+    ma.fields.Url: lambda _: ('UrlField', {}),
 
     # Default
-    object: lambda f: ('TextField', {}),
+    object: lambda _: ('TextField', {}),
 }
 
 MA_TO_RAI: t.Dict[type, RA_CONVERTER] = {
-    ma.fields.Boolean: lambda f: ('BooleanInput', {}),
-    ma.fields.Date: lambda f: ('DateInput', {}),
-    ma.fields.DateTime: lambda f: ('DateTimeInput', {}),
-    ma.fields.Number: lambda f: ('NumberInput', {}),
-    ma.fields.Field: lambda f: ('TextInput', {}),
+    ma.fields.Boolean: lambda _: ('BooleanInput', {}),
+    ma.fields.Date: lambda _: ('DateInput', {}),
+    ma.fields.DateTime: lambda _: ('DateTimeInput', {}),
+    ma.fields.Number: lambda _: ('NumberInput', {}),
+    ma.fields.Field: lambda _: ('TextInput', {}),
 
     # Default
-    object: lambda f: ('TextField', {}),
+    object: lambda _: ('TextField', {}),
 }
 
 

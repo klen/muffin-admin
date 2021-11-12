@@ -167,6 +167,7 @@ Custom Actions
 
         @PWAdminHandler.action('users/disable', view='list')
         async def disable_users(self, request, resource=None):
+            ids = request.query.getall('ids')
             # ...
 
         @PWAdminHandler.action('users/{id}/admin', view='show')

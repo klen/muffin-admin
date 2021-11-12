@@ -16,7 +16,7 @@ PACKAGE_DIR: Path = Path(__file__).parent
 TEMPLATE: str = (PACKAGE_DIR / 'admin.html').read_text()
 
 
-async def page404(request: Request) -> ResponseError:
+async def page404(_: Request) -> ResponseError:
     """Default 404 for authorization methods."""
     return ResponseError.NOT_FOUND()
 
@@ -82,9 +82,8 @@ class Plugin(BasePlugin):
 
             return decorator
 
-        @app.route(f"/{prefix.lstrip('/')}")
         @authorize
-        async def render_admin(request):
+        async def render_admin(_):
             """Render admin page."""
             return TEMPLATE.format(
                 prefix=prefix, title=title, main_js_url=self.cfg.main_js_url.format(prefix=prefix),
@@ -92,7 +91,8 @@ class Plugin(BasePlugin):
                 custom_css=f"<link rel='stylesheet' href={custom_css} />" if custom_css else '',
             )
 
-        @app.route(f"{prefix}/ra.json")
+        app.route(f"/{prefix.lstrip('/')}")(render_admin)
+
         @authorize
         async def ra(request):
             data = self.to_ra()
@@ -102,17 +102,22 @@ class Plugin(BasePlugin):
 
             return data
 
-        @app.route(f"{prefix}/main.js")
-        async def render_admin_static(request):
+        app.route(f"{prefix}/ra.json")(ra)
+
+        async def render_admin_static(_):
             return ResponseFile(PACKAGE_DIR / 'main.js')
 
-        @app.route(f"{prefix}/login")
+        app.route(f"{prefix}/main.js")(render_admin_static)
+
         async def login(request):
             return await self.__login__(request)
 
-        @app.route(f"{prefix}/ident")
+        app.route(f"{prefix}/login")(login)
+
         async def ident(request):
             return await self.__ident__(request)
+
+        app.route(f"{prefix}/ident")(ident)
 
     def route(self, path: t.Any, *paths: str, **params) -> t.Callable:
         """Route an handler."""

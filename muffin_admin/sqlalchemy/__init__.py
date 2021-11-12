@@ -4,7 +4,8 @@ import typing as t
 
 import marshmallow as ma
 from muffin_rest.sqlalchemy import SARESTOptions, SARESTHandler
-from muffin_rest.sqlalchemy.filters import SAFilter, Filter
+from muffin_rest.sqlalchemy.filters import SAFilter
+from muffin_rest.filters import Filter
 from sqlalchemy import Enum, Text, JSON
 
 from ..handler import AdminHandler, AdminOptions
