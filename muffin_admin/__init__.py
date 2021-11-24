@@ -24,4 +24,4 @@ except ImportError:
     pass
 
 
-__all__ = 'AdminHandler', 'PWAdminHandler', 'PWFilter', 'SAAdminHandler', 'SAFilter'
+__all__ = 'AdminHandler', 'PWAdminHandler', 'PWFilter', 'SAAdminHandler', 'SAFilter', 'Plugin'
