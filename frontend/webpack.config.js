@@ -1,7 +1,8 @@
-const path = require('path'), webpack = require('webpack'), mode = process.env.NODE_ENV;
+const path = require('path'),
+  webpack = require('webpack'),
+  mode = process.env.NODE_ENV
 
 module.exports = {
-
   entry: '.',
 
   output: {
@@ -15,29 +16,28 @@ module.exports = {
       {
         test: /\.jsx$/,
         use: {
-          loader: "babel-loader",
+          loader: 'babel-loader',
           options: {
-            presets: ["@babel/preset-env", "@babel/preset-react"],
-            plugins: ["@babel/plugin-transform-runtime"],
+            presets: ['@babel/preset-env', '@babel/preset-react'],
+            plugins: ['@babel/plugin-transform-runtime'],
           },
         },
       },
-    ]
+    ],
   },
 
-  plugins: [
-    new webpack.EnvironmentPlugin({NODE_ENV: 'production'}),
-  ],
+  plugins: [new webpack.EnvironmentPlugin({ NODE_ENV: 'production' })],
 
-  mode: mode || "production",
-  devtool: mode == "development" && "inline-source-map",
+  mode: mode || 'production',
+  devtool: mode == 'development' && 'inline-source-map',
 
   devServer: {
     hot: true,
-    proxy: [{
-      context: ['!*.js'],
-      target: 'http://localhost:5000',
-    }]
-  }
-
-};
+    proxy: [
+      {
+        context: ['!*.js'],
+        target: 'http://localhost:5000',
+      },
+    ],
+  },
+}

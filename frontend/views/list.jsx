@@ -35,7 +35,7 @@ setupAdmin('list', checkParams((props, res) => {
       props = { ...props, ...listProps };
       return (
         <List filters={ <Filters /> } bulkActionButtons={ <Actions /> } perPage={ limit } pagination={ pagination || defaultPagination } { ...props }>
-          <Datagrid rowClick={ show && "show" } children={ children } />
+        <Datagrid rowClick={ show ? "show" : null } children={ children } />
         </List>
       )
     };
