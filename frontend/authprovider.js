@@ -1,79 +1,84 @@
 import Cookies from 'js-cookie'
-import { makeRequest, requestHeaders } from './utils';
+import { makeRequest, processAdmin, requestHeaders, setupAdmin } from './utils'
 
+setupAdmin(
+  'auth-get',
+  ({ storage }) =>
+    (name) =>
+      storage == 'localstorage' ? localStorage.getItem(name) : Cookies.get(name)
+)
+
+setupAdmin('auth-set', ({ storage }) => (name, value) => {
+  if (storage == 'localstorage') {
+    localStorage.setItem(name, value)
+    requestHeaders['Authorization'] = value
+  } else Cookies.set(name, value)
+})
 
 export default (props) => {
+  const { identityURL, authorizeURL, logoutURL, required, storage_name } = props
 
-  const { identityURL, authorizeURL, logoutURL, required, storage, storage_name } = props;
-
-  const authorize = (name, value) => {
-    if (value === undefined) {
-      return storage == 'localstorage' ?  localStorage.getItem(name) : Cookies.get(name);
-    }
-
-    if (storage == 'localstorage') requestHeaders['Authorization'] = value;
-    storage == 'localstorage' ?  localStorage.setItem(name, value) : Cookies.set(name, value);
-    return value;
-  }
+  const authGet = processAdmin('auth-get', props)
+  const authSet = processAdmin('auth-set', props)
 
   // Initialize request headers
-  authorize(storage_name, authorize(storage_name));
+  authSet(storage_name, authGet(storage_name))
 
   let getIdentity = async () => {
-      if (identityURL) {
-        let {json} = await makeRequest(identityURL);
-        return json;
-      }
+    if (identityURL) {
+      let { json } = await makeRequest(identityURL)
+      return json
+    }
   }
 
-  if (required) return {
+  if (required)
+    return {
+      login: async (data) => {
+        if (!authorizeURL) throw { message: 'Authorization is not supported' }
 
-      getIdentity,
-
-      checkAuth: async (data) => {
-        const auth = authorize(storage_name);
-        if (!auth) throw {message: 'Authorization required'}
-
-        if (!identityURL) return auth;
-
-        let user = await getIdentity();
-        if (!user)  throw {message: 'Authorization required'};
-
-        return user;
+        let { json } = await makeRequest(authorizeURL, { data, method: 'POST' })
+        authSet(storage_name, json)
       },
 
       checkError: async (error) => {
-        const {message, status, body} = error;
+        const { status } = error
 
         if (status == 401 || status == 403) {
           // Clean storage
-          authorize(storage_name, '');
+          authSet(storage_name, '')
 
-          throw {message: 'Invalid authorization', redirectTo: logoutURL, logoutUser: !logoutURL};
+          throw {
+            message: 'Invalid authorization',
+            redirectTo: logoutURL,
+            logoutUser: !logoutURL,
+          }
         }
-
       },
 
-      login: async (data) => {
-        if (!authorizeURL) throw {message: 'Authorization is not supported'}
+      checkAuth: async (data) => {
+        const auth = authGet(storage_name)
+        if (!auth) throw { message: 'Authorization required' }
 
-        let {json} = await makeRequest(authorizeURL, {data, method: 'POST'})
-        authorize(storage_name, json);
+        if (!identityURL) return auth
+
+        let user = await getIdentity()
+        if (!user) throw { message: 'Authorization required' }
+
+        return user
       },
 
       logout: async () => {
+        // Clean storage
+        authSet(storage_name, '')
 
-          // Clean storage
-        authorize(storage_name, '');
-
-        if (logoutURL) window.location = logoutURL;
+        if (logoutURL) window.location = logoutURL
       },
+
+      getIdentity,
 
       getPermissions: (data) => {
-        const role = authorize(storage_name + '_role');
-        return role ? Promise.resolve(role) : Promise.reject();
+        const role = authGet(storage_name + '_role')
+        return role ? Promise.resolve(role) : Promise.reject()
       },
-
-  }
-
+    }
 }

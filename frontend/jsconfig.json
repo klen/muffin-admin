@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "target": "ESNext",
+    "moduleResolution": "node",
+    "checkJs": true,
+    "jsx": "react-jsx"
+  }
+}

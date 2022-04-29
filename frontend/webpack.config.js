@@ -33,6 +33,7 @@ module.exports = {
 
   devServer: {
     hot: true,
+    open: true,
     proxy: [
       {
         context: ['!*.js'],

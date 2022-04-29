@@ -1,26 +1,30 @@
-import React from "react";
+import React from 'react'
 
-import { Create, SimpleForm, TopToolbar, ListButton } from "react-admin";
+import { Create, SimpleForm, TopToolbar, ListButton } from 'react-admin'
 
 import initRAItems from '../ui.jsx'
 import { checkParams, processAdmin, setupAdmin } from '../utils'
 
-
 // Initialize a create component
-setupAdmin('create', checkParams((inputs, res) => props => {
+setupAdmin(
+  'create',
+  checkParams(
+    (inputs, res) =>
+      function MACreate(props) {
+        const Actions = (
+          <TopToolbar>
+            <ListButton />
+          </TopToolbar>
+        )
 
-  const Actions = ({basePath}) => (
-      <TopToolbar>
-        <ListButton basePath={ basePath } />
-      </TopToolbar>
+        return (
+          <Create actions={Actions} {...props}>
+            <SimpleForm>
+              {processAdmin('create-inputs', inputs, res)}
+            </SimpleForm>
+          </Create>
+        )
+      }
   )
-
-  return (
-    <Create actions={ <Actions /> } {...props}>
-      <SimpleForm children={ processAdmin('create-inputs', inputs, res) } />
-    </Create>
-  )
-}
-));
-setupAdmin('create-inputs', initRAItems);
-
+)
+setupAdmin('create-inputs', initRAItems)

@@ -1,25 +1,34 @@
-import React from 'react';
+import React from 'react'
 
-import get from 'lodash/get';
-import { useRecordContext } from 'ra-core';
-import Avatar from '@material-ui/core/Avatar';
+import get from 'lodash/get'
+import { useRecordContext } from 'ra-core'
+import Avatar from '@mui/material/Avatar'
 
+const AvatarField = ({ source, alt, style, nameProp, ...props }) => {
+  const record = useRecordContext(props)
 
-const AvatarField = ({ source, record, alt, style, nameProp, ...props }) => {
+  let value = get(record, source),
+    name = record[nameProp]
 
-  let sourceValue = get(record, source),
-      letters = null,
-      name = record[nameProp];
+  const letters = name
+    ? name
+        .trim(' ')
+        .split(/\s+/)
+        .slice(0, 2)
+        .map((n) => n[0].toUpperCase())
+        .join('')
+    : ''
 
-  if (name) letters = name.trim(' ').split(/\s+/).slice(0, 2).map( n => n[0].toUpperCase() ).join('');
-
-  return <Avatar src={ record[source] } alt={ alt } style={ style }>{ letters }</Avatar>
-
+  return (
+    <Avatar src={value} alt={alt} style={style}>
+      {letters}
+    </Avatar>
+  )
 }
 
-AvatarField.displayName = 'AvatarField';
+AvatarField.displayName = 'AvatarField'
 AvatarField.defaultProps = {
   addLabel: true,
 }
 
-export default AvatarField;
+export default AvatarField

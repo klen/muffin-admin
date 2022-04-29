@@ -1,0 +1,44 @@
+{
+  "root": true,
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "prettier"
+  ],
+  "parser": "@babel/eslint-parser",
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true,
+      "experimentalObjectRestSpread": true
+    },
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "babelOptions": {
+      "presets": [
+        "@babel/preset-react"
+      ],
+      "rootMode": "upward"
+    }
+  },
+  "plugins": [
+    "prettier",
+    "react"
+  ],
+  "env": {
+    "browser": true,
+    "es6": true,
+    "jest": true,
+    "node": true
+  },
+  "rules": {
+    "no-console": "warn",
+    "no-debugger": "warn",
+    "prettier/prettier": "warn",
+    "react/prop-types": "off"
+  }
+}

@@ -1,11 +1,14 @@
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client'
 
 import { setupAdmin, processAdmin } from './utils.js'
 
-import './admin.jsx';
+import './admin.jsx'
 
-
-let initAdmin = globalThis.initAdmin = (props) => ReactDOM.render(processAdmin('admin', props), document.getElementById('root'))
+const initAdmin = (globalThis.initAdmin = (props) => {
+  const container = document.getElementById('root')
+  const root = createRoot(container)
+  root.render(processAdmin('admin', props))
+})
 
 export { setupAdmin, processAdmin }
 
