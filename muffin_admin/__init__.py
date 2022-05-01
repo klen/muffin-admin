@@ -5,7 +5,7 @@ from .plugin import Plugin # noqa
 # Package information
 # ===================
 
-__version__ = "1.31.2"
+__version__ = "1.31.3"
 __project__ = "muffin-admin"
 __author__ = "Kirill Klenov <horneds@gmail.com>"
 __license__ = "MIT"
