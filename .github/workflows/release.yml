@@ -26,8 +26,8 @@ jobs:
     - name: Build/Publish frontend
       run: |
         npm install
+        make npm pypi
         npm publish
-        node_modules/.bin/webpack
       working-directory: frontend
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
