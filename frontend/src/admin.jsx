@@ -8,8 +8,8 @@ import authProvider from './authprovider'
 import dataProvider from './dataprovider'
 import { processAdmin, setupAdmin } from './utils'
 
-import './dashboard.jsx'
-import './resources.jsx'
+import './dashboard'
+import './resources'
 
 // Initialize the admin
 setupAdmin('admin', (props) => {
