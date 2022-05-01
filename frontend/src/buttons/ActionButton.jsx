@@ -1,7 +1,4 @@
 import React, { useEffect } from 'react'
-
-import useAction from '../hooks/useAction'
-
 import {
   Button,
   useRefresh,
@@ -10,6 +7,8 @@ import {
   useRecordContext,
 } from 'react-admin'
 import * as icons from '@mui/icons-material'
+
+import useAction from '../hooks/useAction'
 
 export const BulkActionButton = ({
   label,

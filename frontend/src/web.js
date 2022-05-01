@@ -1,8 +1,8 @@
 import { createRoot } from 'react-dom/client'
 
-import { setupAdmin, processAdmin } from './utils.js'
+import { setupAdmin, processAdmin } from './utils'
 
-import './admin.jsx'
+import './admin'
 
 const initAdmin = (globalThis.initAdmin = (props) => {
   const container = document.getElementById('root')

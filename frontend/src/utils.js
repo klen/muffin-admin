@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 
 import { isValidElement } from 'react'
-
 import { fetchUtils } from 'ra-core'
 import { stringify } from 'query-string'
 

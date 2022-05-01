@@ -1,8 +1,7 @@
 import React from 'react'
-
 import { Create, SimpleForm, TopToolbar, ListButton } from 'react-admin'
 
-import initRAItems from '../ui.jsx'
+import initRAItems from '../ui'
 import { checkParams, processAdmin, setupAdmin } from '../utils'
 
 // Initialize a create component

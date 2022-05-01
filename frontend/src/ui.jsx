@@ -38,11 +38,11 @@ import {
   ReferenceInput,
 } from 'react-admin'
 
-import AvatarField from './fields/AvatarField.jsx'
-import FKField from './fields/FKField.jsx'
-import FKInput from './inputs/FKInput.jsx'
-import JsonField from './fields/JsonField.jsx'
-import JsonInput from './inputs/JsonInput.jsx'
+import AvatarField from './fields/AvatarField'
+import FKField from './fields/FKField'
+import FKInput from './inputs/FKInput'
+import JsonField from './fields/JsonField'
+import JsonInput from './inputs/JsonInput'
 
 const ui = {
   // Fields

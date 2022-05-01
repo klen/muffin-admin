@@ -1,5 +1,4 @@
 import React from 'react'
-
 import {
   BulkDeleteButton,
   Datagrid,
@@ -11,9 +10,9 @@ import {
 import uniq from 'lodash/uniq'
 import sortBy from 'lodash/sortBy'
 
-import initRAItems from '../ui.jsx'
+import initRAItems from '../ui'
 import { checkParams, processAdmin, setupAdmin } from '../utils'
-import { BulkActionButton } from '../buttons/ActionButton.jsx'
+import { BulkActionButton } from '../buttons/ActionButton'
 
 const defaultPagination = <Pagination rowsPerPageOptions={[10, 25, 50, 100]} />
 

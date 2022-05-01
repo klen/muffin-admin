@@ -1,3 +1,3 @@
-import './admin.jsx'
+import './admin'
 
-export { setupAdmin, processAdmin } from './utils.js'
+export * from './utils'

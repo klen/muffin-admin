@@ -4,11 +4,10 @@ import { Resource } from 'react-admin'
 import * as icons from '@mui/icons-material'
 
 import { checkParams, processAdmin, setupAdmin } from './utils'
-
-import './views/list.jsx'
-import './views/show.jsx'
-import './views/edit.jsx'
-import './views/create.jsx'
+import './views/list'
+import './views/show'
+import './views/edit'
+import './views/create'
 
 // Initialize Resources Components
 setupAdmin('resources', (resources) =>

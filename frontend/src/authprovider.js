@@ -1,4 +1,5 @@
 import Cookies from 'js-cookie'
+
 import { makeRequest, processAdmin, requestHeaders, setupAdmin } from './utils'
 
 setupAdmin(

@@ -1,5 +1,4 @@
 import React from 'react'
-
 import { ReferenceInput, AutocompleteInput } from 'react-admin'
 
 const FKInput = ({

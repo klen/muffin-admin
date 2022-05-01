@@ -1,5 +1,4 @@
 import React from 'react'
-
 import get from 'lodash/get'
 import { useRecordContext } from 'ra-core'
 import Avatar from '@mui/material/Avatar'

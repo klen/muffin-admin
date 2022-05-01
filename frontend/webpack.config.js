@@ -28,6 +28,10 @@ module.exports = {
   mode: mode || 'production',
   devtool: mode == 'development' && 'inline-source-map',
 
+  resolve: {
+    extensions: ['.jsx', '.js'],
+  },
+
   devServer: {
     hot: true,
     open: true,

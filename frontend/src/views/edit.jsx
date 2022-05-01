@@ -1,5 +1,4 @@
 import React from 'react'
-
 import {
   Edit,
   ListButton,
@@ -8,10 +7,9 @@ import {
   TopToolbar,
 } from 'react-admin'
 
-import initRAItems from '../ui.jsx'
+import initRAItems from '../ui'
 import { checkParams, processAdmin, setupAdmin } from '../utils'
-
-import { ActionButton } from '../buttons/ActionButton.jsx'
+import { ActionButton } from '../buttons/ActionButton'
 
 // Initialize an edit component
 setupAdmin(
