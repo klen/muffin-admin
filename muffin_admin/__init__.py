@@ -1,7 +1,5 @@
 """Plugin meta information."""
 
-from .plugin import Plugin # noqa
-
 # Package information
 # ===================
 
@@ -10,8 +8,8 @@ __project__ = "muffin-admin"
 __author__ = "Kirill Klenov <horneds@gmail.com>"
 __license__ = "MIT"
 
-
 from .handler import AdminHandler
+from .plugin import Plugin  # noqa
 
 try:
     from .peewee import PWAdminHandler, PWFilter
@@ -24,4 +22,11 @@ except ImportError:
     pass
 
 
-__all__ = 'AdminHandler', 'PWAdminHandler', 'PWFilter', 'SAAdminHandler', 'SAFilter', 'Plugin'
+__all__ = (
+    "AdminHandler",
+    "PWAdminHandler",
+    "PWFilter",
+    "SAAdminHandler",
+    "SAFilter",
+    "Plugin",
+)
