@@ -1,14 +1,14 @@
-const path = require('path'),
-  webpack = require('webpack'),
+const path = require("path"),
+  webpack = require("webpack"),
   mode = process.env.NODE_ENV
 
 module.exports = {
-  entry: './src/web',
+  entry: "./src/web",
 
   output: {
-    filename: 'main.js',
-    path: path.resolve(__dirname, '../muffin_admin'),
-    publicPath: '/admin',
+    filename: "main.js",
+    path: path.resolve(__dirname, "../muffin_admin"),
+    publicPath: "/admin",
   },
 
   module: {
@@ -17,19 +17,19 @@ module.exports = {
         test: /\.jsx?$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader',
+          loader: "babel-loader",
         },
       },
     ],
   },
 
-  plugins: [new webpack.EnvironmentPlugin({ NODE_ENV: 'production' })],
+  plugins: [new webpack.EnvironmentPlugin({ NODE_ENV: "production" })],
 
-  mode: mode || 'production',
-  devtool: mode == 'development' && 'inline-source-map',
+  mode: mode || "production",
+  devtool: mode == "development" && "inline-source-map",
 
   resolve: {
-    extensions: ['.jsx', '.js'],
+    extensions: [".jsx", ".js"],
   },
 
   devServer: {
@@ -37,8 +37,8 @@ module.exports = {
     open: true,
     proxy: [
       {
-        context: ['!*.js'],
-        target: 'http://localhost:5000',
+        context: ["!*.js"],
+        target: "http://localhost:5555",
       },
     ],
   },

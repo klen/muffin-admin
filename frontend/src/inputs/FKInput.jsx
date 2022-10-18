@@ -1,5 +1,5 @@
-import React from 'react'
-import { ReferenceInput, AutocompleteInput } from 'react-admin'
+import React from "react"
+import { ReferenceInput, AutocompleteInput } from "react-admin"
 
 const FKInput = ({
   refProp,
@@ -15,11 +15,11 @@ const FKInput = ({
     return filters
   }
 
-  refSource = refSource || 'id'
+  refSource = refSource || "id"
 
   let renderText = (record) => {
     let pk = record[refSource]
-    return (pk && `${record[refProp]} (#${pk})`) || ''
+    return (pk && `${record[refProp]} (#${pk})`) || ""
   }
 
   return (

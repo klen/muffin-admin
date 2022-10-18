@@ -182,7 +182,7 @@ class AdminHandler(RESTBase):
         rtype, props = converter(field)
 
         if isinstance(field.load_default, (bool, str, int)):
-            props.setdefault('initialValue', field.load_default)
+            props.setdefault('defaultValue', field.load_default)
 
         if field.required:
             props.setdefault('required', True)

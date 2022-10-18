@@ -1,6 +1,6 @@
-import React from 'react'
+import React from "react"
 
-import { required } from 'react-admin'
+import { required } from "react-admin"
 import {
   BooleanField,
   ChipField,
@@ -17,7 +17,7 @@ import {
   ReferenceField,
   ReferenceManyField,
   ReferenceArrayField,
-} from 'react-admin'
+} from "react-admin"
 import {
   BooleanInput,
   NullableBooleanInput,
@@ -36,13 +36,13 @@ import {
   CheckboxGroupInput,
   ReferenceArrayInput,
   ReferenceInput,
-} from 'react-admin'
+} from "react-admin"
 
-import AvatarField from './fields/AvatarField'
-import FKField from './fields/FKField'
-import FKInput from './inputs/FKInput'
-import JsonField from './fields/JsonField'
-import JsonInput from './inputs/JsonInput'
+import AvatarField from "./fields/AvatarField"
+import FKField from "./fields/FKField"
+import FKInput from "./inputs/FKInput"
+import JsonField from "./fields/JsonField"
+import JsonInput from "./inputs/JsonInput"
 
 const ui = {
   // Fields

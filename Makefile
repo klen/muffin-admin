@@ -95,9 +95,9 @@ mypy: $(VIRTUAL_ENV)
 example-peewee: $(VIRTUAL_ENV) front
 	@$(VIRTUAL_ENV)/bin/muffin examples.peewee_orm db
 	@$(VIRTUAL_ENV)/bin/muffin examples.peewee_orm devdata
-	@$(VIRTUAL_ENV)/bin/uvicorn examples.peewee_orm:app --reload --port=5000
+	@$(VIRTUAL_ENV)/bin/uvicorn examples.peewee_orm:app --reload --port=5555
 
 .PHONY: example-sqlalchemy
 # target: example-sqlalchemy - Run example
 example-sqlalchemy: $(VIRTUAL_ENV) front
-	@$(VIRTUAL_ENV)/bin/uvicorn examples.sqlalchemy_core:app --reload --port=5000
+	@$(VIRTUAL_ENV)/bin/uvicorn examples.sqlalchemy_core:app --reload --port=5555
