@@ -4,10 +4,9 @@ import datetime as dt
 from pathlib import Path
 
 import peewee as pw
-from muffin_peewee import Plugin, JSONField
+from muffin_peewee import JSONField, Plugin
 
 from . import app
-
 
 db = Plugin(app, connection=f"sqlite:///{ Path(__file__).parent.parent / 'db.sqlite' }")
 
@@ -17,6 +16,14 @@ class BaseModel(db.Model):
     """Automatically keep the model's creation time."""
 
     created = pw.DateTimeField(default=dt.datetime.utcnow)
+
+
+@db.register
+class Group(BaseModel):
+
+    """A group."""
+
+    name = pw.CharField(max_length=255, unique=True)
 
 
 @db.register
@@ -32,7 +39,12 @@ class User(BaseModel):
     meta = JSONField(default={})
 
     is_active = pw.BooleanField(default=True)
-    role = pw.CharField(choices=(('user', 'user'), ('manager', 'manager'), ('admin', 'admin')))
+    role = pw.CharField(
+        choices=(("user", "user"), ("manager", "manager"), ("admin", "admin"))
+    )
+
+    # Relationships
+    group = pw.ForeignKeyField(Group, backref="users", null=True)
 
 
 @db.register
@@ -40,7 +52,7 @@ class Message(BaseModel):
 
     """Just a users' messages."""
 
-    status = pw.CharField(choices=(('new', 'new'), ('published', 'published')))
+    status = pw.CharField(choices=(("new", "new"), ("published", "published")))
     title = pw.CharField()
     body = pw.TextField()
 

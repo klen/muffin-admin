@@ -2,9 +2,8 @@
 
 import typing as t
 
-
-import peewee as pw
 import marshmallow as ma
+import peewee as pw
 from muffin_peewee import JSONField
 from muffin_rest.peewee import PWRESTBase, PWRESTOptions
 from muffin_rest.peewee.filters import PWFilter
@@ -30,11 +29,11 @@ class PWAdminOptions(AdminOptions, PWRESTOptions):
             elif isinstance(flt, tuple):
                 name = flt[0]
 
-            if name == 'id':
+            if name == "id":
                 break
 
         else:
-            self.filters = [PWFilter('id', field=self.model_pk), *self.filters]
+            self.filters = [PWFilter("id", field=self.model_pk), *self.filters]
 
 
 class PWAdminHandler(AdminHandler, PWRESTBase):
@@ -48,9 +47,11 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
     def to_ra_field(cls, field: ma.fields.Field, source: str) -> RA_INFO:
         """Setup RA fields."""
         model_field = getattr(cls.meta.model, field.attribute or source, None)
-        if model_field and \
-                (isinstance(model_field, JSONField) or model_field.field_type.lower() == 'json'):
-            return 'JsonField', {}
+        if model_field and (
+            isinstance(model_field, JSONField)
+            or model_field.field_type.lower() == "json"
+        ):
+            return "JsonField", {}
 
         return super(PWAdminHandler, cls).to_ra_field(field, source)
 
@@ -61,23 +62,31 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
         ra_type, props = super(PWAdminHandler, cls).to_ra_input(field, source)
         if model_field:
             if model_field.choices:
-                return 'SelectInput', dict(props, choices=[{
-                    "id": c[0], "name": c[1]} for c in model_field.choices])
+                return "SelectInput", dict(
+                    props,
+                    choices=[{"id": c[0], "name": c[1]} for c in model_field.choices],
+                )
 
             if isinstance(model_field, pw.TextField):
-                return 'TextInput', dict(props, multiline=True)
+                return "TextInput", dict(props, multiline=True)
 
-            if isinstance(model_field, JSONField) or model_field.field_type.lower() == 'json':
-                return 'JsonInput', props
+            if (
+                isinstance(model_field, JSONField)
+                or model_field.field_type.lower() == "json"
+            ):
+                return "JsonInput", props
 
             if isinstance(model_field, pw.ForeignKeyField):
                 if source in cls.meta.references:
-                    ref, _, ref_source = cls.meta.references[source].partition('.')
-                    return 'FKInput', dict(
-                        props, allowEmpty=model_field.null,
+                    ref, _, ref_source = cls.meta.references[source].partition(".")
+                    return "FKInput", dict(
+                        props,
+                        emptyValue=model_field.null and None or "",
                         refProp=ref_source or ref,
                         refSource=model_field.rel_field.name,
-                        reference=ref_source and ref or model_field.rel_model._meta.table_name,
+                        reference=ref_source
+                        and ref
+                        or model_field.rel_model._meta.table_name,
                     )
 
         return ra_type, props

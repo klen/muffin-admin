@@ -2,14 +2,13 @@
 
 import marshmallow as ma
 from muffin import ResponseJSON
+from muffin_admin import Plugin, PWAdminHandler
 from muffin_rest import APIError
-from muffin_admin import Plugin, PWAdminHandler, PWFilter
 
 from . import app
-from .database import User, Message
+from .database import Group, Message, User
 
-
-admin = Plugin(app, custom_css_url='/admin.css')
+admin = Plugin(app, custom_css_url="/admin.css")
 
 
 @admin.dashboard
@@ -17,9 +16,14 @@ async def dashboard(request):
     """Render dashboard cards."""
     return [
         [
-            {'title': 'App config (Table view)', 'value': [(k, str(v)) for k, v in app.cfg]},
-            {'title': 'Request headers (JSON view)', 'value': {
-                k: v for k, v in request.headers.items() if k != 'cookie'}},
+            {
+                "title": "App config (Table view)",
+                "value": [(k, str(v)) for k, v in app.cfg],
+            },
+            {
+                "title": "Request headers (JSON view)",
+                "value": {k: v for k, v in request.headers.items() if k != "cookie"},
+            },
         ]
     ]
 
@@ -27,10 +31,11 @@ async def dashboard(request):
 # Setup authorization
 # -------------------
 
+
 @admin.check_auth
 async def auth(request, redirect=True):
     """Fake authorization method. Do not use in production."""
-    pk = request.headers.get('authorization')
+    pk = request.headers.get("authorization")
     return await User.select().where(User.id == pk).first()
 
 
@@ -46,8 +51,11 @@ async def ident(request):
 async def login(request):
     """Login an user."""
     data = await request.data()
-    user = await User.select().where(
-        User.email == data['username'], User.password == data['password']).first()
+    user = (
+        await User.select()
+        .where(User.email == data["username"], User.password == data["password"])
+        .first()
+    )
     return ResponseJSON(user and user.id)
 
 
@@ -65,40 +73,53 @@ class UserResource(PWAdminHandler):
         """Tune the resource."""
 
         model = User
-        filters = 'created', 'is_active', 'role', ('email', {'operator': '$contains'})
-        sorting = ('id', {'default': 'desc'}), 'created', 'email', 'is_active', 'role'
+        filters = "created", "is_active", "role", ("email", {"operator": "$contains"})
+        sorting = ("id", {"default": "desc"}), "created", "email", "is_active", "role"
         schema_meta = {
-            'load_only': ('password',),
-            'dump_only': ('created',),
+            "load_only": ("password",),
+            "dump_only": ("created",),
         }
         schema_fields = {
-            'name': ma.fields.Function(
+            "name": ma.fields.Function(
                 lambda user: f"{user.first_name} {user.last_name}"
             )
         }
 
-        icon = 'People'
-        columns = 'id', 'picture', 'email', 'name', 'is_active', 'role'
+        icon = "Person"
+        columns = "id", "picture", "email", "name", "is_active", "role"
         ra_fields = {
-            'picture': ('AvatarField', {
-                'alt': 'picture', 'nameProp': 'name', 'sortable': False
-            })
+            "picture": (
+                "AvatarField",
+                {"alt": "picture", "nameProp": "name", "sortable": False},
+            )
         }
+        references = {"group": "group.name"}
 
-    @PWAdminHandler.action('/user/error', label='Broken Action', icon='Error')
+    @PWAdminHandler.action("/user/error", label="Broken Action", icon="Error")
     async def just_raise_an_error(self, request, resource=None):
         """Just show an error."""
-        raise APIError.BAD_REQUEST(message='The action is broken')
+        raise APIError.BAD_REQUEST(message="The action is broken")
 
-    @PWAdminHandler.action('/user/disable', label='Disable Users', icon='Clear')
+    @PWAdminHandler.action("/user/disable", label="Disable Users", icon="Clear")
     async def disable_users(self, request, resource=None):
         """Mark selected users as inactive."""
         import asyncio
 
-        ids = request.query.getall('ids')
+        ids = request.query.getall("ids")
         await User.update(is_active=False).where(User.id << ids)
         await asyncio.sleep(1)
-        return {'status': True, 'ids': ids, 'message': 'Users is disabled'}
+        return {"status": True, "ids": ids, "message": "Users is disabled"}
+
+
+@admin.route
+class GroupResource(PWAdminHandler):
+
+    """Create Admin Resource for the Group model."""
+
+    class Meta:
+        model = Group
+        schema_meta = {"dump_only": ("created",)}
+        icon = "People"
 
 
 @admin.route
@@ -111,18 +132,20 @@ class MessageResource(PWAdminHandler):
         """Tune the resource."""
 
         model = Message
-        filters = 'status', 'user'
-        schema_meta = {'dump_only': ('created',)}
+        filters = "status", "user"
+        schema_meta = {"dump_only": ("created",)}
 
-        icon = 'Message'
-        references = {'user': 'email'}
+        icon = "Message"
+        references = {"user": "email"}
 
-    @PWAdminHandler.action('/message/{id}/publish', label='Publish', icon='Publish', view='show')
+    @PWAdminHandler.action(
+        "/message/{id}/publish", label="Publish", icon="Publish", view="show"
+    )
     async def publish_message(self, request, resource=None):
         if resource is None:
             raise APIError.NOT_FOUND()
 
-        resource.status = 'published'
+        resource.status = "published"
         await resource.save()
 
-        return {'status': True, 'message': 'Message is published'}
+        return {"status": True, "message": "Message is published"}

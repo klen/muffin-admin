@@ -3,10 +3,10 @@
 import typing as t
 
 import marshmallow as ma
-from muffin_rest.sqlalchemy import SARESTOptions, SARESTHandler
-from muffin_rest.sqlalchemy.filters import SAFilter
 from muffin_rest.filters import Filter
-from sqlalchemy import Enum, Text, JSON
+from muffin_rest.sqlalchemy import SARESTHandler, SARESTOptions
+from muffin_rest.sqlalchemy.filters import SAFilter
+from sqlalchemy import JSON, Enum, Text
 
 from ..handler import AdminHandler, AdminOptions
 from ..typing import RA_INFO
@@ -24,11 +24,11 @@ class SAAdminOptions(AdminOptions, SARESTOptions):
             if isinstance(f, Filter):
                 f = f.name
 
-            if f == 'id':
+            if f == "id":
                 break
 
         else:
-            self.filters = [SAFilter('id', field=self.table_pk), *self.filters]
+            self.filters = [SAFilter("id", field=self.table_pk), *self.filters]
 
 
 class SAAdminHandler(AdminHandler, SARESTHandler):
@@ -47,11 +47,14 @@ class SAAdminHandler(AdminHandler, SARESTHandler):
                 fk = list(column.foreign_keys)[0]
                 ref = fk.column.table.name
                 if ref in cls.meta.references:
-                    return 'FKField', {
-                        'reference': ref, 'source': source, 'refSource': cls.meta.references[ref]}
+                    return "FKField", {
+                        "reference": ref,
+                        "source": source,
+                        "refSource": cls.meta.references[ref],
+                    }
 
             if isinstance(column.type, JSON):
-                return 'JsonField', {}
+                return "JsonField", {}
 
         return super(SAAdminHandler, cls).to_ra_field(field, source)
 
@@ -62,24 +65,28 @@ class SAAdminHandler(AdminHandler, SARESTHandler):
         ra_type, props = super(SAAdminHandler, cls).to_ra_input(field, source)
         if column is not None:
             if column.foreign_keys and (source in cls.meta.references):
-                ref, _, ref_source = cls.meta.references[source].partition('.')
+                ref, _, ref_source = cls.meta.references[source].partition(".")
                 fk = list(column.foreign_keys)[0]
-                return 'FKInput', dict(
-                    props, allowEmpty=column.nullable,
+                return "FKInput", dict(
+                    props,
+                    emptyValue=column.nullable and None or "",
                     refSource=fk.column.name,
                     refProp=ref_source or ref,
                     reference=ref_source and ref or fk.column.table.name,
                 )
 
             if isinstance(column.type, Enum):
-                return 'SelectInput', dict(props, choices=[
-                    {"id": c.value, "name": c.name} for c in column.type.enum_class
-                ])
+                return "SelectInput", dict(
+                    props,
+                    choices=[
+                        {"id": c.value, "name": c.name} for c in column.type.enum_class
+                    ],
+                )
 
             if isinstance(column.type, Text):
-                return 'TextInput', dict(props, multiline=True)
+                return "TextInput", dict(props, multiline=True)
 
             if isinstance(column.type, JSON):
-                return 'JsonInput', props
+                return "JsonInput", props
 
         return ra_type, props
