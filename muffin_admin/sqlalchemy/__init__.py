@@ -69,7 +69,7 @@ class SAAdminHandler(AdminHandler, SARESTHandler):
                 fk = list(column.foreign_keys)[0]
                 return "FKInput", dict(
                     props,
-                    emptyValue=column.nullable and None or "",
+                    emptyValue=None if column.nullable else "",
                     refSource=fk.column.name,
                     refProp=ref_source or ref,
                     reference=ref_source and ref or fk.column.table.name,

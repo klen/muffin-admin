@@ -81,7 +81,7 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
                     ref, _, ref_source = cls.meta.references[source].partition(".")
                     return "FKInput", dict(
                         props,
-                        emptyValue=model_field.null and None or "",
+                        emptyValue=None if model_field.null else "",
                         refProp=ref_source or ref,
                         refSource=model_field.rel_field.name,
                         reference=ref_source

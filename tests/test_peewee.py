@@ -114,7 +114,7 @@ async def test_admin(app, setup_admin):
             "FKInput",
             {
                 "reference": "role",
-                "allowEmpty": True,
+                "emptyValue": None,
                 "refProp": "name",
                 "refSource": "id",
                 "source": "role",
@@ -140,7 +140,7 @@ async def test_admin(app, setup_admin):
                 "FKInput",
                 {
                     "reference": "role",
-                    "allowEmpty": True,
+                    "emptyValue": None,
                     "refProp": "name",
                     "refSource": "id",
                     "source": "role",
