@@ -1,6 +1,6 @@
 aiofile
 aiosqlite
-marshmallow-peewee  >= 3.2.0
+marshmallow-peewee  >= 3.4.1
 marshmallow-sqlalchemy
 muffin-databases    >= 0.2.4
 muffin-peewee-aio
