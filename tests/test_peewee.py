@@ -17,7 +17,7 @@ class User(pw.Model):
 
     name = pw.CharField()
     password = pw.CharField()
-    is_active = pw.BooleanField(default=True)
+    is_active = pw.BooleanField(default=True, help_text="Disable to block the user")
     status = pw.IntegerField(default=1, choices=[(1, "new"), (2, "old")])
     meta = muffin_peewee.JSONField(default={})
 
@@ -100,7 +100,14 @@ async def test_admin(app, setup_admin):
     assert ra["create"] == [
         ("TextInput", {"required": True, "source": "name"}),
         ("TextInput", {"required": True, "source": "password"}),
-        ("BooleanInput", {"defaultValue": True, "source": "is_active"}),
+        (
+            "BooleanInput",
+            {
+                "defaultValue": True,
+                "source": "is_active",
+                "helperText": "Disable to block the user",
+            },
+        ),
         (
             "SelectInput",
             {
@@ -126,7 +133,14 @@ async def test_admin(app, setup_admin):
         "inputs": [
             ("TextInput", {"required": True, "source": "name"}),
             ("TextInput", {"required": True, "source": "password"}),
-            ("BooleanInput", {"defaultValue": True, "source": "is_active"}),
+            (
+                "BooleanInput",
+                {
+                    "defaultValue": True,
+                    "source": "is_active",
+                    "helperText": "Disable to block the user",
+                },
+            ),
             (
                 "SelectInput",
                 {

@@ -32,10 +32,12 @@ class User(BaseModel):
     """A simple user model."""
 
     email = pw.CharField()
-    first_name = pw.CharField(null=True)
+    first_name = pw.CharField(null=True, help_text="First name")
     last_name = pw.CharField(null=True)
     password = pw.CharField(null=True)  # not secure only for the example
-    picture = pw.CharField(default="https://picsum.photos/100")
+    picture = pw.CharField(
+        default="https://picsum.photos/100", help_text="Full URL to the picture"
+    )
     meta = JSONField(default={})
 
     is_active = pw.BooleanField(default=True)
