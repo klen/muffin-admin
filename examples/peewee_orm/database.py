@@ -57,5 +57,6 @@ class Message(BaseModel):
     status = pw.CharField(choices=(("new", "new"), ("published", "published")))
     title = pw.CharField()
     body = pw.TextField()
+    dtpublish = pw.DateTimeField(null=True)
 
     user = pw.ForeignKeyField(User)

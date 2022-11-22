@@ -1,8 +1,8 @@
-import React from 'react'
-import { TextInput } from 'react-admin'
-import isJSON from 'validator/lib/isJSON'
+import React from "react"
+import { TextInput } from "react-admin"
+import isJSON from "validator/lib/isJSON"
 
-const DEFAULT_ERRORTEXT = 'Invalid JSON'
+const DEFAULT_ERRORTEXT = "Invalid JSON"
 
 const parseFunction = (json) => {
   let retval = json
@@ -42,7 +42,7 @@ export default function JsonInput(props) {
   // const errorobj = { message: errortext }
 
   const validateJSON = (value) => {
-    if (!value || typeof value === 'object') return undefined
+    if (!value || typeof value === "object") return undefined
     return isJSON(value) ? undefined : errortext
   }
   validate.push(validateJSON)
@@ -50,7 +50,7 @@ export default function JsonInput(props) {
 
   const formatJSON = (json) => {
     let retval = json
-    if (retval && typeof retval === 'object')
+    if (retval && typeof retval === "object")
       retval = JSON.stringify(retval, null, 2)
     return retval
   }

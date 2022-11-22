@@ -97,6 +97,10 @@ example-peewee: $(VIRTUAL_ENV) front
 	@$(VIRTUAL_ENV)/bin/muffin examples.peewee_orm devdata
 	@$(VIRTUAL_ENV)/bin/uvicorn examples.peewee_orm:app --reload --port=8080
 
+
+shell: $(VIRTUAL_ENV)
+	@$(VIRTUAL_ENV)/bin/muffin examples.peewee_orm shell
+
 .PHONY: example-sqlalchemy
 # target: example-sqlalchemy - Run example
 example-sqlalchemy: $(VIRTUAL_ENV) front
