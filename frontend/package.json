@@ -22,7 +22,7 @@
     "react-admin": "^4.4.3",
     "ra-ui-materialui": "^4.4.3",
     "@mui/icons-material": "5.10.14",
-    "@mui/material": "5.10.14",
+    "@mui/material": "5.11.3",
     "react-dom": "^18.2.0",
     "validator": "^13.7.0"
   },
