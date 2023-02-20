@@ -22,6 +22,7 @@ setup(
     install_requires=parse_requirements("requirements/requirements.txt"),
     extras_require={
         "tests": parse_requirements("requirements/requirements-tests.txt"),
+        "example": parse_requirements("requirements/requirements-example.txt"),
         "yaml": ["pyyaml"],
         "build": ["bump2version", "wheel"],
         "peewee": ["muffin-peewee-aio", "marshmallow-peewee >= 3.4.1"],

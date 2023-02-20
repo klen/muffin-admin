@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 import inspect
-import typing as t
+from typing import Any, Dict, List, Optional, Sequence, Type, Union, cast
 
 import marshmallow as ma
 from muffin_rest.handler import RESTBase, RESTOptions
+from peewee import Tuple
 
 from .typing import RA_CONVERTER, RA_INFO
 
@@ -26,12 +27,12 @@ class AdminOptions(RESTOptions):
     edit: bool = True
     show: bool = True
 
-    columns: t.List[str] = []
-    references: t.Dict[str, str] = {}
-    actions: t.Sequence = ()
+    columns: List[str] = []
+    references: Dict[str, str] = {}
+    actions: Sequence = ()
 
-    ra_fields: t.Dict[str, RA_INFO] = {}
-    ra_inputs: t.Dict[str, RA_INFO] = {}
+    ra_fields: Dict[str, RA_INFO] = {}
+    ra_inputs: Dict[str, RA_INFO] = {}
 
     def setup(self, cls: AdminHandler):
         """Check and build required options."""
@@ -46,7 +47,7 @@ class AdminOptions(RESTOptions):
         ]
 
         if not self.label:
-            self.label = t.cast(str, self.name)
+            self.label = cast(str, self.name)
 
         if not self.columns:
             self.columns = [
@@ -61,7 +62,7 @@ class AdminOptions(RESTOptions):
             ]
 
         if not self.sorting and self.columns:
-            sorting: t.List[t.Union[str, t.Tuple]] = [name for name in self.columns]
+            sorting: List[Union[str, Tuple]] = [name for name in self.columns]
             sorting[0] = (sorting[0], {"default": "desc"})
             self.sorting = sorting  # type: ignore
 
@@ -70,7 +71,7 @@ class AdminHandler(RESTBase):
 
     """Basic handler class for admin UI."""
 
-    meta_class: t.Type[AdminOptions] = AdminOptions
+    meta_class: Type[AdminOptions] = AdminOptions
     meta: AdminOptions
 
     @classmethod
@@ -78,8 +79,8 @@ class AdminHandler(RESTBase):
         cls,
         path: str,
         *,
-        icon: str = None,
-        label: str = None,
+        icon: Optional[str] = None,
+        label: Optional[str] = None,
         view: str = "list",
         **params,
     ):
@@ -99,7 +100,7 @@ class AdminHandler(RESTBase):
         return decorator
 
     @classmethod
-    def to_ra(cls) -> t.Dict[str, t.Any]:
+    def to_ra(cls) -> Dict[str, Any]:
         """Get JSON params for react-admin."""
         Schema = cls.meta.Schema
         exclude = Schema.opts.exclude
@@ -228,7 +229,7 @@ class AdminHandler(RESTBase):
         return rtype, props
 
 
-MA_TO_RAF: t.Dict[type, RA_CONVERTER] = {
+MA_TO_RAF: Dict[Type, RA_CONVERTER] = {
     ma.fields.Boolean: lambda _: ("BooleanField", {}),
     ma.fields.Date: lambda _: ("DateField", {}),
     ma.fields.DateTime: lambda _: ("DateField", {"showTime": True}),
@@ -240,7 +241,7 @@ MA_TO_RAF: t.Dict[type, RA_CONVERTER] = {
     object: lambda _: ("TextField", {}),
 }
 
-MA_TO_RAI: t.Dict[type, RA_CONVERTER] = {
+MA_TO_RAI: Dict[Type, RA_CONVERTER] = {
     ma.fields.Boolean: lambda _: ("BooleanInput", {}),
     ma.fields.Date: lambda _: ("DateInput", {}),
     ma.fields.DateTime: lambda _: ("DateTimeInput", {}),
@@ -251,7 +252,7 @@ MA_TO_RAI: t.Dict[type, RA_CONVERTER] = {
 }
 
 
-def find_ra(field: ma.fields.Field, types: t.Dict[type, RA_CONVERTER]) -> RA_CONVERTER:
+def find_ra(field: ma.fields.Field, types: Dict[Type, RA_CONVERTER]) -> RA_CONVERTER:
     """Find a converter for first supported field class."""
     for fcls in type(field).mro():
         if fcls in types:
