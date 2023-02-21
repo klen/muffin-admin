@@ -1,4 +1,4 @@
-VIRTUAL_ENV ?= env
+VIRTUAL_ENV ?= .venv
 EXAMPLE = example
 
 all: $(VIRTUAL_ENV)
@@ -24,6 +24,7 @@ clean:
 VERSION?=minor
 # target: release - Bump version
 release: $(VIRTUAL_ENV)
+	@$(VIRTUAL_ENV)/bin/pip install bump2version
 	@$(VIRTUAL_ENV)/bin/bump2version $(VERSION)
 	@git checkout develop
 	@git pull
@@ -93,15 +94,13 @@ mypy: $(VIRTUAL_ENV)
 .PHONY: example-peewee
 # target: example-peewee - Run example
 example-peewee: $(VIRTUAL_ENV) front
-	@cd example
-	@$(VIRTUAL_ENV)/bin/muffin peewee_orm db
-	@$(VIRTUAL_ENV)/bin/muffin peewee_orm devdata
-	@$(VIRTUAL_ENV)/bin/uvicorn peewee_orm:app --reload --port=8080
+	@$(VIRTUAL_ENV)/bin/muffin example.peewee_orm db
+	@$(VIRTUAL_ENV)/bin/muffin example.peewee_orm devdata
+	@$(VIRTUAL_ENV)/bin/uvicorn example.peewee_orm:app --reload --port=8080
 
 
 shell: $(VIRTUAL_ENV)
-	@cd example
-	@$(VIRTUAL_ENV)/bin/muffin peewee_orm shell
+	@$(VIRTUAL_ENV)/bin/muffin example.peewee_orm shell
 
 .PHONY: example-sqlalchemy
 # target: example-sqlalchemy - Run example
