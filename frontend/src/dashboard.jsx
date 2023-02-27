@@ -10,7 +10,6 @@ import {
   TableRow,
   TableCell,
 } from "@mui/material"
-// import ReactJSON from "react-json-view";
 
 import { setupAdmin } from "./utils"
 
@@ -66,9 +65,10 @@ const AdminCard = ({ src }) => {
 setupAdmin("dashboard", (props) => {
   if (!props) return
 
-  return () => (
+  const Dashboard = () => (
     <Grid container spacing={1}>
       <AdminCard src={props} />
     </Grid>
   )
+  return Dashboard
 })
