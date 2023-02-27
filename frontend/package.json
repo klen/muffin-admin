@@ -2,7 +2,9 @@
   "name": "muffin-admin",
   "version": "1.36.4",
   "description": "NPM package for https://github.com/klen/muffin-admin",
-  "main": "dist/index.js",
+  "files": ["src", "dist"],
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -35,14 +37,5 @@
     "webpack": "^5.24.4",
     "webpack-cli": "^5.0.0",
     "webpack-dev-server": "^4.3.1"
-  },
-  "babel": {
-    "presets": [
-      "@babel/preset-env",
-      "@babel/preset-react"
-    ],
-    "plugins": [
-      "@babel/plugin-transform-runtime"
-    ]
   }
 }
