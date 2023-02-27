@@ -1,19 +1,20 @@
-import React from 'react'
+import React from "react"
+
 import {
   ListButton,
   EditButton,
   Show,
   SimpleShowLayout,
   TopToolbar,
-} from 'react-admin'
+} from "react-admin"
 
-import initRAItems from '../ui'
-import { checkParams, processAdmin, setupAdmin } from '../utils'
-import { ActionButton } from '../buttons/ActionButton'
+import initRAItems from "../ui"
+import { checkParams, processAdmin, setupAdmin } from "../utils"
+import { ActionButton } from "../buttons/ActionButton"
 
 // Initiliaze a show component
 setupAdmin(
-  'show',
+  "show",
   checkParams(
     ({ actions, fields }, resource) =>
       function MAShow(props) {
@@ -30,7 +31,7 @@ setupAdmin(
         return (
           <Show actions={<Actions />} {...props}>
             <SimpleShowLayout>
-              {processAdmin('show-fields', fields, resource)}
+              {processAdmin("show-fields", fields, resource)}
             </SimpleShowLayout>
           </Show>
         )
@@ -38,4 +39,4 @@ setupAdmin(
   )
 )
 
-setupAdmin('show-fields', initRAItems)
+setupAdmin("show-fields", initRAItems)

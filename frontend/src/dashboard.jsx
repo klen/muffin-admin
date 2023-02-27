@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react"
 
 import {
   Grid,
@@ -9,10 +9,10 @@ import {
   TableBody,
   TableRow,
   TableCell,
-} from '@mui/material'
+} from "@mui/material"
 // import ReactJSON from "react-json-view";
 
-import { setupAdmin } from './utils'
+import { setupAdmin } from "./utils"
 
 const AdminTableView = ({ src }) => (
   <Table>
@@ -46,10 +46,10 @@ const AdminCard = ({ src }) => {
       <Card>
         <CardContent>
           <Typography
-            variant='h5'
-            component='h2'
+            variant="h5"
+            component="h2"
             m={2}
-            style={{ textAlign: 'center' }}
+            style={{ textAlign: "center" }}
           >
             {title}
           </Typography>
@@ -63,7 +63,7 @@ const AdminCard = ({ src }) => {
 }
 
 // Process dashboard
-setupAdmin('dashboard', (props) => {
+setupAdmin("dashboard", (props) => {
   if (!props) return
 
   return () => (

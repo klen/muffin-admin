@@ -1,4 +1,5 @@
-import React from 'react'
+import React from "react"
+
 import {
   BulkDeleteButton,
   Datagrid,
@@ -6,19 +7,19 @@ import {
   Filter,
   List,
   Pagination,
-} from 'react-admin'
-import uniq from 'lodash/uniq'
-import sortBy from 'lodash/sortBy'
+} from "react-admin"
+import uniq from "lodash/uniq"
+import sortBy from "lodash/sortBy"
 
-import initRAItems from '../ui'
-import { checkParams, processAdmin, setupAdmin } from '../utils'
-import { BulkActionButton } from '../buttons/ActionButton'
+import initRAItems from "../ui"
+import { checkParams, processAdmin, setupAdmin } from "../utils"
+import { BulkActionButton } from "../buttons/ActionButton"
 
 const defaultPagination = <Pagination rowsPerPageOptions={[10, 25, 50, 100]} />
 
 // Initiliaze a list component
 setupAdmin(
-  'list',
+  "list",
   checkParams((props, res) => {
     let {
       children,
@@ -32,8 +33,8 @@ setupAdmin(
       ...listProps
     } = props
 
-    children = processAdmin('list-fields', children, res)
-    if (edit) children.push(<EditButton key='edit-button' />)
+    children = processAdmin("list-fields", children, res)
+    if (edit) children.push(<EditButton key="edit-button" />)
 
     pagination = pagination || (
       <Pagination
@@ -43,9 +44,9 @@ setupAdmin(
 
     return function MAList(props) {
       let Filters = (props) => (
-        <Filter {...props}>{processAdmin('list-filters', filters, res)}</Filter>
+        <Filter {...props}>{processAdmin("list-filters", filters, res)}</Filter>
       )
-      let Actions = processAdmin('list-bulkActions', actions)
+      let Actions = processAdmin("list-bulkActions", actions)
 
       props = { ...props, ...listProps }
       return (
@@ -56,7 +57,7 @@ setupAdmin(
           pagination={pagination || defaultPagination}
           {...props}
         >
-          <Datagrid rowClick={show ? 'show' : null}>{children}</Datagrid>
+          <Datagrid rowClick={show ? "show" : null}>{children}</Datagrid>
         </List>
       )
     }
@@ -64,7 +65,7 @@ setupAdmin(
 )
 
 setupAdmin(
-  'list-bulkActions',
+  "list-bulkActions",
   (actions) =>
     function MABulkActions(props) {
       let buttons = actions.map((action, idx) => {
@@ -81,5 +82,5 @@ setupAdmin(
     }
 )
 
-setupAdmin('list-filters', initRAItems)
-setupAdmin('list-fields', initRAItems)
+setupAdmin("list-filters", initRAItems)
+setupAdmin("list-fields", initRAItems)

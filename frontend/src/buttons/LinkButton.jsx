@@ -1,7 +1,7 @@
-import React from 'react'
-import { Button } from 'react-admin'
-import { Link } from 'react-router-dom'
-import * as icons from '@mui/icons-material'
+import React from "react"
+import { Button } from "react-admin"
+import { Link } from "react-router-dom"
+import * as icons from "@mui/icons-material"
 
 const LinkButton = ({ label, icon, title, resource, filters }) => {
   const Icon = icons[icon] || icon

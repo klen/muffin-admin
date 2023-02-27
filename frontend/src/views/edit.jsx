@@ -1,19 +1,20 @@
-import React from 'react'
+import React from "react"
+
 import {
   Edit,
   ListButton,
   ShowButton,
   SimpleForm,
   TopToolbar,
-} from 'react-admin'
+} from "react-admin"
 
-import initRAItems from '../ui'
-import { checkParams, processAdmin, setupAdmin } from '../utils'
-import { ActionButton } from '../buttons/ActionButton'
+import initRAItems from "../ui"
+import { checkParams, processAdmin, setupAdmin } from "../utils"
+import { ActionButton } from "../buttons/ActionButton"
 
 // Initialize an edit component
 setupAdmin(
-  'edit',
+  "edit",
   checkParams(
     ({ actions, inputs }, res) =>
       function MAEdit(props) {
@@ -30,11 +31,11 @@ setupAdmin(
 
         return (
           <Edit actions={<Actions />} {...props}>
-            <SimpleForm>{processAdmin('edit-inputs', inputs, res)}</SimpleForm>
+            <SimpleForm>{processAdmin("edit-inputs", inputs, res)}</SimpleForm>
           </Edit>
         )
       }
   )
 )
 
-setupAdmin('edit-inputs', initRAItems)
+setupAdmin("edit-inputs", initRAItems)

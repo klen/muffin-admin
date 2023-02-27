@@ -1,12 +1,13 @@
-import React from 'react'
-import { Create, SimpleForm, TopToolbar, ListButton } from 'react-admin'
+import React from "react"
 
-import initRAItems from '../ui'
-import { checkParams, processAdmin, setupAdmin } from '../utils'
+import { Create, SimpleForm, TopToolbar, ListButton } from "react-admin"
+
+import initRAItems from "../ui"
+import { checkParams, processAdmin, setupAdmin } from "../utils"
 
 // Initialize a create component
 setupAdmin(
-  'create',
+  "create",
   checkParams(
     (inputs, res) =>
       function MACreate(props) {
@@ -19,11 +20,11 @@ setupAdmin(
         return (
           <Create actions={Actions} {...props}>
             <SimpleForm>
-              {processAdmin('create-inputs', inputs, res)}
+              {processAdmin("create-inputs", inputs, res)}
             </SimpleForm>
           </Create>
         )
       }
   )
 )
-setupAdmin('create-inputs', initRAItems)
+setupAdmin("create-inputs", initRAItems)

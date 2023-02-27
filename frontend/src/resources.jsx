@@ -1,22 +1,22 @@
-import React from 'react'
+import React from "react"
 
-import { Resource } from 'react-admin'
-import * as icons from '@mui/icons-material'
+import { Resource } from "react-admin"
+import * as icons from "@mui/icons-material"
 
-import { checkParams, processAdmin, setupAdmin } from './utils'
-import './views/list'
-import './views/show'
-import './views/edit'
-import './views/create'
+import { checkParams, processAdmin, setupAdmin } from "./utils"
+import "./views/list"
+import "./views/show"
+import "./views/edit"
+import "./views/create"
 
 // Initialize Resources Components
-setupAdmin('resources', (resources) =>
-  resources.map((res) => processAdmin('resource', res, res.name))
+setupAdmin("resources", (resources) =>
+  resources.map((res) => processAdmin("resource", res, res.name))
 )
 
 // Initialize a resource's component
 setupAdmin(
-  'resource',
+  "resource",
   checkParams((props, res) => {
     let { create, edit, icon, list, name, show, ...resProps } = props
 
@@ -25,10 +25,10 @@ setupAdmin(
         key={name}
         name={name}
         icon={icons[icon]}
-        create={processAdmin('create', create, res)}
-        edit={processAdmin('edit', edit, res)}
-        list={processAdmin('list', list, res)}
-        show={processAdmin('show', show, res)}
+        create={processAdmin("create", create, res)}
+        edit={processAdmin("edit", edit, res)}
+        list={processAdmin("list", list, res)}
+        show={processAdmin("show", show, res)}
         {...resProps}
       />
     )

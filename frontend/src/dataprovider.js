@@ -1,4 +1,4 @@
-import { makeRequest } from './utils'
+import { makeRequest } from "./utils"
 
 export default (apiUrl) => {
   const methods = {
@@ -12,7 +12,7 @@ export default (apiUrl) => {
       }
       if (sort) {
         const { field, order } = sort
-        query.sort = order == 'ASC' ? field : `-${field}`
+        query.sort = order == "ASC" ? field : `-${field}`
       }
 
       const { headers, json } = await makeRequest(`${apiUrl}/${resource}`, {
@@ -20,7 +20,7 @@ export default (apiUrl) => {
       })
       return {
         data: json,
-        total: parseInt(headers.get('x-total'), 10),
+        total: parseInt(headers.get("x-total"), 10),
       }
     },
 
@@ -32,7 +32,7 @@ export default (apiUrl) => {
     create: async (resource, { data }) => {
       const { json } = await makeRequest(`${apiUrl}/${resource}`, {
         data,
-        method: 'POST',
+        method: "POST",
       })
       return { data: json }
     },
@@ -40,7 +40,7 @@ export default (apiUrl) => {
     update: async (resource, { id, data }) => {
       const { json } = await makeRequest(`${apiUrl}/${resource}/${id}`, {
         data,
-        method: 'PUT',
+        method: "PUT",
       })
       return { data: json }
     },
@@ -52,7 +52,7 @@ export default (apiUrl) => {
 
     delete: async (resource, { id }) => {
       await makeRequest(`${apiUrl}/${resource}/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       })
       return { data: { id } }
     },
@@ -60,7 +60,7 @@ export default (apiUrl) => {
     deleteMany: async (resource, { ids }) => {
       await makeRequest(`${apiUrl}/${resource}`, {
         data: ids,
-        method: 'DELETE',
+        method: "DELETE",
       })
       return { data: ids }
     },
@@ -77,13 +77,13 @@ export default (apiUrl) => {
 
     runAction: async (resource, action, props) => {
       const { payload, ids, record } = props
-      action = action.replace(/^\/+/, '')
+      action = action.replace(/^\/+/, "")
       if (record) {
         action = action.replace(/\{([^}]+)\}/, (_, field) => record[field])
       }
       const { json } = await makeRequest(`${apiUrl}/${action}`, {
         query: { ids },
-        method: 'POST',
+        method: "POST",
         data: payload,
       })
       return { data: json }

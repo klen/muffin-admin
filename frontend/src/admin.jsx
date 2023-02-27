@@ -8,7 +8,13 @@ import {
   ToggleThemeButton,
   defaultTheme,
 } from "react-admin"
-import { IconButton, SvgIcon, Tooltip, Typography } from "@mui/material"
+import {
+  IconButton,
+  SvgIcon,
+  Tooltip,
+  Typography,
+  createTheme,
+} from "@mui/material"
 import * as icons from "@mui/icons-material"
 
 import authProvider from "./authprovider"
@@ -18,13 +24,9 @@ import { processAdmin, setupAdmin } from "./utils"
 import "./dashboard"
 import "./resources"
 
-// Create a dark theme
-const darkTheme = {
-  ...defaultTheme,
-  palette: {
-    mode: "mode",
-  },
-}
+const darkTheme = createTheme({
+  palette: { mode: "dark" },
+})
 
 // Initialize the admin
 setupAdmin("admin", (props) => {

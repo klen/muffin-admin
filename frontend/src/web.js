@@ -1,3 +1,3 @@
-import { initAdmin } from '.'
+import { initAdmin } from "."
 
 global.initAdmin = initAdmin

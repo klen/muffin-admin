@@ -1,26 +1,26 @@
-import Cookies from 'js-cookie'
+import Cookies from "js-cookie"
 
-import { makeRequest, processAdmin, requestHeaders, setupAdmin } from './utils'
+import { makeRequest, processAdmin, requestHeaders, setupAdmin } from "./utils"
 
 setupAdmin(
-  'auth-get',
+  "auth-get",
   ({ storage }) =>
     (name) =>
-      storage == 'localstorage' ? localStorage.getItem(name) : Cookies.get(name)
+      storage == "localstorage" ? localStorage.getItem(name) : Cookies.get(name)
 )
 
-setupAdmin('auth-set', ({ storage }) => (name, value) => {
-  if (storage == 'localstorage') {
+setupAdmin("auth-set", ({ storage }) => (name, value) => {
+  if (storage == "localstorage") {
     localStorage.setItem(name, value)
-    requestHeaders['Authorization'] = value
+    requestHeaders["Authorization"] = value
   } else Cookies.set(name, value)
 })
 
 export default (props) => {
   const { identityURL, authorizeURL, logoutURL, required, storage_name } = props
 
-  const authGet = processAdmin('auth-get', props)
-  const authSet = processAdmin('auth-set', props)
+  const authGet = processAdmin("auth-get", props)
+  const authSet = processAdmin("auth-set", props)
 
   // Initialize request headers
   authSet(storage_name, authGet(storage_name))
@@ -35,9 +35,9 @@ export default (props) => {
   if (required)
     return {
       login: async (data) => {
-        if (!authorizeURL) throw { message: 'Authorization is not supported' }
+        if (!authorizeURL) throw { message: "Authorization is not supported" }
 
-        let { json } = await makeRequest(authorizeURL, { data, method: 'POST' })
+        let { json } = await makeRequest(authorizeURL, { data, method: "POST" })
         authSet(storage_name, json)
       },
 
@@ -46,39 +46,39 @@ export default (props) => {
 
         if (status == 401 || status == 403) {
           // Clean storage
-          authSet(storage_name, '')
+          authSet(storage_name, "")
 
           throw {
-            message: 'Invalid authorization',
+            message: "Invalid authorization",
             redirectTo: logoutURL,
             logoutUser: !logoutURL,
           }
         }
       },
 
-      checkAuth: async (data) => {
+      checkAuth: async () => {
         const auth = authGet(storage_name)
-        if (!auth) throw { message: 'Authorization required' }
+        if (!auth) throw { message: "Authorization required" }
 
         if (!identityURL) return auth
 
         let user = await getIdentity()
-        if (!user) throw { message: 'Authorization required' }
+        if (!user) throw { message: "Authorization required" }
 
         return user
       },
 
       logout: async () => {
         // Clean storage
-        authSet(storage_name, '')
+        authSet(storage_name, "")
 
         if (logoutURL) window.location = logoutURL
       },
 
       getIdentity,
 
-      getPermissions: (data) => {
-        const role = authGet(storage_name + '_role')
+      getPermissions: () => {
+        const role = authGet(storage_name + "_role")
         return role ? Promise.resolve(role) : Promise.reject()
       },
     }

@@ -1,14 +1,15 @@
-import React, { useEffect } from 'react'
+import React from "react"
+
 import {
   Button,
   useRefresh,
   useUnselectAll,
   useNotify,
   useRecordContext,
-} from 'react-admin'
-import * as icons from '@mui/icons-material'
+} from "react-admin"
+import * as icons from "@mui/icons-material"
 
-import useAction from '../hooks/useAction'
+import useAction from "../hooks/useAction"
 
 export const BulkActionButton = ({
   label,
@@ -33,12 +34,12 @@ export const BulkActionButton = ({
       },
       {
         onSuccess: ({ data }) => {
-          if (data && data.message) notify(data.message, { type: 'success' })
+          if (data && data.message) notify(data.message, { type: "success" })
           refresh()
           unselectAll()
         },
         onError: (err) => {
-          notify(typeof err === 'string' ? err : err.message, { type: 'error' })
+          notify(typeof err === "string" ? err : err.message, { type: "error" })
         },
       }
     )
@@ -72,11 +73,11 @@ export const ActionButton = (props) => {
         onSuccess: ({ data }) => {
           refresh()
           if (data && data.redirectTo) window.location = data.redirectTo
-          if (data && data.message) notify(data.message, { type: 'success' })
+          if (data && data.message) notify(data.message, { type: "success" })
         },
         onError: (error) => {
-          notify(typeof error === 'string' ? error : error.message, {
-            type: 'error',
+          notify(typeof error === "string" ? error : error.message, {
+            type: "error",
           })
         },
       }
