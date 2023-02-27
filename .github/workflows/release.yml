@@ -26,7 +26,7 @@ jobs:
     - name: Build/Publish frontend
       run: |
         npm install
-        make npm
+        make build
         npm publish
         make pypi
       working-directory: frontend
