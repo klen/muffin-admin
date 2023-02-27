@@ -19,8 +19,7 @@
   "dependencies": {
     "js-cookie": "^3.0.1",
     "react": "^18.2.0",
-    "react-admin": "^4.8.1",
-    "ra-ui-materialui": "^4.8.1",
+    "react-admin": "^4.4.3",
     "react-dom": "^18.2.0",
     "validator": "^13.7.0"
   },
