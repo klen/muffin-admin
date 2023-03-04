@@ -1,20 +1,23 @@
 """Setup the plugin."""
 
+from importlib import metadata
 from inspect import isclass
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, cast
 
 from muffin import Application, Request, ResponseError, ResponseFile, ResponseRedirect
 from muffin.plugins import BasePlugin
-from muffin_rest.api import API, TAuth
+from muffin_rest.api import API
+from muffin_rest.types import TAuth
 
 from .handler import AdminHandler
 
 PACKAGE_DIR: Path = Path(__file__).parent
 TEMPLATE: str = (PACKAGE_DIR / "admin.html").read_text()
+VERSION = metadata.version("muffin-admin")
 
 
-async def page404(request: Request) -> ResponseError:
+async def page404(_: Request) -> ResponseError:
     """Default 404 for authorization methods."""
     return ResponseError.NOT_FOUND()
 
@@ -47,7 +50,7 @@ class Plugin(BasePlugin):
         self.__dashboard__: Optional[TAuth] = None
         super(Plugin, self).__init__(app, **kwargs)
 
-    def setup(self, app: Application, **options):
+    def setup(self, app: Application, **options):  # noqa: C901
         """Initialize the application."""
         super().setup(app, **options)
         self.cfg.update(prefix=self.cfg.prefix.rstrip("/"))
@@ -70,9 +73,8 @@ class Plugin(BasePlugin):
                 """Authorize an user."""
                 if self.api.authorize:
                     auth = await self.api.authorize(request)
-                    if not auth:
-                        if self.cfg.login_url:
-                            return ResponseRedirect(self.cfg.login_url)
+                    if not auth and self.cfg.login_url:
+                        return ResponseRedirect(self.cfg.login_url)
 
                 return await view(request)
 
@@ -172,8 +174,6 @@ class Plugin(BasePlugin):
 
     def to_ra(self) -> Dict:
         """Prepare params for react-admin."""
-        from . import __version__
-
         return {
             "apiUrl": f"{self.cfg.prefix}/api",
             "auth": self.auth,
@@ -183,5 +183,5 @@ class Plugin(BasePlugin):
             },
             "appBarLinks": self.cfg.app_bar_links,
             "resources": [res.to_ra() for res in self.handlers],
-            "version": __version__,
+            "version": VERSION,
         }

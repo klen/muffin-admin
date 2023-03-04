@@ -1,5 +1,0 @@
-uvicorn
-mixer
-peewee
-muffin-peewee-aio
-muffin-databases

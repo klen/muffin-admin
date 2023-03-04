@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 import inspect
-from typing import Any, Dict, List, Optional, Sequence, Type, Union, cast
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Sequence, Tuple, Type, Union, cast
 
 import marshmallow as ma
 from muffin_rest.handler import RESTBase, RESTOptions
-from peewee import Tuple
 
-from .typing import RA_CONVERTER, RA_INFO
+if TYPE_CHECKING:
+    from .typing import RA_CONVERTER, RA_INFO
 
 
 class AdminOptions(RESTOptions):
@@ -62,9 +62,9 @@ class AdminOptions(RESTOptions):
             ]
 
         if not self.sorting and self.columns:
-            sorting: List[Union[str, Tuple]] = [name for name in self.columns]
+            sorting: List[Union[str, Tuple]] = list(self.columns)
             sorting[0] = (sorting[0], {"default": "desc"})
-            self.sorting = sorting  # type: ignore
+            self.sorting = sorting  # type: ignore[assignment]
 
 
 class AdminHandler(RESTBase):
@@ -102,15 +102,15 @@ class AdminHandler(RESTBase):
     @classmethod
     def to_ra(cls) -> Dict[str, Any]:
         """Get JSON params for react-admin."""
-        Schema = cls.meta.Schema
-        exclude = Schema.opts.exclude
-        load_only = Schema.opts.load_only
-        dump_only = Schema.opts.dump_only
+        schema_cls = cls.meta.Schema
+        exclude = schema_cls.opts.exclude
+        load_only = schema_cls.opts.load_only
+        dump_only = schema_cls.opts.dump_only
         fields_customize = cls.meta.ra_fields
         inputs_customize = cls.meta.ra_inputs
         fields = []
         inputs = []
-        for name, field in Schema._declared_fields.items():
+        for name, field in schema_cls._declared_fields.items():
             if not field or name in exclude:
                 continue
 
@@ -120,7 +120,7 @@ class AdminHandler(RESTBase):
                     fields_customize[source]
                     if source in fields_customize
                     else cls.to_ra_field(field, source)
-                )  # noqa
+                )
                 if isinstance(field_info, str):
                     field_info = field_info, {}
 
@@ -132,7 +132,7 @@ class AdminHandler(RESTBase):
                     inputs_customize[source]
                     if source in inputs_customize
                     else cls.to_ra_input(field, source)
-                )  # noqa
+                )
                 if isinstance(input_info, str):
                     input_info = input_info, {}
 
@@ -190,7 +190,7 @@ class AdminHandler(RESTBase):
 
         default_sort = cls.meta.sorting.default and cls.meta.sorting.default[0]
         if default_sort:
-            data["list"]["sort"] = {  # type: ignore
+            data["list"]["sort"] = {  # type: ignore  # noqa:
                 "field": default_sort.name,
                 "order": default_sort.meta["default"].upper(),
             }

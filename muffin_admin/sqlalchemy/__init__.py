@@ -1,15 +1,19 @@
 """SQLAlchemy core support."""
+from __future__ import annotations
 
-import typing as t
+from typing import TYPE_CHECKING, Type
 
-import marshmallow as ma
 from muffin_rest.filters import Filter
 from muffin_rest.sqlalchemy import SARESTHandler, SARESTOptions
 from muffin_rest.sqlalchemy.filters import SAFilter
 from sqlalchemy import JSON, Enum, Text
 
-from ..handler import AdminHandler, AdminOptions
-from ..typing import RA_INFO
+from muffin_admin.handler import AdminHandler, AdminOptions
+
+if TYPE_CHECKING:
+    import marshmallow as ma
+
+    from muffin_admin.typing import RA_INFO
 
 
 class SAAdminOptions(AdminOptions, SARESTOptions):
@@ -22,7 +26,7 @@ class SAAdminOptions(AdminOptions, SARESTOptions):
 
         for f in self.filters:
             if isinstance(f, Filter):
-                f = f.name
+                f = f.name  # noqa:
 
             if f == "id":
                 break
@@ -35,7 +39,7 @@ class SAAdminHandler(AdminHandler, SARESTHandler):
 
     """Work with SQLAlchemy Core."""
 
-    meta_class: t.Type[SAAdminOptions] = SAAdminOptions
+    meta_class: Type[SAAdminOptions] = SAAdminOptions
     meta: SAAdminOptions
 
     @classmethod

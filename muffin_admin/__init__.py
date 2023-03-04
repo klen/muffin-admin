@@ -1,25 +1,15 @@
 """Plugin meta information."""
 
-# Package information
-# ===================
-
-__version__ = "1.36.8"
-__project__ = "muffin-admin"
-__author__ = "Kirill Klenov <horneds@gmail.com>"
-__license__ = "MIT"
+from contextlib import suppress
 
 from .handler import AdminHandler
-from .plugin import Plugin  # noqa
+from .plugin import Plugin
 
-try:
+with suppress(ImportError):
     from .peewee import PWAdminHandler, PWFilter
-except ImportError:
-    pass
 
-try:
+with suppress(ImportError):
     from .sqlalchemy import SAAdminHandler, SAFilter
-except ImportError:
-    pass
 
 
 __all__ = (

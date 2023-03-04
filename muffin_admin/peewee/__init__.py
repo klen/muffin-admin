@@ -1,15 +1,20 @@
 """Peewee ORM Support."""
 
-import typing as t
+from __future__ import annotations
 
-import marshmallow as ma
+from typing import TYPE_CHECKING, Tuple, Type
+
 import peewee as pw
 from muffin_peewee import JSONField
 from muffin_rest.peewee import PWRESTBase, PWRESTOptions
 from muffin_rest.peewee.filters import PWFilter
 
-from ..handler import AdminHandler, AdminOptions
-from ..typing import RA_INFO
+from muffin_admin.handler import AdminHandler, AdminOptions
+
+if TYPE_CHECKING:
+    import marshmallow as ma
+
+    from muffin_admin.typing import RA_INFO
 
 
 class PWAdminOptions(AdminOptions, PWRESTOptions):
@@ -40,7 +45,7 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
 
     """Work with Peewee Models."""
 
-    meta_class: t.Type[PWAdminOptions] = PWAdminOptions
+    meta_class: Type[PWAdminOptions] = PWAdminOptions
     meta: PWAdminOptions
 
     @classmethod
@@ -76,18 +81,17 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
             ):
                 return "JsonInput", props
 
-            if isinstance(model_field, pw.ForeignKeyField):
-                if source in cls.meta.references:
-                    ref, _, ref_source = cls.meta.references[source].partition(".")
-                    return "FKInput", dict(
-                        props,
-                        emptyValue=None if model_field.null else "",
-                        refProp=ref_source or ref,
-                        refSource=model_field.rel_field.name,
-                        reference=ref_source
-                        and ref
-                        or model_field.rel_model._meta.table_name,
-                    )
+            if isinstance(model_field, pw.ForeignKeyField) and source in cls.meta.references:
+                ref, _, ref_source = cls.meta.references[source].partition(".")
+                return "FKInput", dict(
+                    props,
+                    emptyValue=None if model_field.null else "",
+                    refProp=ref_source or ref,
+                    refSource=model_field.rel_field.name,
+                    reference=ref_source
+                    and ref
+                    or model_field.rel_model._meta.table_name,
+                )
 
         return ra_type, props
 
@@ -96,7 +100,7 @@ class PWSearchFilter(PWFilter):
 
     """Search in query by value."""
 
-    def query(self, query: pw.Query, column: pw.Field, *ops: t.Tuple, **_) -> pw.Query:
+    def query(self, qs: pw.Query, column: pw.Field, *ops: Tuple, **_) -> pw.Query:
         """Apply the filters to Peewee QuerySet.."""
         _, value = ops[0]
-        return query.where(column.contains(value))  # type: ignore
+        return qs.where(column.contains(value))

@@ -1,2 +1,0 @@
-muffin              >= 0.87
-muffin-rest         >= 4.1.1

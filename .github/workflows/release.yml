@@ -15,7 +15,7 @@ jobs:
 
     - uses: actions/checkout@main
       with:
-        fetch-depth: 5
+        fetch-depth: 2
 
     - uses: actions/setup-node@main
       with:
@@ -35,9 +35,8 @@ jobs:
 
     - name: Build python package
       run: |
-        pip install wheel
-        python setup.py bdist_wheel
-        python setup.py sdist
+        pip install build
+        python -m build
 
     - uses: actions/upload-artifact@main
       with:
