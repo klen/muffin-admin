@@ -1,6 +1,6 @@
 [project]
 name = "muffin-admin"
-version = "1.37.0"
+version = "1.37.1"
 description = "Admin interface for Muffin Framework"
 readme = "README.rst"
 requires-python = ">=3.8"
