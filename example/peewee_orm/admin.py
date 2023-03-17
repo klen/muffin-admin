@@ -140,7 +140,10 @@ class MessageResource(PWAdminHandler):
         references = {"user": "email"}
 
     @PWAdminHandler.action(
-        "/message/{id}/publish", label="Publish", icon="Publish", view="show",
+        "/message/{id}/publish",
+        label="Publish",
+        icon="Publish",
+        view="show",
     )
     async def publish_message(self, request, resource=None):
         if resource is None:

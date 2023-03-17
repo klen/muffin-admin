@@ -4,8 +4,9 @@ import pytest
 from muffin import Application, TestClient
 
 
-@pytest.fixture(params=[
-    "trio", "curio", pytest.param(("asyncio", {"use_uvloop": False}), id="asyncio")])
+@pytest.fixture(
+    params=["trio", "curio", pytest.param(("asyncio", {"use_uvloop": False}), id="asyncio")]
+)
 def aiolib(request):
     return request.param
 

@@ -39,4 +39,3 @@ repos:
       entry: poetry run pytest
       language: system
       pass_filenames: false
-

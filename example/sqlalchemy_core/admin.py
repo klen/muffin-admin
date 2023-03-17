@@ -15,14 +15,17 @@ async def dashboard(request):
     return [
         [
             {"title": "App config (Table view)", "value": [(k, str(v)) for k, v in app.cfg]},
-            {"title": "Request headers (JSON view)", "value": {
-                k: v for k, v in request.headers.items() if k != "cookie"}},
+            {
+                "title": "Request headers (JSON view)",
+                "value": {k: v for k, v in request.headers.items() if k != "cookie"},
+            },
         ],
     ]
 
 
 # Setup authorization
 # -------------------
+
 
 @admin.check_auth
 async def auth(request):
@@ -46,8 +49,7 @@ async def login(request):
     """Login an user."""
     data = await request.data()
     qs = User.select().where(
-        (User.columns.email == data["username"]) &
-        (User.columns.password == data["password"]),
+        (User.columns.email == data["username"]) & (User.columns.password == data["password"]),
     )
     user = await db.fetch_one(qs)
     return ResponseJSON(user and user.id)

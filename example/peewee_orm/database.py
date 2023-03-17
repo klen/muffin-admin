@@ -36,7 +36,8 @@ class User(BaseModel):
     last_name = pw.CharField(null=True)
     password = pw.CharField(null=True)  # not secure only for the example
     picture = pw.CharField(
-        default="https://picsum.photos/100", help_text="Full URL to the picture",
+        default="https://picsum.photos/100",
+        help_text="Full URL to the picture",
     )
     meta = JSONField(default={})
 

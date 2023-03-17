@@ -14,7 +14,6 @@ class Role(pw.Model):
 
 @db.register
 class User(pw.Model):
-
     name = pw.CharField()
     password = pw.CharField()
     is_active = pw.BooleanField(default=True, help_text="Disable to block the user")

@@ -20,7 +20,8 @@ class Roles(enum.Enum):
 
 
 User = sa.Table(
-    "user", meta,
+    "user",
+    meta,
     sa.Column("id", sa.Integer, primary_key=True),
     sa.Column("created", sa.DateTime, default=dt.datetime.utcnow, nullable=False),
     sa.Column("email", sa.String(255), nullable=False),
@@ -40,7 +41,8 @@ class Statuses(enum.Enum):
 
 
 Message = sa.Table(
-    "message", meta,
+    "message",
+    meta,
     sa.Column("id", sa.Integer, primary_key=True),
     sa.Column("created", sa.DateTime, default=dt.datetime.utcnow, nullable=False),
     sa.Column("status", sa.Enum(Statuses), default=Statuses.new, nullable=False),

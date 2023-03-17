@@ -9,15 +9,12 @@ def test_endpoint(app):
 
     @admin.route
     class BaseHandler(AdminHandler):
-
         class Meta:
-
             name = "base"
             filters = "id", "name"
             sorting = "id", "name"
 
             class Schema(ma.Schema):
-
                 id = ma.fields.String()
                 name = ma.fields.String(validate=ma.validate.Length(3, 100))
                 active = ma.fields.Boolean()
@@ -59,7 +56,6 @@ def test_endpoint(app):
             ("TextField", {"source": "name"}),
             ("BooleanField", {"source": "active"}),
         ],
-
     }
     assert ra["list"] == {
         "actions": [],
@@ -69,7 +65,10 @@ def test_endpoint(app):
             ("TextField", {"source": "name", "sortable": True}),
         ],
         "filters": [("TextInput", {"source": "id"}), ("TextInput", {"source": "name"})],
-        "limit": 25, "limitMax": 100, "show": True, "edit": True,
+        "limit": 25,
+        "limitMax": 100,
+        "show": True,
+        "edit": True,
     }
 
 
@@ -81,9 +80,7 @@ async def test_endpoint_action(app):
 
     @admin.route
     class Handler(AdminHandler):
-
         class Meta:
-
             name = "handler"
             filters = "id", "name"
             sorting = "id", "name"
@@ -94,22 +91,20 @@ async def test_endpoint_action(app):
 
     ra = Handler.to_ra()
     assert ra["list"]["actions"] == [
-        {"view": "list", "icon": None, "action": "/base", "title": None, "label": "base_action"}]
+        {"view": "list", "icon": None, "action": "/base", "title": None, "label": "base_action"}
+    ]
 
 
 def test_custom_fields_inputs(app):
     from muffin_admin import AdminHandler
 
     class BaseHandler(AdminHandler):
-
         class Meta:
-
             name = "name"
             filters = "id", "name"
             sorting = "id", "name"
 
             class Schema(ma.Schema):
-
                 id = ma.fields.String()
                 name = ma.fields.String(validate=ma.validate.Length(3, 100))
                 active = ma.fields.Boolean()
