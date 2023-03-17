@@ -48,10 +48,6 @@ Message = sa.Table(
 
 #  @pytest.fixture(autouse=True)
 #  async def setup_db(app):
-#      db.setup(app)
-#      #  await db.execute(sa.schema.CreateTable(Role))
-#      #  await db.execute(sa.schema.CreateTable(User))
-#      #  await db.execute(sa.schema.CreateTable(Message))
 
 
 @pytest.fixture(autouse=True)
