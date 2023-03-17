@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Tuple, Type
 
 import peewee as pw
-from muffin_peewee import JSONField
+from muffin_peewee import JSONLikeField
 from muffin_rest.peewee import PWRESTBase, PWRESTOptions
 from muffin_rest.peewee.filters import PWFilter
 
@@ -53,7 +53,7 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
         """Setup RA fields."""
         model_field = getattr(cls.meta.model, field.attribute or source, None)
         if model_field and (
-            isinstance(model_field, JSONField)
+            isinstance(model_field, JSONLikeField)
             or model_field.field_type.lower() == "json"
         ):
             return "JsonField", {}
@@ -76,12 +76,15 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
                 return "TextInput", dict(props, multiline=True)
 
             if (
-                isinstance(model_field, JSONField)
+                isinstance(model_field, JSONLikeField)
                 or model_field.field_type.lower() == "json"
             ):
                 return "JsonInput", props
 
-            if isinstance(model_field, pw.ForeignKeyField) and source in cls.meta.references:
+            if (
+                isinstance(model_field, pw.ForeignKeyField)
+                and source in cls.meta.references
+            ):
                 ref, _, ref_source = cls.meta.references[source].partition(".")
                 return "FKInput", dict(
                     props,

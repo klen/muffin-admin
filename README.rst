@@ -178,7 +178,7 @@ Custom Actions
 Configuration options
 ----------------------
 
-=========================== ==================================================== =========================== 
+=========================== ==================================================== ===========================
 Name                        Default value                                        Description
 --------------------------- ---------------------------------------------------- ---------------------------
 **prefix**                  ``"/admin"``                                         Admin's HTTP URL prefix
@@ -190,7 +190,7 @@ Name                        Default value                                       
 **auth_storage**            ``"localstorage"``                                   Where to keep authorization information (localstorage|cookies)
 **auth_storage_name**       ``muffin_admin_auth``                                Localstorage/Cookie name for authentication info
 **app_bar_links**           ``[{'url': '/', 'icon': 'Home', 'title': 'Home'}]``  Appbar links
-=========================== ==================================================== =========================== 
+=========================== ==================================================== ===========================
 
 .. _bugtracker:
 
