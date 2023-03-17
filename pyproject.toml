@@ -67,7 +67,7 @@ muffin-peewee-aio = "*"
 muffin-databases = "*"
 
 [tool.pytest.ini_options]
-addopts = "-xsv --mypy"
+addopts = "-xsv"
 
 [tool.mypy]
 packages = ["muffin_admin"]

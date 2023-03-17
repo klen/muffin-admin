@@ -4,14 +4,15 @@ import datetime as dt
 from pathlib import Path
 
 import peewee as pw
-from muffin_peewee import JSONField, Plugin
+from muffin_peewee import JSONLikeField, Plugin
+from peewee_aio.model import AIOModel
 
 from . import app
 
 db = Plugin(app, connection=f"sqlite:///{ Path(__file__).parent.parent / 'db.sqlite' }")
 
 
-class BaseModel(db.Model):
+class BaseModel(AIOModel):
 
     """Automatically keep the model's creation time."""
 
@@ -39,7 +40,7 @@ class User(BaseModel):
         default="https://picsum.photos/100",
         help_text="Full URL to the picture",
     )
-    meta = JSONField(default={})
+    meta = JSONLikeField(default={})
 
     is_active = pw.BooleanField(default=True)
     role = pw.CharField(

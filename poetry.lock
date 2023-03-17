@@ -770,14 +770,14 @@ tests = ["aiosqlite", "pytest", "pytest-aio", "pytest-mypy", "ruff"]
 
 [[package]]
 name = "muffin-peewee-aio"
-version = "0.11.0"
+version = "0.11.2"
 description = "Peewee-AIO integration for Muffin framework"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "muffin_peewee_aio-0.11.0-py3-none-any.whl", hash = "sha256:cfbb874f1e4f2bbe7795d8dec2528c54d82521a467a826705051773305472c93"},
-    {file = "muffin_peewee_aio-0.11.0.tar.gz", hash = "sha256:871c60f3887cfafcdbde41e90596d4d257e80456205d3c49482c173c97eae184"},
+    {file = "muffin_peewee_aio-0.11.2-py3-none-any.whl", hash = "sha256:750068b499e2d1295f5cf92c38f29a14eebfb682b7059a73c52e3c236a664d79"},
+    {file = "muffin_peewee_aio-0.11.2.tar.gz", hash = "sha256:eccf46e953cad0f642f4d09a59f36358dabbf590f760c17eabfca74423dd4153"},
 ]
 
 [package.dependencies]
@@ -795,14 +795,14 @@ asyncpg = ["asyncpg"]
 
 [[package]]
 name = "muffin-rest"
-version = "4.6.4"
+version = "4.6.5"
 description = "The package provides enhanced support for writing REST APIs with Muffin framework"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "muffin_rest-4.6.4-py3-none-any.whl", hash = "sha256:7cde43544630357e87986ea3ffef37bb1fca3de89682e3da0929e700a98c8ea7"},
-    {file = "muffin_rest-4.6.4.tar.gz", hash = "sha256:96f3d9e121b8b73c3ba00f445fbb54639b619d4866b8bc6ddc8c946d1e9eff74"},
+    {file = "muffin_rest-4.6.5-py3-none-any.whl", hash = "sha256:b2d7fe73f5ea14c2d3511594472e94d3e07816eb7ff6539f8900bab70c677b3d"},
+    {file = "muffin_rest-4.6.5.tar.gz", hash = "sha256:0fe4a70bcb10d4898bfa9c4ff65f35c369fe8c627ade60f831c59d7d0fdd572a"},
 ]
 
 [package.dependencies]
