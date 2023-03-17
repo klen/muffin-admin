@@ -1,12 +1,12 @@
 import marshmallow as ma
-from muffin_admin import Plugin, SAAdminHandler, SAFilter
 from muffin import ResponseJSON
 
+from muffin_admin import Plugin, SAAdminHandler, SAFilter
+
 from . import app
-from .database import User, Message, db
+from .database import Message, User, db
 
-
-admin = Plugin(app, custom_css_url='/admin.css')
+admin = Plugin(app, custom_css_url="/admin.css")
 
 
 @admin.dashboard
@@ -14,20 +14,23 @@ async def dashboard(request):
     """Render dashboard cards."""
     return [
         [
-            {'title': 'App config (Table view)', 'value': [(k, str(v)) for k, v in app.cfg]},
-            {'title': 'Request headers (JSON view)', 'value': {
-                k: v for k, v in request.headers.items() if k != 'cookie'}},
-        ]
+            {"title": "App config (Table view)", "value": [(k, str(v)) for k, v in app.cfg]},
+            {
+                "title": "Request headers (JSON view)",
+                "value": {k: v for k, v in request.headers.items() if k != "cookie"},
+            },
+        ],
     ]
 
 
 # Setup authorization
 # -------------------
 
+
 @admin.check_auth
 async def auth(request):
     """Fake authorization method. Do not use in production."""
-    pk = request.headers.get('authorization')
+    pk = request.headers.get("authorization")
     qs = User.select().where(User.columns.id == pk)
     user = await db.fetch_one(qs)
     return user
@@ -46,8 +49,7 @@ async def login(request):
     """Login an user."""
     data = await request.data()
     qs = User.select().where(
-        (User.columns.email == data['username']) &
-        (User.columns.password == data['password'])
+        (User.columns.email == data["username"]) & (User.columns.password == data["password"]),
     )
     user = await db.fetch_one(qs)
     return ResponseJSON(user and user.id)
@@ -68,22 +70,22 @@ class UserResource(SAAdminHandler):
 
         database = db
         table = User
-        filters = 'created', 'is_active', 'role', SAFilter('email', operator='$contains')
-        sorting = 'id', 'created', 'email', 'is_active', 'role'
+        filters = "created", "is_active", "role", SAFilter("email", operator="$contains")
+        sorting = "id", "created", "email", "is_active", "role"
         schema_meta = {
-            'load_only': ('password',),
-            'dump_only': ('created',),
+            "load_only": ("password",),
+            "dump_only": ("created",),
         }
         schema_fields = {
-            'name': ma.fields.Function(
-                lambda user: "{first_name} {last_name}".format(**user)
-            )
+            "name": ma.fields.Function(
+                lambda user: "{first_name} {last_name}".format(**user),
+            ),
         }
 
-        icon = 'People'
-        columns = 'id', 'picture', 'email', 'name', 'is_active', 'role'
+        icon = "People"
+        columns = "id", "picture", "email", "name", "is_active", "role"
         ra_fields = {
-            'picture': ('AvatarField', {'alt': 'picture', 'nameProp': 'name', 'sortable': False})
+            "picture": ("AvatarField", {"alt": "picture", "nameProp": "name", "sortable": False}),
         }
 
 
@@ -98,7 +100,7 @@ class MessageResource(SAAdminHandler):
 
         database = db
         table = Message
-        filters = 'status', 'user_id'
+        filters = "status", "user_id"
 
-        icon = 'Message'
-        references = {'user_id': 'user.email'}
+        icon = "Message"
+        references = {"user_id": "user.email"}

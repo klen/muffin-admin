@@ -2,8 +2,9 @@
 
 import marshmallow as ma
 from muffin import ResponseJSON
-from muffin_admin import Plugin, PWAdminHandler
 from muffin_rest import APIError
+
+from muffin_admin import Plugin, PWAdminHandler
 
 from . import app
 from .database import Group, Message, User
@@ -24,7 +25,7 @@ async def dashboard(request):
                 "title": "Request headers (JSON view)",
                 "value": {k: v for k, v in request.headers.items() if k != "cookie"},
             },
-        ]
+        ],
     ]
 
 
@@ -81,8 +82,8 @@ class UserResource(PWAdminHandler):
         }
         schema_fields = {
             "name": ma.fields.Function(
-                lambda user: f"{user.first_name} {user.last_name}"
-            )
+                lambda user: f"{user.first_name} {user.last_name}",
+            ),
         }
 
         icon = "Person"
@@ -91,7 +92,7 @@ class UserResource(PWAdminHandler):
             "picture": (
                 "AvatarField",
                 {"alt": "picture", "nameProp": "name", "sortable": False},
-            )
+            ),
         }
         references = {"group": "group.name"}
 
@@ -139,7 +140,10 @@ class MessageResource(PWAdminHandler):
         references = {"user": "email"}
 
     @PWAdminHandler.action(
-        "/message/{id}/publish", label="Publish", icon="Publish", view="show"
+        "/message/{id}/publish",
+        label="Publish",
+        icon="Publish",
+        view="show",
     )
     async def publish_message(self, request, resource=None):
         if resource is None:
