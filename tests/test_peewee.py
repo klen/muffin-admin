@@ -19,7 +19,7 @@ class User(pw.Model):
     password = pw.CharField()
     is_active = pw.BooleanField(default=True, help_text="Disable to block the user")
     status = pw.IntegerField(default=1, choices=[(1, "new"), (2, "old")])
-    meta = muffin_peewee.JSONField(default={})
+    meta = muffin_peewee.JSONLikeField(default={})
 
     created = pw.DateTimeField(default=dt.datetime.utcnow)
     is_super = pw.BooleanField(default=True)
@@ -48,7 +48,7 @@ async def setup_db(app):
             await db.drop_tables()
 
 
-@pytest.fixture
+@pytest.fixture()
 def setup_admin(app):
     from muffin_admin import Plugin, PWAdminHandler
 
