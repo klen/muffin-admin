@@ -24,4 +24,4 @@ async def index(request):
 
 
 async def admin_css(request):
-    return ResponseFile(Path(__file__).parent / 'admin.css')
+    return ResponseFile(Path(__file__).parent / "admin.css")
