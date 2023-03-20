@@ -186,7 +186,9 @@ Name                        Default value                                       
 **main_js_url**             ``"{prefix}/main.js"``                               A link to main JS file
 **custom_js_url**           ``""``                                               A link to custom JS file
 **custom_css_url**          ``""``                                               A link to custom CSS file
+**login_url**               ``None``                                             An HTTP URL for your custom login page
 **logout_url**              ``None``                                             An HTTP URL for your custom logout page
+**menu_sort**               ``True``                                             Sort menu items
 **auth_storage**            ``"localstorage"``                                   Where to keep authorization information (localstorage|cookies)
 **auth_storage_name**       ``muffin_admin_auth``                                Localstorage/Cookie name for authentication info
 **app_bar_links**           ``[{'url': '/', 'icon': 'Home', 'title': 'Home'}]``  Appbar links

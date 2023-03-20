@@ -55,19 +55,20 @@ front-dev:
 
 .PHONY: dev
 dev:
-	make -j example-peewee front-dev
+	BACKEND_PORT=5555 make -j example-peewee front-dev
 
 .PHONY: dev
 mypy: $(VIRTUAL_ENV)
 	$(VIRTUAL_ENV)/bin/mypy muffin_admin
 
 
+BACKEND_PORT ?= 8080
 .PHONY: example-peewee
 # target: example-peewee - Run example
 example-peewee: $(VIRTUAL_ENV) front
 	@poetry run muffin example.peewee_orm db
 	@poetry run muffin example.peewee_orm devdata
-	@poetry run uvicorn example.peewee_orm:app --reload --port=8080
+	@poetry run uvicorn example.peewee_orm:app --reload --port=$(BACKEND_PORT)
 
 
 shell: $(VIRTUAL_ENV)

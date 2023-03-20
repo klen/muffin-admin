@@ -3,7 +3,7 @@
 from importlib import metadata
 from inspect import isclass
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, cast
+from typing import Any, Callable, Dict, List, Optional, Type, cast
 
 from muffin import Application, Request, ResponseError, ResponseFile, ResponseRedirect
 from muffin.plugins import BasePlugin
@@ -35,6 +35,7 @@ class Plugin(BasePlugin):
         "custom_css_url": "",
         "login_url": None,
         "logout_url": None,
+        "menu_sort": True,
         "auth_storage": "localstorage",  # localstorage|cookies
         "auth_storage_name": "muffin_admin_auth",
         "app_bar_links": [
@@ -45,7 +46,7 @@ class Plugin(BasePlugin):
     def __init__(self, app: Optional[Application] = None, **kwargs):
         self.api: API = API()
         self.auth: Dict = {}
-        self.handlers: List = []
+        self.handlers: List[Type[AdminHandler]] = []
         self.__login__ = self.__ident__ = cast(TAuth, page404)
         self.__dashboard__: Optional[TAuth] = None
         super(Plugin, self).__init__(app, **kwargs)
@@ -88,9 +89,7 @@ class Plugin(BasePlugin):
                 title=title,
                 main_js_url=self.cfg.main_js_url.format(prefix=prefix),
                 custom_js=f"<script src={custom_js}></script>" if custom_js else "",
-                custom_css=f"<link rel='stylesheet' href={custom_css} />"
-                if custom_css
-                else "",
+                custom_css=f"<link rel='stylesheet' href={custom_css} />" if custom_css else "",
             )
 
         app.route(f"/{prefix.lstrip('/')}")(render_admin)
@@ -172,8 +171,12 @@ class Plugin(BasePlugin):
     # Serialize to react-admin
     # -------------------------
 
-    def to_ra(self) -> Dict:
+    def to_ra(self) -> Dict[str, Any]:
         """Prepare params for react-admin."""
+        handlers = self.handlers
+        if self.cfg.menu_sort:
+            handlers = sorted(handlers, key=lambda r: r.meta.name)
+
         return {
             "apiUrl": f"{self.cfg.prefix}/api",
             "auth": self.auth,
@@ -182,6 +185,6 @@ class Plugin(BasePlugin):
                 "disableTelemetry": True,
             },
             "appBarLinks": self.cfg.app_bar_links,
-            "resources": [res.to_ra() for res in self.handlers],
+            "resources": [res.to_ra() for res in handlers],
             "version": VERSION,
         }

@@ -84,7 +84,15 @@ class AdminHandler(RESTBase):
         view: str = "list",
         **params,
     ):
-        """Decorate any function as an action."""
+        """Register an action for the handler.
+
+        Decorate any function to use it as an action.
+
+        :param path: Path to the action
+        :param icon: Icon name
+        :param label: Label for the action
+        :param view: View name (list, show)
+        """
 
         def decorator(method):
             method.__route__ = (path,), params
@@ -156,14 +164,8 @@ class AdminHandler(RESTBase):
                 "limitMax": cls.meta.limit_max,
                 "edit": bool(cls.meta.edit),
                 "show": bool(cls.meta.show),
-                "actions": [
-                    action for action in cls.meta.actions if action["view"] == "list"
-                ],
-                "children": [
-                    fields_hash[name]
-                    for name in cls.meta.columns
-                    if name in fields_hash
-                ],
+                "actions": [action for action in cls.meta.actions if action["view"] == "list"],
+                "children": [fields_hash[name] for name in cls.meta.columns if name in fields_hash],
                 "filters": [
                     (ra_type, dict(source=flt.name, **props))
                     for flt, (ra_type, props) in [
@@ -173,15 +175,11 @@ class AdminHandler(RESTBase):
                 ],
             },
             "show": {
-                "actions": [
-                    action for action in cls.meta.actions if action["view"] == "show"
-                ],
+                "actions": [action for action in cls.meta.actions if action["view"] == "show"],
                 "fields": fields,
             },
             "edit": {
-                "actions": [
-                    action for action in cls.meta.actions if action["view"] == "edit"
-                ],
+                "actions": [action for action in cls.meta.actions if action["view"] == "edit"],
                 "inputs": inputs,
             },
             "create": cls.meta.create and inputs,
