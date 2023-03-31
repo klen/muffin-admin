@@ -30,6 +30,7 @@ jobs:
           npm install
           make build
           npm publish
+          make pypi
 
       working-directory: frontend
       env:
