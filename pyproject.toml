@@ -20,11 +20,12 @@ classifiers = [
   "Framework :: AsyncIO",
   "Framework :: Trio",
 ]
+homepage = "https://github.com/klen/muffin-admin"
+repository = "https://github.com/klen/muffin-admin"
 packages = [
   {include = "muffin_admin"}
 ]
-homepage = "https://github.com/klen/muffin-admin"
-repository = "https://github.com/klen/muffin-admin"
+include = ["muffin_admin/main.js", "muffin_admin/main.js.LICENSE.txt"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
