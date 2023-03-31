@@ -13,11 +13,28 @@ jobs:
     steps:
 
     - uses: actions/checkout@main
+    - uses: actions/setup-python@main
+    - uses: actions/setup-node@main
+      with:
+        node-version: '15.x'
+        registry-url: 'https://registry.npmjs.org'
+
     - name: Install poetry
       run: pipx install poetry
     - name: Setup poetry
       run: poetry config pypi-token.pypi ${{ secrets.pypy }}
-    - name: Build and publish
+
+    - name: Build Frontend
+      run: |
+          npm install
+          make build
+          npm publish
+
+      working-directory: frontend
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+    - name: Build Package
       run: poetry publish --build
 
   notify:
