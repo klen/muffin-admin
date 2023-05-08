@@ -33,6 +33,7 @@ const FKInput = ({
         source={refSource}
         optionText={renderText}
         fullWidth={fullWidth}
+        {...props}
       />
     </ReferenceInput>
   )

@@ -3,6 +3,7 @@ import datetime as dt
 import muffin_peewee
 import peewee as pw
 import pytest
+from marshmallow import fields
 
 db = muffin_peewee.Plugin(connection="sqlite:///:memory:", manage_connections=False)
 
@@ -47,8 +48,8 @@ async def setup_db(app):
             await db.drop_tables()
 
 
-@pytest.fixture()
-def setup_admin(app):
+@pytest.fixture(autouse=True)
+def _setup_admin(app):
     from muffin_admin import Plugin, PWAdminHandler
 
     admin = Plugin(app)
@@ -61,6 +62,9 @@ def setup_admin(app):
                 "dump_only": ("is_super",),
                 "load_only": ("password",),
                 "exclude": ("created",),
+            }
+            schema_fields = {
+                "name": fields.String(metadata={"description": "User name"}),
             }
             references = {"role": "name"}
             filters = ("status",)
@@ -76,28 +80,28 @@ def setup_admin(app):
             model = Message
 
 
-async def test_admin(app, setup_admin):
+async def test_admin(app):
     admin = app.plugins["admin"]
     assert admin.to_ra()
 
     assert admin.api.router.routes()
     assert admin.handlers
 
-    UserResource = admin.handlers[0]
-    assert UserResource.meta.limit
-    assert UserResource.meta.columns
-    assert UserResource.meta.sorting
+    user_resource_type = admin.handlers[0]
+    assert user_resource_type.meta.limit
+    assert user_resource_type.meta.columns
+    assert user_resource_type.meta.sorting
 
-    assert UserResource.meta.Schema
-    assert UserResource.meta.Schema._declared_fields["is_active"].load_default is True
+    assert user_resource_type.meta.Schema
+    assert user_resource_type.meta.Schema._declared_fields["is_active"].load_default is True
 
-    ra = UserResource.to_ra()
+    ra = user_resource_type.to_ra()
     assert ra["delete"] is True
-    assert ra["icon"] == ""
+    assert not ra["icon"]
     assert ra["name"] == "user"
     assert ra["label"] == "user"
     assert ra["create"] == [
-        ("TextInput", {"required": True, "source": "name"}),
+        ("TextInput", {"helperText": "User name", "source": "name"}),
         ("TextInput", {"required": True, "source": "password"}),
         (
             "BooleanInput",
@@ -130,7 +134,7 @@ async def test_admin(app, setup_admin):
     assert ra["edit"] == {
         "actions": [],
         "inputs": [
-            ("TextInput", {"required": True, "source": "name"}),
+            ("TextInput", {"helperText": "User name", "source": "name"}),
             ("TextInput", {"required": True, "source": "password"}),
             (
                 "BooleanInput",
@@ -217,8 +221,8 @@ async def test_admin(app, setup_admin):
         ),
     ]
 
-    MessageResource = admin.handlers[2]
-    assert MessageResource.to_ra()["edit"] == {
+    message_resource_type = admin.handlers[2]
+    assert message_resource_type.to_ra()["edit"] == {
         "actions": [],
         "inputs": [
             ("TextInput", {"source": "body", "required": True, "multiline": True}),

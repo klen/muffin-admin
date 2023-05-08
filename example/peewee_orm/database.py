@@ -61,4 +61,4 @@ class Message(BaseModel):
     body = pw.TextField()
     dtpublish = pw.DateTimeField(null=True)
 
-    user = pw.ForeignKeyField(User)
+    user = pw.ForeignKeyField(User, help_text="Choose a user")

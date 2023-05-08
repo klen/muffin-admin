@@ -18,7 +18,7 @@ def test_endpoint(app):
             class Schema(ma.Schema):
                 id = ma.fields.String()
                 name = ma.fields.String(validate=validate.Length(3, 100))
-                active = ma.fields.Boolean()
+                active = ma.fields.Boolean(metadata={"description": "Is active?"})
 
             columns = "id", "active", "name", "unknown"
 
@@ -35,19 +35,19 @@ def test_endpoint(app):
     ra = BaseHandler.to_ra()
     assert ra["name"] == "base"
     assert ra["label"] == "base"
-    assert ra["icon"] == ""
+    assert not ra["icon"]
     assert ra["delete"] is True
     assert ra["create"] == [
         ("TextInput", {"source": "id"}),
         ("TextInput", {"source": "name"}),
-        ("BooleanInput", {"source": "active"}),
+        ("BooleanInput", {"source": "active", "helperText": "Is active?"}),
     ]
     assert ra["edit"] == {
         "actions": [],
         "inputs": [
             ("TextInput", {"source": "id"}),
             ("TextInput", {"source": "name"}),
-            ("BooleanInput", {"source": "active"}),
+            ("BooleanInput", {"source": "active", "helperText": "Is active?"}),
         ],
     }
     assert ra["show"] == {
