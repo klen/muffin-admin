@@ -6,7 +6,8 @@ import inspect
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Sequence, Tuple, Type, Union, cast
 
 import marshmallow as ma
-from muffin_rest.handler import RESTBase, RESTOptions
+from muffin_rest.handler import RESTBase
+from muffin_rest.options import RESTOptions
 
 if TYPE_CHECKING:
     from .typing import RA_CONVERTER, RA_INFO
@@ -111,19 +112,29 @@ class AdminHandler(RESTBase):
     def to_ra(cls) -> Dict[str, Any]:
         """Get JSON params for react-admin."""
         schema_cls = cls.meta.Schema
-        exclude = schema_cls.opts.exclude
-        load_only = schema_cls.opts.load_only
-        dump_only = schema_cls.opts.dump_only
+        schema_opts = schema_cls.opts
+        schema_fields = schema_opts.fields
+        schema_exclude = schema_opts.exclude
+        schema_load_only = schema_opts.load_only
+        schema_dump_only = schema_opts.dump_only
+
         fields_customize = cls.meta.ra_fields
         inputs_customize = cls.meta.ra_inputs
+
         fields = []
         inputs = []
-        for name, field in schema_cls._declared_fields.items():
-            if not field or name in exclude:
+
+        if not schema_fields:
+            schema_fields = list(schema_cls._declared_fields.keys())
+
+        for name in schema_fields:
+            field = schema_cls._declared_fields.get(name)
+
+            if not field or name in schema_exclude:
                 continue
 
             source = field.data_key or name
-            if not field.load_only and name not in load_only:
+            if not field.load_only and name not in schema_load_only:
                 field_info = (
                     fields_customize[source]
                     if source in fields_customize
@@ -135,7 +146,7 @@ class AdminHandler(RESTBase):
                 field_info[1].setdefault("source", source)
                 fields.append(field_info)
 
-            if not field.dump_only and name not in dump_only:
+            if not field.dump_only and name not in schema_dump_only:
                 input_info = (
                     inputs_customize[source]
                     if source in inputs_customize

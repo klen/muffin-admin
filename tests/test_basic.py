@@ -1,4 +1,5 @@
 import marshmallow as ma
+from marshmallow import validate
 
 
 def test_endpoint(app):
@@ -16,7 +17,7 @@ def test_endpoint(app):
 
             class Schema(ma.Schema):
                 id = ma.fields.String()
-                name = ma.fields.String(validate=ma.validate.Length(3, 100))
+                name = ma.fields.String(validate=validate.Length(3, 100))
                 active = ma.fields.Boolean()
 
             columns = "id", "active", "name", "unknown"
@@ -91,11 +92,11 @@ async def test_endpoint_action(app):
 
     ra = Handler.to_ra()
     assert ra["list"]["actions"] == [
-        {"view": "list", "icon": None, "action": "/base", "title": None, "label": "base_action"}
+        {"view": "list", "icon": None, "action": "/base", "title": None, "label": "base_action"},
     ]
 
 
-def test_custom_fields_inputs(app):
+def test_custom_fields_inputs():
     from muffin_admin import AdminHandler
 
     class BaseHandler(AdminHandler):
@@ -106,7 +107,7 @@ def test_custom_fields_inputs(app):
 
             class Schema(ma.Schema):
                 id = ma.fields.String()
-                name = ma.fields.String(validate=ma.validate.Length(3, 100))
+                name = ma.fields.String(validate=validate.Length(3, 100))
                 active = ma.fields.Boolean()
 
             columns = "id", "active", "name", "unknown"
@@ -120,3 +121,31 @@ def test_custom_fields_inputs(app):
         ("TextInput", {"source": "name"}),
         ("BooleanInput", {"source": "active"}),
     ]
+
+
+def test_schema_opts():
+    from muffin_admin import AdminHandler
+
+    class BaseHandler(AdminHandler):
+        class Meta:
+            name = "name"
+            filters = "id", "name"
+            sorting = "id", "name"
+
+            class Schema(ma.Schema):
+                id = ma.fields.String()
+                name = ma.fields.String(validate=validate.Length(3, 100))
+                active = ma.fields.Boolean()
+
+                class Meta:
+                    fields = "name", "id"
+
+    ra = BaseHandler.to_ra()
+    assert ra
+    assert ra["edit"] == {
+        "actions": [],
+        "inputs": [
+            ("TextInput", {"source": "name"}),
+            ("TextInput", {"source": "id"}),
+        ],
+    }

@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Tuple, Type
+from typing import TYPE_CHECKING, Tuple, Type, cast
 
 import peewee as pw
 from muffin_peewee import JSONLikeField
-from muffin_rest.peewee import PWRESTBase, PWRESTOptions
+from muffin_rest.peewee import PWRESTBase
 from muffin_rest.peewee.filters import PWFilter
+from muffin_rest.peewee.options import PWRESTOptions
 
 from muffin_admin.handler import AdminHandler, AdminOptions
 
@@ -38,7 +39,7 @@ class PWAdminOptions(AdminOptions, PWRESTOptions):
                 break
 
         else:
-            self.filters = [PWFilter("id", field=self.model_pk), *self.filters]
+            self.filters = [PWFilter("id", field=self.model_pk), *self.filters]  # type: ignore[]
 
 
 class PWAdminHandler(AdminHandler, PWRESTBase):
@@ -97,4 +98,4 @@ class PWSearchFilter(PWFilter):
     def query(self, qs: pw.Query, column: pw.Field, *ops: Tuple, **_) -> pw.Query:
         """Apply the filters to Peewee QuerySet.."""
         _, value = ops[0]
-        return qs.where(column.contains(value))
+        return cast(pw.Query, qs.where(column.contains(value)))
