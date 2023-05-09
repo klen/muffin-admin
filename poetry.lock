@@ -794,14 +794,14 @@ asyncpg = ["asyncpg"]
 
 [[package]]
 name = "muffin-rest"
-version = "4.6.5"
+version = "5.0.0"
 description = "The package provides enhanced support for writing REST APIs with Muffin framework"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "muffin_rest-4.6.5-py3-none-any.whl", hash = "sha256:b2d7fe73f5ea14c2d3511594472e94d3e07816eb7ff6539f8900bab70c677b3d"},
-    {file = "muffin_rest-4.6.5.tar.gz", hash = "sha256:0fe4a70bcb10d4898bfa9c4ff65f35c369fe8c627ade60f831c59d7d0fdd572a"},
+    {file = "muffin_rest-5.0.0-py3-none-any.whl", hash = "sha256:2a40a853cd9569e536b4e078b90e86f05eb77ff62ef1b0998d1e4917074807de"},
+    {file = "muffin_rest-5.0.0.tar.gz", hash = "sha256:078a88bce8dbef1f3bf6b40d8e0a32cd348691a0d59873ee0b5eaf9f1f0d9172"},
 ]
 
 [package.dependencies]
@@ -810,8 +810,8 @@ marshmallow = ">=3,<4"
 muffin = ">=0,<1"
 
 [package.extras]
-peewee = ["marshmallow-peewee (>=4.0.3,<5.0.0)", "muffin-peewee-aio (>=0,<1)"]
-sqlalchemy = ["marshmallow-sqlalchemy (>=0.27.0,<0.28.0)", "muffin-databases (>=0.5.0,<0.6.0)", "sqlalchemy"]
+peewee = ["marshmallow-peewee (>=4,<5)", "muffin-peewee-aio (>=0,<1)"]
+sqlalchemy = ["marshmallow-sqlalchemy (>=0,<1)", "muffin-databases (>=0.5.0,<0.6.0)", "sqlalchemy"]
 yaml = ["pyyaml"]
 
 [[package]]
@@ -1680,4 +1680,4 @@ yaml = ["pyyaml"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "1358487b0348964221dc9cb48e58e65a67ea640360f6818df3c2e1a4eb9e6a79"
+content-hash = "0c1141bfc66f09137d56c2eb04f521e17c8ed5afe14ba643131be469c506f653"
