@@ -10,6 +10,8 @@ from muffin_rest.handler import RESTBase
 from muffin_rest.options import RESTOptions
 
 if TYPE_CHECKING:
+    from http_router.types import TMethods
+
     from .typing import RA_CONVERTER, RA_INFO
 
 
@@ -76,14 +78,14 @@ class AdminHandler(RESTBase):
     meta: AdminOptions
 
     @classmethod
-    def action(
+    def action(  # noqa: PLR0913
         cls,
         path: str,
         *,
+        methods: Optional[TMethods] = None,
         icon: Optional[str] = None,
         label: Optional[str] = None,
         view: str = "list",
-        **params,
     ):
         """Register an action for the handler.
 
@@ -96,7 +98,7 @@ class AdminHandler(RESTBase):
         """
 
         def decorator(method):
-            method.__route__ = (path,), params
+            method.__route__ = (path,), methods
             method.__action__ = {
                 "view": view,
                 "icon": icon,

@@ -1,5 +1,7 @@
 """Setup the plugin."""
 
+from __future__ import annotations
+
 from importlib import metadata
 from inspect import isclass
 from pathlib import Path

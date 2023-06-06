@@ -1,5 +1,6 @@
 VIRTUAL_ENV ?= .venv
 EXAMPLE = example
+PACKAGE = muffin_admin
 
 all: $(VIRTUAL_ENV)
 
@@ -38,7 +39,7 @@ db.sqlite: $(VIRTUAL_ENV)
 .PHONY: locales
 LOCALE ?= ru
 locales: $(VIRTUAL_ENV)/bin/py.test db.sqlite
-	@poetry run muffin $(EXAMPLE) extract_messages muffin_admin --locale $(LOCALE)
+	@poetry run muffin $(EXAMPLE) extract_messages $(PACKAGE) --locale $(LOCALE)
 	@poetry run muffin $(EXAMPLE) compile_messages
 
 .PHONY: front
@@ -57,9 +58,10 @@ front-dev:
 dev:
 	BACKEND_PORT=5555 make -j example-peewee front-dev
 
-.PHONY: dev
-mypy: $(VIRTUAL_ENV)
-	$(VIRTUAL_ENV)/bin/mypy muffin_admin
+.PHONY: lint
+lint: $(VIRTUAL_ENV)
+	@poetry run mypy $(PACKAGE)
+	@poetry run ruff $(PACKAGE)
 
 
 BACKEND_PORT ?= 8080
@@ -94,8 +96,7 @@ release: $(VIRTUAL_ENV)
 	@git checkout master
 	@git merge develop
 	@git checkout develop
-	@git push origin develop master
-	@git push --tags
+	@git push --tags origin develop master
 
 .PHONY: minor
 minor: release

@@ -22,9 +22,7 @@ classifiers = [
 ]
 homepage = "https://github.com/klen/muffin-admin"
 repository = "https://github.com/klen/muffin-admin"
-packages = [
-  {include = "muffin_admin"}
-]
+packages = [{ include = "muffin_admin" }]
 include = ["muffin_admin/main.js", "muffin_admin/main.js.LICENSE.txt"]
 
 [tool.poetry.dependencies]
@@ -33,12 +31,12 @@ muffin = "^0"
 muffin-rest = "^5"
 
 # Optional dependencies
-pyyaml = {version = "*", optional = true}
-muffin-peewee-aio = {version = "*", optional = true}
-marshmallow-peewee = {version = "*", optional = true}
-muffin-databases = {version = "*", optional = true}
-marshmallow-sqlalchemy = {version = "*", optional = true}
-sqlalchemy = {version = "*", optional = true}
+pyyaml = { version = "*", optional = true }
+muffin-peewee-aio = { version = "*", optional = true }
+marshmallow-peewee = { version = "*", optional = true }
+muffin-databases = { version = "*", optional = true }
+marshmallow-sqlalchemy = { version = "*", optional = true }
+sqlalchemy = { version = "*", optional = true }
 
 [tool.poetry.extras]
 yaml = ["pyyaml"]
@@ -53,7 +51,7 @@ marshmallow-sqlalchemy = "^0.27.0"
 muffin-databases = "*"
 muffin-peewee-aio = "*"
 pytest = "*"
-pytest-aio = {version = "*", extras = ["curio", "trio"]}
+pytest-aio = { version = "*", extras = ["curio", "trio"] }
 pytest-mypy = "*"
 pyyaml = "*"
 ruff = "*"
@@ -95,7 +93,23 @@ line-length = 100
 target-version = "py38"
 exclude = [".venv", "docs", "examples"]
 select = ["ALL"]
-ignore = ["D", "UP", "ANN", "DJ", "EM", "RSE", "SLF", "RET", "S101", "PLR2004", "PLR0912", "N804", "A003", "TRY003"]
+ignore = [
+  "A003",
+  "ANN",
+  "COM",
+  "D",
+  "DJ",
+  "EM",
+  "N804",
+  "PLR0912",
+  "PLR2004",
+  "RET",
+  "RSE",
+  "S101",
+  "SLF",
+  "TRY003",
+  "UP",
+]
 
 [tool.black]
 line-length = 100
