@@ -192,6 +192,7 @@ Name                        Default value                                       
 **auth_storage**            ``"localstorage"``                                   Where to keep authorization information (localstorage|cookies)
 **auth_storage_name**       ``muffin_admin_auth``                                Localstorage/Cookie name for authentication info
 **app_bar_links**           ``[{'url': '/', 'icon': 'Home', 'title': 'Home'}]``  Appbar links
+**mutation_mode**           ``"optimistic"``                                     React-Admin edit mutation mode (pessimistic|optimistic|undoable)
 =========================== ==================================================== ===========================
 
 .. _bugtracker:

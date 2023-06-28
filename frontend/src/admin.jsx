@@ -65,7 +65,7 @@ setupAdmin("admin", (props) => {
       layout={(props) => <Layout appBar={appBar} {...props} />}
       {...adminProps}
     >
-      {processAdmin("resources", resources)}
+      {processAdmin("resources", { resources, adminProps })}
     </Admin>
   )
 })

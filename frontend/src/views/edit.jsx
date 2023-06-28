@@ -15,27 +15,35 @@ import { ActionButton } from "../buttons/ActionButton"
 // Initialize an edit component
 setupAdmin(
   "edit",
-  checkParams(
-    ({ actions, inputs }, res) =>
-      function MAEdit(props) {
-        const Actions = ({ basePath, resource, ...baseProps }) => (
-          <TopToolbar>
-            {actions.map((props, idx) => {
-              let aProps = { resource, basePath, ...baseProps, ...props }
-              return <ActionButton key={idx} {...aProps} />
-            })}
-            <ListButton />
-            <ShowButton />
-          </TopToolbar>
-        )
+  checkParams((props, name) => {
+    let { edit, adminProps } = props
+    let { actions, inputs } = edit
 
-        return (
-          <Edit actions={<Actions />} mutationMode="optimistic" {...props}>
-            <SimpleForm>{processAdmin("edit-inputs", inputs, res)}</SimpleForm>
-          </Edit>
-        )
-      }
-  )
+    function MAEdit(props) {
+      const Actions = ({ basePath, resource, ...baseProps }) => (
+        <TopToolbar>
+          {actions.map((props, idx) => {
+            let aProps = { resource, basePath, ...baseProps, ...props }
+            return <ActionButton key={idx} {...aProps} />
+          })}
+          <ListButton />
+          <ShowButton />
+        </TopToolbar>
+      )
+
+      return (
+        <Edit
+          actions={<Actions />}
+          mutationMode={adminProps.mutationMode || "optimistic"}
+          {...props}
+        >
+          <SimpleForm>{processAdmin("edit-inputs", inputs, name)}</SimpleForm>
+        </Edit>
+      )
+    }
+
+    return MAEdit
+  })
 )
 
 setupAdmin("edit-inputs", initRAItems)

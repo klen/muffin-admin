@@ -10,25 +10,28 @@ import "./views/edit"
 import "./views/create"
 
 // Initialize Resources Components
-setupAdmin("resources", (resources) =>
-  resources.map((res) => processAdmin("resource", res, res.name))
+setupAdmin("resources", ({ resources, adminProps }) =>
+  resources.map((resource) =>
+    processAdmin("resource", { resource, adminProps }, resource.name)
+  )
 )
 
 // Initialize a resource's component
 setupAdmin(
   "resource",
-  checkParams((props, res) => {
-    let { create, edit, icon, list, name, show, ...resProps } = props
+  checkParams((props, name) => {
+    let { resource, adminProps } = props
+    let { create, edit, icon, list, show, ...resProps } = resource
 
     return (
       <Resource
         key={name}
         name={name}
         icon={icons[icon]}
-        create={processAdmin("create", create, res)}
-        edit={processAdmin("edit", edit, res)}
-        list={processAdmin("list", list, res)}
-        show={processAdmin("show", show, res)}
+        create={processAdmin("create", create, name)}
+        edit={processAdmin("edit", { edit, adminProps }, name)}
+        list={processAdmin("list", list, name)}
+        show={processAdmin("show", show, name)}
         {...resProps}
       />
     )
