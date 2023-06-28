@@ -43,6 +43,7 @@ class Plugin(BasePlugin):
         "app_bar_links": [
             {"url": "/", "icon": "Home", "title": "Home"},
         ],
+        "mutation_mode": "optimistic",
     }
 
     def __init__(self, app: Optional[Application] = None, **kwargs):
@@ -185,6 +186,7 @@ class Plugin(BasePlugin):
             "adminProps": {
                 "title": self.cfg.title,
                 "disableTelemetry": True,
+                "mutationMode": self.cfg.mutation_mode,
             },
             "appBarLinks": self.cfg.app_bar_links,
             "resources": [res.to_ra() for res in handlers],

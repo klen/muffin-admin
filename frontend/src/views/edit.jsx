@@ -30,7 +30,7 @@ setupAdmin(
         )
 
         return (
-          <Edit actions={<Actions />} {...props}>
+          <Edit actions={<Actions />} mutationMode="optimistic" {...props}>
             <SimpleForm>{processAdmin("edit-inputs", inputs, res)}</SimpleForm>
           </Edit>
         )
