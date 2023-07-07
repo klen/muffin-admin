@@ -3,7 +3,19 @@
 from __future__ import annotations
 
 import inspect
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Sequence, Tuple, Type, Union, cast
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    ClassVar,
+    Dict,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+    Type,
+    Union,
+    cast,
+)
 
 import marshmallow as ma
 from muffin_rest.handler import RESTBase
@@ -30,12 +42,12 @@ class AdminOptions(RESTOptions):
     edit: bool = True
     show: bool = True
 
-    columns: List[str] = []
-    references: Dict[str, str] = {}
     actions: Sequence = ()
+    columns: Tuple[str, ...] = ()
+    references: ClassVar[Dict[str, str]] = {}
 
-    ra_fields: Dict[str, RA_INFO] = {}
-    ra_inputs: Dict[str, RA_INFO] = {}
+    ra_fields: ClassVar[Dict[str, RA_INFO]] = {}
+    ra_inputs: ClassVar[Dict[str, RA_INFO]] = {}
 
     def setup(self, cls: AdminHandler):
         """Check and build required options."""
@@ -53,7 +65,7 @@ class AdminOptions(RESTOptions):
             self.label = cast(str, self.name)
 
         if not self.columns:
-            self.columns = [
+            self.columns = tuple(
                 name
                 for name, field in self.Schema._declared_fields.items()
                 if field
@@ -62,7 +74,7 @@ class AdminOptions(RESTOptions):
                     or name in self.Schema.opts.load_only
                     or name in self.Schema.opts.exclude
                 )
-            ]
+            )
 
         if not self.sorting and self.columns:
             sorting: List[Union[str, Tuple]] = list(self.columns)

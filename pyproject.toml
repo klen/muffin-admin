@@ -27,8 +27,8 @@ include = ["muffin_admin/main.js", "muffin_admin/main.js.LICENSE.txt"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-muffin = "^0"
-muffin-rest = "^5"
+muffin = "*"
+muffin-rest = "*"
 
 # Optional dependencies
 pyyaml = { version = "*", optional = true }

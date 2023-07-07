@@ -5,7 +5,7 @@ from __future__ import annotations
 from importlib import metadata
 from inspect import isclass
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Type, cast
+from typing import Any, Callable, ClassVar, Dict, List, Optional, Type, cast
 
 from muffin import Application, Request, ResponseError, ResponseFile, ResponseRedirect
 from muffin.plugins import BasePlugin
@@ -29,7 +29,7 @@ class Plugin(BasePlugin):
     """Admin interface for Muffin Framework."""
 
     name = "admin"
-    defaults = {
+    defaults: ClassVar[Dict[str, Any]] = {
         "prefix": "/admin",
         "title": "Muffin-Admin",
         "main_js_url": "{prefix}/main.js",
