@@ -20,11 +20,10 @@ setupAdmin(
     let { actions, inputs } = edit
 
     function MAEdit(props) {
-      const Actions = ({ basePath, resource, ...baseProps }) => (
+      const Actions = () => (
         <TopToolbar>
           {actions.map((props, idx) => {
-            let aProps = { resource, basePath, ...baseProps, ...props }
-            return <ActionButton key={idx} {...aProps} />
+            return <ActionButton key={idx} {...props} />
           })}
           <ListButton />
           <ShowButton />

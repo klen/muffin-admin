@@ -4,6 +4,7 @@ import "./admin"
 import { processAdmin } from "./utils"
 
 export * from "./utils"
+export { buildRAComponent } from "./ui"
 
 export async function initAdmin(prefix = "") {
   const response = await fetch(`${prefix}/ra.json`)

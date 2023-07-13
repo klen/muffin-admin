@@ -44,7 +44,7 @@ import FKInput from "./inputs/FKInput"
 import JsonField from "./fields/JsonField"
 import JsonInput from "./inputs/JsonInput"
 
-const ui = {
+const UI = {
   // Fields
   BooleanField,
   ChipField,
@@ -87,21 +87,21 @@ const ui = {
   FKInput,
 }
 
-const initRAItems = (itemsProps) =>
-  itemsProps.map((item) => {
-    const Item = ui[item[0]],
-      props = { ...item[1] }
+export function buildRAComponent(name, props) {
+  const Item = UI[name]
 
-    if (props.required) {
-      props.validate = required()
-      delete props.required
-    }
+  if (props.required) {
+    props.validate = required()
+    delete props.required
+  }
 
-    props.fullWidth = props.fullWidth ?? true
+  props.fullWidth = props.fullWidth ?? true
 
-    if (props.children) props.children = initRAItems(props.children)[0]
+  if (props.children) props.children = initRAItems(props.children)[0]
 
-    return <Item key={props.source} {...props} />
-  })
+  return <Item key={props.source} {...props} />
+}
 
-export default initRAItems
+export default function initRAItems(items) {
+  return items.map((item) => buildRAComponent(...item))
+}
