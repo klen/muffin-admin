@@ -18,18 +18,15 @@ setupAdmin(
   checkParams(
     ({ actions, fields }, resource) =>
       function MAShow(props) {
-        const Actions = () => (
-          <TopToolbar>
-            {actions.map((props, idx) => {
-              return <ActionButton key={idx} resource={resource} {...props} />
-            })}
-            <ListButton />
-            <EditButton />
-          </TopToolbar>
-        )
-
         return (
-          <Show actions={<Actions />} {...props}>
+          <Show
+            actions={processAdmin(
+              "show-actions",
+              { actions, resource },
+              resource
+            )}
+            {...props}
+          >
             <SimpleShowLayout>
               {processAdmin("show-fields", fields, resource)}
             </SimpleShowLayout>
@@ -39,4 +36,16 @@ setupAdmin(
   )
 )
 
+/* Actions */
+setupAdmin("show-actions", ({ actions, resource }) => (
+  <TopToolbar>
+    {actions.map((props, idx) => (
+      <ActionButton key={idx} resource={resource} {...props} />
+    ))}
+    <ListButton />
+    <EditButton />
+  </TopToolbar>
+))
+
+/* Fields */
 setupAdmin("show-fields", initRAItems)
