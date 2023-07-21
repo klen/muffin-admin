@@ -60,14 +60,14 @@ export const BulkActionButton = ({
 export const ActionButton = (props) => {
   const { icon, label, title, resource, action } = props
   const record = useRecordContext()
-  const mutation = useAction(resource, action)
+  const { mutate, isLoading } = useAction(resource, action)
 
   const refresh = useRefresh(),
     notify = useNotify(),
     Icon = icons[icon]
 
   let onClick = () => {
-    mutation.mutate(
+    mutate(
       { record },
       {
         onSuccess: ({ data }) => {
@@ -85,12 +85,7 @@ export const ActionButton = (props) => {
   }
 
   return (
-    <Button
-      label={label}
-      title={title}
-      onClick={onClick}
-      disabled={mutation.isLoading}
-    >
+    <Button label={label} title={title} onClick={onClick} disabled={isLoading}>
       {Icon && <Icon />}
     </Button>
   )
