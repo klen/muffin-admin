@@ -42,7 +42,7 @@ export default (props) => {
       },
 
       checkError: async (error) => {
-        const { status } = error
+        const { status } = error || {}
 
         if (status == 401 || status == 403) {
           // Clean storage
@@ -77,9 +77,9 @@ export default (props) => {
 
       getIdentity,
 
-      getPermissions: () => {
+      getPermissions: async () => {
         const role = authGet(storage_name + "_role")
-        return role ? Promise.resolve(role) : Promise.reject()
+        return role || ""
       },
     }
 }
