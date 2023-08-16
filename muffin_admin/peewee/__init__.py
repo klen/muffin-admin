@@ -53,8 +53,10 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
     def to_ra_field(cls, field: ma.fields.Field, source: str) -> RA_INFO:
         """Setup RA fields."""
         model_field = getattr(cls.meta.model, field.attribute or source, None)
-        if model_field and (
-            isinstance(model_field, JSONLikeField) or model_field.field_type.lower() == "json"
+        if (
+            model_field
+            and isinstance(model_field, pw.Field)
+            and (isinstance(model_field, JSONLikeField) or model_field.field_type.lower() == "json")
         ):
             return "JsonField", {}
 
