@@ -6,27 +6,24 @@ import {
   useUnselectAll,
   useNotify,
   useRecordContext,
+  useResourceContext,
+  useListContext,
 } from "react-admin"
 import * as icons from "@mui/icons-material"
 
-import useAction from "../hooks/useAction"
+import { useAction } from "../hooks/useAction"
+import { buildIcon } from "../utils"
 
-export const BulkActionButton = ({
-  label,
-  icon,
-  title,
-  action,
-  resource,
-  selectedIds,
-}) => {
+export function BulkActionButton({ label, icon, title, action }) {
+  const resource = useResourceContext()
+  const { selectedIds } = useListContext()
   const refresh = useRefresh(),
     unselectAll = useUnselectAll(resource),
-    notify = useNotify(),
-    Icon = icons[icon]
+    notify = useNotify()
 
   const mutation = useAction(resource, action)
 
-  let onClick = () => {
+  const onClick = () => {
     mutation.mutate(
       {
         action,
@@ -52,12 +49,12 @@ export const BulkActionButton = ({
       onClick={onClick}
       disabled={mutation.isLoading}
     >
-      {Icon && <Icon />}
+      {buildIcon(icon)}
     </Button>
   )
 }
 
-export const ActionButton = (props) => {
+export function ActionButton(props) {
   const { icon, label, title, resource, action } = props
   const record = useRecordContext()
   const { mutate, isLoading } = useAction(resource, action)
@@ -66,7 +63,7 @@ export const ActionButton = (props) => {
     notify = useNotify(),
     Icon = icons[icon]
 
-  let onClick = () => {
+  const onClick = () => {
     mutate(
       { record },
       {
@@ -75,8 +72,8 @@ export const ActionButton = (props) => {
           if (data && data.redirectTo) window.location = data.redirectTo
           if (data && data.message) notify(data.message, { type: "success" })
         },
-        onError: (error) => {
-          notify(typeof error === "string" ? error : error.message, {
+        onError: (err) => {
+          notify(typeof err === "string" ? err : err.message, {
             type: "error",
           })
         },
@@ -90,5 +87,3 @@ export const ActionButton = (props) => {
     </Button>
   )
 }
-
-export default ActionButton

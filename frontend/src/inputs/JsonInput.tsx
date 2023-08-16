@@ -9,6 +9,7 @@ const parseFunction = (json) => {
   try {
     retval = JSON.parse(json)
   } finally {
+    // eslint-disable-next-line no-unsafe-finally
     return retval
   }
 }
@@ -31,7 +32,7 @@ const parseFunction = (json) => {
  * @example
  * <JsonInput source='config' label='JSON Config' parse={false}/>
  */
-export default function JsonInput(props) {
+export function JsonInput(props) {
   const {
     validate = [],
     errortext = DEFAULT_ERRORTEXT,

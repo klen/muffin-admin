@@ -3,42 +3,30 @@
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended",
     "prettier"
   ],
-  "parser": "@babel/eslint-parser",
-  "settings": {
-    "react": {
-      "version": "detect"
-    }
-  },
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaFeatures": {
-      "jsx": true,
-      "experimentalObjectRestSpread": true
+      "jsx": true
     },
-    "ecmaVersion": 2020,
+    "ecmaVersion": 2018,
     "sourceType": "module",
-    "babelOptions": {
-      "presets": [
-        "@babel/preset-react"
-      ],
-      "rootMode": "upward"
-    }
+    "project": "./tsconfig.json"
   },
   "plugins": [
+    "@typescript-eslint",
     "prettier",
     "react"
   ],
-  "env": {
-    "browser": true,
-    "es6": true,
-    "jest": true,
-    "node": true
-  },
   "rules": {
-    "no-console": "warn",
+    "no-console": "off",
     "no-debugger": "warn",
     "prettier/prettier": "warn",
-    "react/prop-types": "off"
+    "react/prop-types": "off",
+    "react/react-in-jsx-scope": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/ban-ts-comment": "off"
   }
 }

@@ -1,24 +1,24 @@
 import React from "react"
 import { ReferenceInput, AutocompleteInput } from "react-admin"
 
-const FKInput = ({
+export function FKInput({
   refProp,
   refSource,
   fullWidth,
   reference,
   source,
   ...props
-}) => {
-  let filterToQuery = (search) => {
-    let filters = {}
+}) {
+  const filterToQuery = (search) => {
+    const filters = {}
     filters[refProp] = search
     return filters
   }
 
   refSource = refSource || "id"
 
-  let renderText = (record) => {
-    let pk = record[refSource]
+  const renderText = (record) => {
+    const pk = record[refSource]
     return (pk && `${record[refProp]} (#${pk})`) || ""
   }
 
@@ -38,5 +38,3 @@ const FKInput = ({
     </ReferenceInput>
   )
 }
-
-export default FKInput

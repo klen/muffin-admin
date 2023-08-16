@@ -190,7 +190,7 @@ class AdminHandler(RESTBase):
                 "edit": bool(cls.meta.edit),
                 "show": bool(cls.meta.show),
                 "actions": [action for action in cls.meta.actions if action["view"] == "list"],
-                "children": [fields_hash[name] for name in cls.meta.columns if name in fields_hash],
+                "fields": [fields_hash[name] for name in cls.meta.columns if name in fields_hash],
                 "filters": [
                     (ra_type, dict(source=flt.name, **props))
                     for flt, (ra_type, props) in [

@@ -3,7 +3,7 @@ const path = require("path"),
   mode = process.env.NODE_ENV
 
 module.exports = {
-  entry: "./src/web",
+  entry: "./src/index.tsx",
 
   output: {
     filename: "main.js",
@@ -14,11 +14,9 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
+        test: /\.tsx?$/,
+        use: "ts-loader",
         exclude: /node_modules/,
-        use: {
-          loader: "babel-loader",
-        },
       },
     ],
   },
@@ -29,7 +27,7 @@ module.exports = {
   devtool: mode == "development" && "inline-source-map",
 
   resolve: {
-    extensions: [".jsx", ".js"],
+    extensions: [".js", ".tsx", ".ts"],
   },
 
   devServer: {

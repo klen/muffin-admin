@@ -61,7 +61,7 @@ class Plugin(BasePlugin):
         self.api.setup(app, prefix=f"{self.cfg.prefix}/api", openapi=False)
 
         self.auth["storage"] = self.cfg.auth_storage
-        self.auth["storage_name"] = self.cfg.auth_storage_name
+        self.auth["storageName"] = self.cfg.auth_storage_name
         self.auth["loginURL"] = self.cfg.login_url
         self.auth["logoutURL"] = self.cfg.logout_url
 

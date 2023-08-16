@@ -3,7 +3,7 @@ import get from "lodash/get"
 import React, { useState } from "react"
 import { Button, FunctionField, useRecordContext } from "react-admin"
 
-export default function JsonField({ label, source }) {
+export function JsonField({ label, source }) {
   const [expand, setExpand] = useState(false)
   const record = useRecordContext()
   const src = JSON.stringify(get(record, source), null, 2)

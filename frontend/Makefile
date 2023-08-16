@@ -2,7 +2,7 @@ all: node_modules
 	$(CURDIR)/node_modules/.bin/webpack
 
 node_modules: package.json
-	npm install
+	yarn
 	touch node_modules
 
 pypi:
@@ -22,5 +22,10 @@ esm: node_modules
 
 clean:
 	@rm -rf dist
+
+lint:
+	# npx lint
+	npx tsc --noEmit --pretty
+
 
 build: clean npm esm
