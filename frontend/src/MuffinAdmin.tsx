@@ -20,7 +20,7 @@ const darkTheme = createTheme({
 })
 
 export function MuffinAdmin(props: AdminOpts) {
-  const { resources, auth } = props
+  const { resources, auth, appBarLinks } = props
   const children = resources.map((resource) =>
     buildAdmin(["resource", resource.name], {
       ...resource,
@@ -41,7 +41,7 @@ export function MuffinAdmin(props: AdminOpts) {
         }}
       />
       <ToggleThemeButton lightTheme={defaultTheme} darkTheme={darkTheme} />
-      {props.appBarLinks.map((info) => (
+      {appBarLinks.map((info) => (
         <Tooltip key={info.url} title={info.title}>
           <IconButton color="inherit" href={info.url}>
             <SvgIcon component={findIcon(info.icon)} />

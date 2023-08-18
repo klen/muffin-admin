@@ -57,7 +57,7 @@ export type AdminOpts = {
     mutationMode?: "optimistic" | "pessimistic" | "undoable"
   }
   apiUrl: string
-  appBarLinks: [{ ulr: string; title: string; icon?: string }]
+  appBarLinks: [{ url: string; title: string; icon?: string }]
   auth: {
     identityURL: string
     authorizeURL: string
