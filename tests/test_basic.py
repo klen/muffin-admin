@@ -52,6 +52,7 @@ def test_endpoint(app):
     }
     assert ra["show"] == {
         "actions": [],
+        "links": {},
         "fields": [
             ("TextField", {"source": "id"}),
             ("TextField", {"source": "name"}),
@@ -60,7 +61,7 @@ def test_endpoint(app):
     }
     assert ra["list"] == {
         "actions": [],
-        "children": [
+        "fields": [
             ("TextField", {"source": "id", "sortable": True}),
             ("BooleanField", {"source": "active", "sortable": False}),
             ("TextField", {"source": "name", "sortable": True}),

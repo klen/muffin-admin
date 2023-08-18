@@ -158,6 +158,7 @@ def test_admin_schemas(app):
     }
     assert ra["show"] == {
         "actions": [],
+        "links": {},
         "fields": [
             ("NumberField", {"source": "id"}),
             ("TextField", {"source": "name"}),
@@ -193,7 +194,7 @@ def test_admin_schemas(app):
             },
         ),
     ]
-    assert ra["list"]["children"] == [
+    assert ra["list"]["fields"] == [
         ("NumberField", {"source": "id", "sortable": True}),
         ("TextField", {"source": "name", "sortable": True}),
         ("BooleanField", {"source": "is_active", "sortable": True}),

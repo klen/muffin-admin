@@ -41,11 +41,10 @@ def aiolib(request):
 @pytest.fixture(autouse=True)
 async def setup_db(app):
     db.setup(app)
-    async with db:
-        async with db.connection():
-            await db.create_tables()
-            yield db
-            await db.drop_tables()
+    async with db, db.connection():
+        await db.create_tables()
+        yield db
+        await db.drop_tables()
 
 
 @pytest.fixture(autouse=True)
@@ -165,6 +164,7 @@ async def test_admin(app):
     }
     assert ra["show"] == {
         "actions": [],
+        "links": {},
         "fields": [
             ("TextField", {"source": "id"}),
             ("TextField", {"source": "name"}),
@@ -201,7 +201,7 @@ async def test_admin(app):
         ),
     ]
 
-    assert ra["list"]["children"] == [
+    assert ra["list"]["fields"] == [
         ("TextField", {"source": "id", "sortable": True}),
         ("TextField", {"source": "name", "sortable": True}),
         ("BooleanField", {"source": "is_active", "sortable": True}),

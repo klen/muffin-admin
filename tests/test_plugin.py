@@ -10,7 +10,7 @@ async def test_plugin(app):
     assert data["apiUrl"]
     assert data["auth"] == {
         "storage": "localstorage",
-        "storage_name": "muffin_admin_auth",
+        "storageName": "muffin_admin_auth",
         "logoutURL": None,
         "loginURL": None,
     }
@@ -92,7 +92,7 @@ async def test_auth(app, client):
         "logoutURL": None,
         "required": True,
         "storage": "localstorage",
-        "storage_name": "muffin_admin_auth",
+        "storageName": "muffin_admin_auth",
     }
 
     res = await client.get("/admin/login", data={"username": "user", "password": "pass"})

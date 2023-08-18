@@ -21,10 +21,10 @@ clean:
 #  Development
 # =============
 
-$(VIRTUAL_ENV): pyproject.toml
+$(VIRTUAL_ENV): pyproject.toml .pre-commit-config.yaml
 	@poetry install --with dev,example
 	@poetry self add poetry-bumpversion
-	@poetry run pre-commit install --hook-type pre-push
+	@poetry run pre-commit install
 	@touch $(VIRTUAL_ENV)
 
 .PHONY: test t
@@ -89,9 +89,8 @@ example-sqlalchemy: $(VIRTUAL_ENV) front
 VERSION?=minor
 # target: release - Bump version
 release: $(VIRTUAL_ENV)
-	@$(eval VFROM := $(shell poetry version -s))
 	@poetry version $(VERSION)
-	@git commit -am "Bump version $(VFROM) → `poetry version -s`"
+	@git commit -am "build(release): `poetry version -s`"
 	@git tag `poetry version -s`
 	@git checkout master
 	@git merge develop
