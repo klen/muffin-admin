@@ -24,7 +24,9 @@ from muffin_rest.options import RESTOptions
 if TYPE_CHECKING:
     from http_router.types import TMethods
 
-    from .typing import RA_CONVERTER, RA_INFO
+    from muffin_admin.types import TRAActionLink
+
+    from .types import TRAConverter, TRAInfo
 
 
 class AdminOptions(RESTOptions):
@@ -46,8 +48,9 @@ class AdminOptions(RESTOptions):
     columns: Tuple[str, ...] = ()
     references: ClassVar[Dict[str, str]] = {}
 
-    ra_fields: ClassVar[Dict[str, RA_INFO]] = {}
-    ra_inputs: ClassVar[Dict[str, RA_INFO]] = {}
+    ra_links: ClassVar[Dict[str, TRAActionLink]] = {}
+    ra_fields: ClassVar[Dict[str, TRAInfo]] = {}
+    ra_inputs: ClassVar[Dict[str, TRAInfo]] = {}
 
     def setup(self, cls: AdminHandler):
         """Check and build required options."""
@@ -190,7 +193,7 @@ class AdminHandler(RESTBase):
                 "edit": bool(cls.meta.edit),
                 "show": bool(cls.meta.show),
                 "actions": [action for action in cls.meta.actions if action["view"] == "list"],
-                "children": [fields_hash[name] for name in cls.meta.columns if name in fields_hash],
+                "fields": [fields_hash[name] for name in cls.meta.columns if name in fields_hash],
                 "filters": [
                     (ra_type, dict(source=flt.name, **props))
                     for flt, (ra_type, props) in [
@@ -201,6 +204,7 @@ class AdminHandler(RESTBase):
             },
             "show": {
                 "actions": [action for action in cls.meta.actions if action["view"] == "show"],
+                "links": cls.meta.ra_links,
                 "fields": fields,
             },
             "edit": {
@@ -221,7 +225,7 @@ class AdminHandler(RESTBase):
         return data
 
     @classmethod
-    def to_ra_field(cls, field: ma.fields.Field, source: str) -> RA_INFO:
+    def to_ra_field(cls, field: ma.fields.Field, source: str) -> TRAInfo:
         """Convert self schema field to ra field."""
         if source in cls.meta.references:
             ref, _, ref_source = cls.meta.references[source].partition(".")
@@ -234,7 +238,7 @@ class AdminHandler(RESTBase):
         return converter(field)
 
     @classmethod
-    def to_ra_input(cls, field: ma.fields.Field, _: str) -> RA_INFO:
+    def to_ra_input(cls, field: ma.fields.Field, _: str) -> TRAInfo:
         """Convert a field to react-admin."""
         converter = find_ra(field, MA_TO_RAI)
         rtype, props = converter(field)
@@ -252,7 +256,7 @@ class AdminHandler(RESTBase):
         return rtype, props
 
 
-MA_TO_RAF: Dict[Type, RA_CONVERTER] = {
+MA_TO_RAF: Dict[Type, TRAConverter] = {
     ma.fields.Boolean: lambda _: ("BooleanField", {}),
     ma.fields.Date: lambda _: ("DateField", {}),
     ma.fields.DateTime: lambda _: ("DateField", {"showTime": True}),
@@ -264,7 +268,7 @@ MA_TO_RAF: Dict[Type, RA_CONVERTER] = {
     object: lambda _: ("TextField", {}),
 }
 
-MA_TO_RAI: Dict[Type, RA_CONVERTER] = {
+MA_TO_RAI: Dict[Type, TRAConverter] = {
     ma.fields.Boolean: lambda _: ("BooleanInput", {}),
     ma.fields.Date: lambda _: ("DateInput", {}),
     ma.fields.DateTime: lambda _: ("DateTimeInput", {}),
@@ -275,7 +279,7 @@ MA_TO_RAI: Dict[Type, RA_CONVERTER] = {
 }
 
 
-def find_ra(field: ma.fields.Field, types: Dict[Type, RA_CONVERTER]) -> RA_CONVERTER:
+def find_ra(field: ma.fields.Field, types: Dict[Type, TRAConverter]) -> TRAConverter:
     """Find a converter for first supported field class."""
     for fcls in type(field).mro():
         if fcls in types:

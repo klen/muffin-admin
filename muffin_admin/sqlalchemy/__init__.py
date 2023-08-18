@@ -13,7 +13,7 @@ from muffin_admin.handler import AdminHandler, AdminOptions
 if TYPE_CHECKING:
     import marshmallow as ma
 
-    from muffin_admin.typing import RA_INFO
+    from muffin_admin.types import TRAInfo
 
 
 class SAAdminOptions(AdminOptions, SARESTOptions):
@@ -43,7 +43,7 @@ class SAAdminHandler(AdminHandler, SARESTHandler):
     meta: SAAdminOptions
 
     @classmethod
-    def to_ra_field(cls, field: ma.fields.Field, source: str) -> RA_INFO:
+    def to_ra_field(cls, field: ma.fields.Field, source: str) -> TRAInfo:
         """Setup RA fields."""
         column = getattr(cls.meta.table.c, field.attribute or source, None)
         if column is not None:
@@ -63,7 +63,7 @@ class SAAdminHandler(AdminHandler, SARESTHandler):
         return super(SAAdminHandler, cls).to_ra_field(field, source)
 
     @classmethod
-    def to_ra_input(cls, field: ma.fields.Field, source: str) -> RA_INFO:
+    def to_ra_input(cls, field: ma.fields.Field, source: str) -> TRAInfo:
         """Setup RA inputs."""
         column = getattr(cls.meta.table.c, field.attribute or source, None)
         ra_type, props = super(SAAdminHandler, cls).to_ra_input(field, source)
@@ -82,9 +82,7 @@ class SAAdminHandler(AdminHandler, SARESTHandler):
             if isinstance(column.type, Enum):
                 return "SelectInput", dict(
                     props,
-                    choices=[
-                        {"id": c.value, "name": c.name} for c in column.type.enum_class
-                    ],
+                    choices=[{"id": c.value, "name": c.name} for c in column.type.enum_class],
                 )
 
             if isinstance(column.type, Text):

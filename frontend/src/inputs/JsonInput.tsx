@@ -1,4 +1,3 @@
-import React from "react"
 import { TextInput } from "react-admin"
 import isJSON from "validator/lib/isJSON"
 
@@ -9,6 +8,7 @@ const parseFunction = (json) => {
   try {
     retval = JSON.parse(json)
   } finally {
+    // eslint-disable-next-line no-unsafe-finally
     return retval
   }
 }
@@ -31,7 +31,7 @@ const parseFunction = (json) => {
  * @example
  * <JsonInput source='config' label='JSON Config' parse={false}/>
  */
-export default function JsonInput(props) {
+export function JsonInput(props) {
   const {
     validate = [],
     errortext = DEFAULT_ERRORTEXT,
@@ -50,8 +50,7 @@ export default function JsonInput(props) {
 
   const formatJSON = (json) => {
     let retval = json
-    if (retval && typeof retval === "object")
-      retval = JSON.stringify(retval, null, 2)
+    if (retval && typeof retval === "object") retval = JSON.stringify(retval, null, 2)
     return retval
   }
   rest.format = formatJSON

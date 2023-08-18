@@ -1,9 +1,11 @@
-import { makeRequest } from "./utils"
+import { AdminOpts } from "./types"
+import { APIParams, makeRequest, setupAdmin } from "./utils"
 
-export default (apiUrl) => {
+export function MuffinDataprovider({ apiUrl }: AdminOpts) {
   const methods = {
-    getList: async (resource, { filter, pagination, sort }) => {
-      const query = {}
+    getList: async (resource: string, params: any) => {
+      const { filter, pagination, sort } = params
+      const query: APIParams["query"] = {}
       if (filter) query.where = JSON.stringify(filter)
       if (pagination) {
         const { page, perPage: limit } = pagination
@@ -14,7 +16,6 @@ export default (apiUrl) => {
         const { field, order } = sort
         query.sort = order == "ASC" ? field : `-${field}`
       }
-
       const { headers, json } = await makeRequest(`${apiUrl}/${resource}`, {
         query,
       })
@@ -89,6 +90,7 @@ export default (apiUrl) => {
       return { data: json }
     },
   }
-
   return methods
 }
+
+setupAdmin(["dataprovider"], MuffinDataprovider)

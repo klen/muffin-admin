@@ -94,6 +94,13 @@ class UserResource(PWAdminHandler):
                 {"alt": "picture", "nameProp": "name", "sortable": False},
             ),
         }
+        ra_links = {
+            "message": {
+                "icon": "Message",
+                "label": "Messages",
+                "title": "Show user messages",
+            }
+        }
         references = {"group": "group.name"}
 
     @PWAdminHandler.action("/user/error", label="Broken Action", icon="Error")

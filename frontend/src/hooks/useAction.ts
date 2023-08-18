@@ -1,9 +1,9 @@
 import { useDataProvider } from "react-admin"
 import { useMutation } from "react-query"
 
-export default function useAction(resource, action) {
+export function useAction(resource, action) {
   const dataProvider = useDataProvider()
-  return useMutation((params) =>
+  return useMutation<{ data: any }, { message: string } | string, any>((params: any) =>
     dataProvider.runAction(resource, action, params)
   )
 }

@@ -1,48 +1,41 @@
-import React from "react"
-
-import { required } from "react-admin"
 import {
-  BooleanField,
-  ChipField,
-  DateField,
-  EmailField,
-  ImageField,
-  FileField,
-  NumberField,
-  RichTextField,
-  TextField,
-  UrlField,
-  SelectField,
   ArrayField,
-  ReferenceField,
-  ReferenceManyField,
-  ReferenceArrayField,
-} from "react-admin"
-import {
-  BooleanInput,
-  NullableBooleanInput,
-  DateInput,
-  DateTimeInput,
-  ImageInput,
-  FileInput,
-  NumberInput,
-  PasswordInput,
-  TextInput,
-  AutocompleteInput,
-  RadioButtonGroupInput,
-  SelectInput,
   ArrayInput,
   AutocompleteArrayInput,
+  AutocompleteInput,
+  BooleanField,
+  BooleanInput,
   CheckboxGroupInput,
+  ChipField,
+  DateField,
+  DateInput,
+  DateTimeInput,
+  EmailField,
+  FileField,
+  FileInput,
+  ImageField,
+  ImageInput,
+  NullableBooleanInput,
+  NumberField,
+  NumberInput,
+  PasswordInput,
+  RadioButtonGroupInput,
+  ReferenceArrayField,
   ReferenceArrayInput,
+  ReferenceField,
   ReferenceInput,
+  ReferenceManyField,
+  RichTextField,
+  SelectField,
+  SelectInput,
+  TextField,
+  TextInput,
+  UrlField,
+  required,
 } from "react-admin"
 
-import AvatarField from "./fields/AvatarField"
-import FKField from "./fields/FKField"
-import FKInput from "./inputs/FKInput"
-import JsonField from "./fields/JsonField"
-import JsonInput from "./inputs/JsonInput"
+import { AvatarField, EditableBooleanField, FKField, JsonField } from "./fields"
+import { FKInput, JsonInput } from "./inputs"
 
 const UI = {
   // Fields
@@ -62,8 +55,9 @@ const UI = {
   ReferenceManyField,
   ReferenceArrayField,
   AvatarField,
-  JsonField,
+  EditableBooleanField,
   FKField,
+  JsonField,
 
   // Inputs
   BooleanInput,
@@ -89,6 +83,7 @@ const UI = {
 
 export function buildRAComponent(name, props) {
   const Item = UI[name]
+  if (!Item) return null
 
   if (props.required) {
     props.validate = required()
@@ -97,11 +92,11 @@ export function buildRAComponent(name, props) {
 
   props.fullWidth = props.fullWidth ?? true
 
-  if (props.children) props.children = initRAItems(props.children)[0]
+  if (props.children) props.children = buildRA(props.children)[0]
 
   return <Item key={props.source} {...props} />
 }
 
-export default function initRAItems(items) {
-  return items.map((item) => buildRAComponent(...item))
+export function buildRA(items) {
+  return items.map((item) => buildRAComponent(item[0], item[1]))
 }
