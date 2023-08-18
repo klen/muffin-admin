@@ -66,11 +66,9 @@ async def login(request):
 
 @admin.route
 class UserResource(PWAdminHandler):
-
     """Create Admin Resource for the User model."""
 
     class Meta:
-
         """Tune the resource."""
 
         model = User
@@ -96,7 +94,6 @@ class UserResource(PWAdminHandler):
         }
         ra_links = {
             "message": {
-                "icon": "Message",
                 "label": "Messages",
                 "title": "Show user messages",
             }
@@ -121,7 +118,6 @@ class UserResource(PWAdminHandler):
 
 @admin.route
 class GroupResource(PWAdminHandler):
-
     """Create Admin Resource for the Group model."""
 
     class Meta:
@@ -132,11 +128,9 @@ class GroupResource(PWAdminHandler):
 
 @admin.route
 class MessageResource(PWAdminHandler):
-
     """Create Admin Resource for the Message model."""
 
     class Meta:
-
         """Tune the resource."""
 
         model = Message

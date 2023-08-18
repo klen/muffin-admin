@@ -10,12 +10,12 @@ export function LinkAction({ field, icon, ...props }: AdminShowLink & { resource
   const currentResource = useResourceContext()
   if (!record) return null
 
-  icon = icon || adminProps?.resources[props.resource]?.icon
+  const resource = adminProps?.resources.find((r) => r.name === props.resource)
 
   return (
     <LinkButton
       {...props}
-      icon={icon}
+      icon={icon || resource?.icon}
       filters={{ [currentResource]: encodeURIComponent(record[field || "id"]) }}
     />
   )
