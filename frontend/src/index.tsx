@@ -2,6 +2,7 @@ import { createRoot } from "react-dom/client"
 import { buildAdmin } from "./utils"
 
 export * from "./MuffinAdmin"
+export * from "./MuffinDashboard"
 export * from "./MuffinResource"
 export * from "./MuffinResourceCreate"
 export * from "./MuffinResourceEdit"

@@ -7,20 +7,30 @@ import TableCell from "@mui/material/TableCell"
 import TableRow from "@mui/material/TableRow"
 import Typography from "@mui/material/Typography"
 import { AdminDashboardBlock, AdminOpts } from "./types"
+import { setupAdmin } from "./utils"
 
-export function MuffinDashboard(props: AdminOpts["dashboard"]) {
+export function MuffinDashboard({ src }: { src: AdminOpts["dashboard"] }) {
   return (
     <Grid container spacing={1}>
-      {Array.isArray(props) ? (
-        props.map((card, idx) => <DashboardCard key={idx} {...card} />)
-      ) : (
-        <DashboardCard {...props} />
-      )}
+      <AdminCards src={src} />
     </Grid>
   )
 }
 
-function DashboardCard(title, value: AdminDashboardBlock) {
+function AdminCards({ src }: { src: AdminDashboardBlock | AdminDashboardBlock[] }) {
+  if (Array.isArray(src))
+    return (
+      <Grid container item spacing={2}>
+        {src.map((card, idx) => (
+          <AdminCards key={idx} src={card} />
+        ))}
+      </Grid>
+    )
+
+  return <DashboardCard {...src} />
+}
+
+function DashboardCard({ title, value }: AdminDashboardBlock) {
   return (
     <Grid item xs>
       <Card>
@@ -50,3 +60,5 @@ const AdminTableView = ({ src }) => (
     </TableBody>
   </Table>
 )
+
+setupAdmin(["dashboard"], (dashboard) => () => <MuffinDashboard src={dashboard} />)

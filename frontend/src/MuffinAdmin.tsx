@@ -20,7 +20,7 @@ const darkTheme = createTheme({
 })
 
 export function MuffinAdmin(props: AdminOpts) {
-  const { resources, auth, appBarLinks } = props
+  const { resources, auth, appBarLinks, dashboard } = props
   const children = resources.map((resource) =>
     buildAdmin(["resource", resource.name], {
       ...resource,
@@ -54,12 +54,12 @@ export function MuffinAdmin(props: AdminOpts) {
   return (
     <AdminPropsContext.Provider value={props}>
       <Admin
-        requireAuth={auth.required}
-        dashboard={buildAdmin(["dashboard"])}
-        loginPage={findBuilder(["loginpage"])}
         authProvider={buildAdmin(["authprovider"], auth)}
-        layout={(props) => <Layout {...props} appBar={appBar} />}
+        dashboard={buildAdmin(["dashboard"], dashboard)}
         dataProvider={buildAdmin(["dataprovider"], props) as unknown as DataProvider}
+        layout={(props) => <Layout {...props} appBar={appBar} />}
+        loginPage={findBuilder(["loginpage"])}
+        requireAuth={auth.required}
       >
         {children}
       </Admin>
