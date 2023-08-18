@@ -107,3 +107,6 @@ patch:
 .PHONY: major
 major:
 	make release VERSION=major
+
+v:
+	@echo `poetry version -s`
