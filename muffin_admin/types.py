@@ -14,3 +14,4 @@ class TRAActionLink(TypedDict):
     label: str
     icon: NotRequired[str]
     title: NotRequired[str]
+    field: NotRequired[str]

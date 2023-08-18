@@ -17,7 +17,7 @@ export type AdminShowLink = {
   label: string
   title?: string
   icon?: string
-  fk?: string
+  field?: string
 }
 export type AdminShowProps = {
   actions: AdminAction[]
