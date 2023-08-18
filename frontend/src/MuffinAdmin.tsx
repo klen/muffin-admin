@@ -70,4 +70,4 @@ export function MuffinAdmin(props: AdminOpts) {
 setupAdmin(["admin"], MuffinAdmin)
 
 // Initialize login page
-setupAdmin(["loginpage"], () => Login)
+setupAdmin(["loginpage"], Login)

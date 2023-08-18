@@ -3,7 +3,7 @@ const path = require("path"),
   mode = process.env.NODE_ENV
 
 module.exports = {
-  entry: "./src/index.tsx",
+  entry: "./src/web.ts",
 
   output: {
     filename: "main.js",

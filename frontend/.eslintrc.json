@@ -28,5 +28,15 @@
     "react/react-in-jsx-scope": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/ban-ts-comment": "off"
-  }
+  },
+  "ignorePatterns": [
+    "node_modules",
+    "build",
+    "dist",
+    "coverage",
+    ".eslintrc.js",
+    "jest.config.js",
+    "babel.config.js",
+    "webpack.config.js"
+  ]
 }
