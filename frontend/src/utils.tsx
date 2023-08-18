@@ -1,9 +1,8 @@
-import React from "react"
-import { createContext } from "react"
-import { fetchUtils } from "ra-core"
-import { AdminOpts } from "./types"
-import { stringify } from "query-string"
 import * as icons from "@mui/icons-material"
+import { stringify } from "query-string"
+import { fetchUtils } from "ra-core"
+import { createContext } from "react"
+import { AdminOpts } from "./types"
 
 const builders = new Map<string, (props) => any>()
 

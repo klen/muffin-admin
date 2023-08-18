@@ -1,15 +1,13 @@
-import React from "react"
-
+import * as icons from "@mui/icons-material"
 import {
   Button,
-  useRefresh,
-  useUnselectAll,
+  useListContext,
   useNotify,
   useRecordContext,
+  useRefresh,
   useResourceContext,
-  useListContext,
+  useUnselectAll,
 } from "react-admin"
-import * as icons from "@mui/icons-material"
 
 import { useAction } from "../hooks/useAction"
 import { buildIcon } from "../utils"
@@ -43,12 +41,7 @@ export function BulkActionButton({ label, icon, title, action }) {
   }
 
   return (
-    <Button
-      label={label}
-      title={title}
-      onClick={onClick}
-      disabled={mutation.isLoading}
-    >
+    <Button label={label} title={title} onClick={onClick} disabled={mutation.isLoading}>
       {buildIcon(icon)}
     </Button>
   )

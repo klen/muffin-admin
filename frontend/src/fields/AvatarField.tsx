@@ -1,7 +1,6 @@
-import React from "react"
+import Avatar from "@mui/material/Avatar"
 import get from "lodash/get"
 import { useRecordContext } from "ra-core"
-import Avatar from "@mui/material/Avatar"
 
 export function AvatarField({ source, alt, style, nameProp, ...props }) {
   const record = useRecordContext(props)

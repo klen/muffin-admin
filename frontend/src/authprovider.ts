@@ -6,9 +6,7 @@ setupAdmin(
   ["auth-storage-get"],
   ({ storage, storageName }: AdminOpts["auth"]) =>
     () =>
-      storage == "localstorage"
-        ? localStorage.getItem(storageName)
-        : Cookies.get(storageName)
+      storage == "localstorage" ? localStorage.getItem(storageName) : Cookies.get(storageName)
 )
 
 setupAdmin(["auth-storage-set"], ({ storage }) => (name, value) => {

@@ -6,8 +6,8 @@ from typing import TYPE_CHECKING, Tuple, Type, cast
 
 import peewee as pw
 from muffin_peewee import JSONLikeField
-from muffin_rest.peewee import PWRESTBase
 from muffin_rest.peewee.filters import PWFilter
+from muffin_rest.peewee.handler import PWRESTBase
 from muffin_rest.peewee.options import PWRESTOptions
 
 from muffin_admin.handler import AdminHandler, AdminOptions
@@ -15,7 +15,7 @@ from muffin_admin.handler import AdminHandler, AdminOptions
 if TYPE_CHECKING:
     import marshmallow as ma
 
-    from muffin_admin.typing import RA_INFO
+    from muffin_admin.types import TRAInfo
 
 
 class PWAdminOptions(AdminOptions, PWRESTOptions):
@@ -50,7 +50,7 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
     meta: PWAdminOptions
 
     @classmethod
-    def to_ra_field(cls, field: ma.fields.Field, source: str) -> RA_INFO:
+    def to_ra_field(cls, field: ma.fields.Field, source: str) -> TRAInfo:
         """Setup RA fields."""
         model_field = getattr(cls.meta.model, field.attribute or source, None)
         if (
@@ -63,7 +63,7 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
         return super(PWAdminHandler, cls).to_ra_field(field, source)
 
     @classmethod
-    def to_ra_input(cls, field: ma.fields.Field, source: str) -> RA_INFO:
+    def to_ra_input(cls, field: ma.fields.Field, source: str) -> TRAInfo:
         """Setup RA inputs."""
         model_field = getattr(cls.meta.model, field.attribute or source, None)
         ra_type, props = super(PWAdminHandler, cls).to_ra_input(field, source)

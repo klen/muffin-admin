@@ -1,4 +1,3 @@
-import React from "react"
 import { Resource } from "react-admin"
 import { AdminResourceProps } from "./types"
 import { buildAdmin, findIcon, setupAdmin } from "./utils"

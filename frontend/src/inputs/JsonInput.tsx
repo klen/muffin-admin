@@ -1,4 +1,3 @@
-import React from "react"
 import { TextInput } from "react-admin"
 import isJSON from "validator/lib/isJSON"
 
@@ -51,8 +50,7 @@ export function JsonInput(props) {
 
   const formatJSON = (json) => {
     let retval = json
-    if (retval && typeof retval === "object")
-      retval = JSON.stringify(retval, null, 2)
+    if (retval && typeof retval === "object") retval = JSON.stringify(retval, null, 2)
     return retval
   }
   rest.format = formatJSON

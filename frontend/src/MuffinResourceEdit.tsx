@@ -1,4 +1,4 @@
-import React from "react"
+import { useContext } from "react"
 import {
   Edit,
   ListButton,
@@ -7,17 +7,12 @@ import {
   TopToolbar,
   useResourceContext,
 } from "react-admin"
-import { AdminPropsContext, buildAdmin, setupAdmin } from "./utils"
-import { AdminAction, AdminOpts, AdminResourceProps } from "./types"
-import { useContext } from "react"
-import { ActionButton } from "./buttons"
 import { buildRA } from "./buildRA"
+import { ActionButton } from "./buttons"
+import { AdminAction, AdminOpts, AdminResourceProps } from "./types"
+import { AdminPropsContext, buildAdmin, setupAdmin } from "./utils"
 
-export function MuffinResourceEdit({
-  actions,
-  inputs,
-  ...props
-}: AdminResourceProps["edit"]) {
+export function MuffinResourceEdit({ actions, inputs, ...props }: AdminResourceProps["edit"]) {
   const resourceName = useResourceContext()
   const {
     adminProps: { mutationMode },
@@ -29,9 +24,7 @@ export function MuffinResourceEdit({
       mutationMode={mutationMode || "optimistic"}
       {...props}
     >
-      <SimpleForm>
-        {buildAdmin(["edit-inputs", resourceName], inputs)}
-      </SimpleForm>
+      <SimpleForm>{buildAdmin(["edit-inputs", resourceName], inputs)}</SimpleForm>
     </Edit>
   )
 }

@@ -1,45 +1,41 @@
-import React from "react"
-
-import { required } from "react-admin"
 import {
-  BooleanField,
-  ChipField,
-  DateField,
-  EmailField,
-  ImageField,
-  FileField,
-  NumberField,
-  RichTextField,
-  TextField,
-  UrlField,
-  SelectField,
   ArrayField,
-  ReferenceField,
-  ReferenceManyField,
-  ReferenceArrayField,
-} from "react-admin"
-import {
-  BooleanInput,
-  NullableBooleanInput,
-  DateInput,
-  DateTimeInput,
-  ImageInput,
-  FileInput,
-  NumberInput,
-  PasswordInput,
-  TextInput,
-  AutocompleteInput,
-  RadioButtonGroupInput,
-  SelectInput,
   ArrayInput,
   AutocompleteArrayInput,
+  AutocompleteInput,
+  BooleanField,
+  BooleanInput,
   CheckboxGroupInput,
+  ChipField,
+  DateField,
+  DateInput,
+  DateTimeInput,
+  EmailField,
+  FileField,
+  FileInput,
+  ImageField,
+  ImageInput,
+  NullableBooleanInput,
+  NumberField,
+  NumberInput,
+  PasswordInput,
+  RadioButtonGroupInput,
+  ReferenceArrayField,
   ReferenceArrayInput,
+  ReferenceField,
   ReferenceInput,
+  ReferenceManyField,
+  RichTextField,
+  SelectField,
+  SelectInput,
+  TextField,
+  TextInput,
+  UrlField,
+  required,
 } from "react-admin"
 
 import { AvatarField, EditableBooleanField, FKField, JsonField } from "./fields"
-import { JsonInput, FKInput } from "./inputs"
+import { FKInput, JsonInput } from "./inputs"
 
 const UI = {
   // Fields

@@ -13,6 +13,17 @@ export type AdminAction = {
 export type AdminField = [string, { source: string }]
 export type AdminInput = [string, { required: boolean; source: string }]
 
+export type AdminShowLink = {
+  label: string
+  title?: string
+  icon?: string
+}
+export type AdminShowProps = {
+  actions: AdminAction[]
+  fields: AdminField[]
+  links: Record<string, AdminShowLink>
+}
+
 export type AdminResourceProps = {
   name: string
   icon?: string
@@ -31,10 +42,12 @@ export type AdminResourceProps = {
     show: boolean
     edit?: boolean
   }
-  show: {
-    actions: AdminAction[]
-    fields: AdminField[]
-  }
+  show: AdminShowProps
+}
+
+export type AdminDashboardBlock = {
+  title: string
+  value: any
 }
 
 export type AdminOpts = {
@@ -54,6 +67,7 @@ export type AdminOpts = {
     storage: "localstorage" | "cookie"
     storageName: string
   }
+  dashboard: AdminDashboardBlock[] | AdminDashboardBlock
   resources: AdminResourceProps[]
   version: string
 }

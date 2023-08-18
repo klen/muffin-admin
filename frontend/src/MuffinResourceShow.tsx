@@ -1,4 +1,3 @@
-import React from "react"
 import {
   EditButton,
   ListButton,
@@ -7,27 +6,30 @@ import {
   TopToolbar,
   useResourceContext,
 } from "react-admin"
-import { buildAdmin, setupAdmin } from "./utils"
-import { AdminResourceProps } from "./types"
+import { LinkAction } from "./actions"
 import { buildRA } from "./buildRA"
 import { ActionButton } from "./buttons"
+import { AdminShowProps } from "./types"
+import { buildAdmin, setupAdmin } from "./utils"
 
-export function MuffinResourceShow(props: AdminResourceProps["show"]) {
+export function MuffinResourceShow(props: AdminShowProps) {
   const resourceName = useResourceContext()
-  const { fields, actions } = props
   return (
-    <Show actions={buildAdmin(["show-actions", resourceName], actions)}>
-      <SimpleShowLayout>
-        {buildAdmin(["show-fields", resourceName], fields)}
-      </SimpleShowLayout>
+    <Show actions={buildAdmin(["show-actions", resourceName], props)}>
+      <SimpleShowLayout>{buildAdmin(["show-fields", resourceName], props)}</SimpleShowLayout>
     </Show>
   )
 }
 
 setupAdmin(["show"], (props) => <MuffinResourceShow {...props} />)
-setupAdmin(["show-fields"], (props) => buildRA(props))
-setupAdmin(["show-actions"], (actions) => (
+setupAdmin(["show-fields"], ({ fields }) => buildRA(fields))
+setupAdmin(["show-actions"], ({ actions, links }) => (
   <TopToolbar>
+    <div style={{ marginRight: "auto" }}>
+      {Object.keys(links).map((key) => (
+        <LinkAction key={key} resource={key} {...links[key]} />
+      ))}
+    </div>
     {actions.map((props, idx) => (
       <ActionButton key={idx} {...props} />
     ))}

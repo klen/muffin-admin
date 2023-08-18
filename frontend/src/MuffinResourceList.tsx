@@ -1,4 +1,5 @@
-import React from "react"
+import sortBy from "lodash/sortBy"
+import uniq from "lodash/uniq"
 import {
   BulkDeleteButton,
   Datagrid,
@@ -7,12 +8,10 @@ import {
   Pagination,
   useResourceContext,
 } from "react-admin"
-import { buildAdmin, setupAdmin } from "./utils"
-import { AdminAction, AdminResourceProps } from "./types"
 import { buildRA } from "./buildRA"
-import uniq from "lodash/uniq"
-import sortBy from "lodash/sortBy"
 import { BulkActionButton } from "./buttons"
+import { AdminAction, AdminResourceProps } from "./types"
+import { buildAdmin, setupAdmin } from "./utils"
 
 export function MuffinResourceList(props: AdminResourceProps["list"]) {
   const resourceName = useResourceContext()
@@ -23,9 +22,7 @@ export function MuffinResourceList(props: AdminResourceProps["list"]) {
       filters={buildAdmin(["list-filters", resourceName], filters) || undefined}
       perPage={limit}
       pagination={
-        <Pagination
-          rowsPerPageOptions={sortBy(uniq([10, 25, 50, 100, limit, limitMax]))}
-        />
+        <Pagination rowsPerPageOptions={sortBy(uniq([10, 25, 50, 100, limit, limitMax]))} />
       }
     >
       <Datagrid rowClick={show ? "show" : edit ? "edit" : false}>

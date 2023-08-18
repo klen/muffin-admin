@@ -1,7 +1,23 @@
-import React from "react"
-import { Admin, DataProvider, Layout } from "react-admin"
+import IconButton from "@mui/material/IconButton"
+import SvgIcon from "@mui/material/SvgIcon"
+import Tooltip from "@mui/material/Tooltip"
+import Typography from "@mui/material/Typography"
+import createTheme from "@mui/material/styles/createTheme"
+import {
+  Admin,
+  AppBar,
+  DataProvider,
+  Layout,
+  Login,
+  ToggleThemeButton,
+  defaultTheme,
+} from "react-admin"
 import { AdminOpts } from "./types"
-import { AdminPropsContext, buildAdmin, findBuilder, setupAdmin } from "./utils"
+import { AdminPropsContext, buildAdmin, findBuilder, findIcon, setupAdmin } from "./utils"
+
+const darkTheme = createTheme({
+  palette: { mode: "dark" },
+})
 
 export function MuffinAdmin(props: AdminOpts) {
   const { resources, auth } = props
@@ -11,17 +27,39 @@ export function MuffinAdmin(props: AdminOpts) {
       key: resource.name,
     })
   )
+  const appBar = (props) => (
+    <AppBar {...props}>
+      <Typography
+        variant="h6"
+        color="inherit"
+        id="react-admin-title"
+        style={{
+          flex: 1,
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+        }}
+      />
+      <ToggleThemeButton lightTheme={defaultTheme} darkTheme={darkTheme} />
+      {props.appBarLinks.map((info) => (
+        <Tooltip key={info.url} title={info.title}>
+          <IconButton color="inherit" href={info.url}>
+            <SvgIcon component={findIcon(info.icon)} />
+          </IconButton>
+        </Tooltip>
+      ))}
+    </AppBar>
+  )
+
   return (
     <AdminPropsContext.Provider value={props}>
       <Admin
-        authProvider={buildAdmin(["authprovider"], auth)}
-        dataProvider={
-          buildAdmin(["dataprovider"], props) as unknown as DataProvider
-        }
-        loginPage={findBuilder(["loginpage"])}
-        layout={findBuilder(["layout"])}
-        dashboard={buildAdmin(["dashboard"])}
         requireAuth={auth.required}
+        dashboard={buildAdmin(["dashboard"])}
+        loginPage={findBuilder(["loginpage"])}
+        authProvider={buildAdmin(["authprovider"], auth)}
+        layout={(props) => <Layout {...props} appBar={appBar} />}
+        dataProvider={buildAdmin(["dataprovider"], props) as unknown as DataProvider}
       >
         {children}
       </Admin>
@@ -30,4 +68,6 @@ export function MuffinAdmin(props: AdminOpts) {
 }
 
 setupAdmin(["admin"], MuffinAdmin)
-setupAdmin(["layout"], Layout)
+
+// Initialize login page
+setupAdmin(["loginpage"], () => Login)

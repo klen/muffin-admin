@@ -1,6 +1,5 @@
 import get from "lodash/get"
-
-import React, { useState } from "react"
+import { useState } from "react"
 import { Button, FunctionField, useRecordContext } from "react-admin"
 
 export function JsonField({ label, source }) {

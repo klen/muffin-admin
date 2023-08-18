@@ -1,14 +1,6 @@
-import React from "react"
-import { ReferenceInput, AutocompleteInput } from "react-admin"
+import { AutocompleteInput, ReferenceInput } from "react-admin"
 
-export function FKInput({
-  refProp,
-  refSource,
-  fullWidth,
-  reference,
-  source,
-  ...props
-}) {
+export function FKInput({ refProp, refSource, fullWidth, reference, source, ...props }) {
   const filterToQuery = (search) => {
     const filters = {}
     filters[refProp] = search
@@ -23,12 +15,7 @@ export function FKInput({
   }
 
   return (
-    <ReferenceInput
-      reference={reference}
-      source={source}
-      filterToQuery={filterToQuery}
-      {...props}
-    >
+    <ReferenceInput reference={reference} source={source} filterToQuery={filterToQuery} {...props}>
       <AutocompleteInput
         source={refSource}
         optionText={renderText}

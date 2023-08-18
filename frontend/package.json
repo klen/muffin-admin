@@ -6,9 +6,10 @@
     "src",
     "dist"
   ],
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.js",
   "scripts": {
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -48,5 +49,16 @@
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^4.15.1"
+  },
+  "prettier": {
+    "arrowParens": "always",
+    "plugins": [
+      "prettier-plugin-organize-imports"
+    ],
+    "printWidth": 100,
+    "semi": false,
+    "tabWidth": 2,
+    "trailingComma": "es5",
+    "useTabs": false
   }
 }

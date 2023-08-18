@@ -1,21 +1,8 @@
-import React from "react"
 import { ReferenceField, TextField } from "react-admin"
 
-export function FKField({
-  refSource,
-  refID,
-  link,
-  reference,
-  source,
-  ...props
-}) {
+export function FKField({ refSource, refID, link, reference, source, ...props }) {
   return (
-    <ReferenceField
-      link={link || "show"}
-      reference={reference}
-      source={source}
-      {...props}
-    >
+    <ReferenceField link={link || "show"} reference={reference} source={source} {...props}>
       <>
         <TextField source={refSource} />
         {" (#"}

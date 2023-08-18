@@ -1,9 +1,15 @@
-import React from "react"
 import { Button } from "react-admin"
 import { Link } from "react-router-dom"
+import { AdminShowLink } from "../types"
 import { buildIcon } from "../utils"
 
-const LinkButton = ({ label, icon, title, resource, filters }) => {
+const LinkButton = ({
+  filters,
+  icon,
+  label,
+  resource,
+  title,
+}: AdminShowLink & { resource: string; filters: any }) => {
   const linkParams = {
     pathname: `/${resource}`,
     search: filters ? `filter=${JSON.stringify(filters)}` : undefined,
