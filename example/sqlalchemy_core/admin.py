@@ -61,11 +61,9 @@ async def login(request):
 
 @admin.route
 class UserResource(SAAdminHandler):
-
     """Create Admin Resource for the User model."""
 
     class Meta:
-
         """Tune the resource."""
 
         database = db
@@ -84,18 +82,16 @@ class UserResource(SAAdminHandler):
 
         icon = "People"
         columns = "id", "picture", "email", "name", "is_active", "role"
-        ra_fields = {
-            "picture": ("AvatarField", {"alt": "picture", "nameProp": "name", "sortable": False}),
-        }
+        ra_fields = (
+            ("picture", ("AvatarField", {"alt": "picture", "nameProp": "name", "sortable": False})),
+        )
 
 
 @admin.route
 class MessageResource(SAAdminHandler):
-
     """Create Admin Resource for the Message model."""
 
     class Meta:
-
         """Tune the resource."""
 
         database = db
@@ -103,4 +99,4 @@ class MessageResource(SAAdminHandler):
         filters = "status", "user_id"
 
         icon = "Message"
-        references = {"user_id": "user.email"}
+        ra_refs = (("user_id", "user.email"),)

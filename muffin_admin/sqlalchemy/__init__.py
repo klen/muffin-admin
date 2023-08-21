@@ -17,7 +17,6 @@ if TYPE_CHECKING:
 
 
 class SAAdminOptions(AdminOptions, SARESTOptions):
-
     """Keep SAAdmin options."""
 
     def setup(self, cls):
@@ -36,7 +35,6 @@ class SAAdminOptions(AdminOptions, SARESTOptions):
 
 
 class SAAdminHandler(AdminHandler, SARESTHandler):
-
     """Work with SQLAlchemy Core."""
 
     meta_class: Type[SAAdminOptions] = SAAdminOptions
@@ -46,15 +44,16 @@ class SAAdminHandler(AdminHandler, SARESTHandler):
     def to_ra_field(cls, field: ma.fields.Field, source: str) -> TRAInfo:
         """Setup RA fields."""
         column = getattr(cls.meta.table.c, field.attribute or source, None)
+        refs = dict(cls.meta.ra_refs)
         if column is not None:
             if column.foreign_keys:
                 fk = list(column.foreign_keys)[0]
                 ref = fk.column.table.name
-                if ref in cls.meta.references:
+                if ref in refs:
                     return "FKField", {
                         "reference": ref,
                         "source": source,
-                        "refSource": cls.meta.references[ref],
+                        "refSource": refs[ref],
                     }
 
             if isinstance(column.type, JSON):
@@ -67,9 +66,10 @@ class SAAdminHandler(AdminHandler, SARESTHandler):
         """Setup RA inputs."""
         column = getattr(cls.meta.table.c, field.attribute or source, None)
         ra_type, props = super(SAAdminHandler, cls).to_ra_input(field, source)
+        refs = dict(cls.meta.ra_refs)
         if column is not None:
-            if column.foreign_keys and (source in cls.meta.references):
-                ref, _, ref_source = cls.meta.references[source].partition(".")
+            if column.foreign_keys and (source in refs):
+                ref, _, ref_source = refs[source].partition(".")
                 fk = list(column.foreign_keys)[0]
                 return "FKInput", dict(
                     props,

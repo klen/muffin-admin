@@ -86,19 +86,11 @@ class UserResource(PWAdminHandler):
 
         icon = "Person"
         columns = "id", "picture", "email", "name", "is_active", "role"
-        ra_fields = {
-            "picture": (
-                "AvatarField",
-                {"alt": "picture", "nameProp": "name", "sortable": False},
-            ),
-        }
-        ra_links = {
-            "message": {
-                "label": "Messages",
-                "title": "Show user messages",
-            }
-        }
-        references = {"group": "group.name"}
+        ra_fields = (
+            ("picture", ("AvatarField", {"alt": "picture", "nameProp": "name", "sortable": False})),
+        )
+        ra_links = (("message", {"label": "Messages", "title": "Show user messages"}),)
+        ra_refs = (("group", "group.name"),)
 
     @PWAdminHandler.action("/user/error", label="Broken Action", icon="Error")
     async def just_raise_an_error(self, request, resource=None):
@@ -138,7 +130,7 @@ class MessageResource(PWAdminHandler):
         schema_meta = {"dump_only": ("created",)}
 
         icon = "Message"
-        references = {"user": "email"}
+        ra_refs = (("user", "user.email"),)
 
     @PWAdminHandler.action(
         "/message/{id}/publish",

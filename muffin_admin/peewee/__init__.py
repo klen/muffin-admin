@@ -19,7 +19,6 @@ if TYPE_CHECKING:
 
 
 class PWAdminOptions(AdminOptions, PWRESTOptions):
-
     """Keep PWAdmin options."""
 
     def setup(self, cls):
@@ -43,7 +42,6 @@ class PWAdminOptions(AdminOptions, PWRESTOptions):
 
 
 class PWAdminHandler(AdminHandler, PWRESTBase):
-
     """Work with Peewee Models."""
 
     meta_class: Type[PWAdminOptions] = PWAdminOptions
@@ -67,6 +65,7 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
         """Setup RA inputs."""
         model_field = getattr(cls.meta.model, field.attribute or source, None)
         ra_type, props = super(PWAdminHandler, cls).to_ra_input(field, source)
+        refs = dict(cls.meta.ra_refs)
         if model_field:
             if model_field.choices:
                 return "SelectInput", dict(
@@ -80,8 +79,8 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
             if isinstance(model_field, JSONLikeField) or model_field.field_type.lower() == "json":
                 return "JsonInput", props
 
-            if isinstance(model_field, pw.ForeignKeyField) and source in cls.meta.references:
-                ref, _, ref_source = cls.meta.references[source].partition(".")
+            if isinstance(model_field, pw.ForeignKeyField) and source in refs:
+                ref, _, ref_source = refs[source].partition(".")
                 return "FKInput", dict(
                     props,
                     refProp=ref_source or ref,
@@ -93,7 +92,6 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
 
 
 class PWSearchFilter(PWFilter):
-
     """Search in query by value."""
 
     def query(self, qs: pw.Query, column: pw.Field, *ops: Tuple, **_) -> pw.Query:

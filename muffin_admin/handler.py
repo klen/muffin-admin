@@ -6,7 +6,6 @@ import inspect
 from typing import (
     TYPE_CHECKING,
     Any,
-    ClassVar,
     Dict,
     List,
     Optional,
@@ -30,7 +29,6 @@ if TYPE_CHECKING:
 
 
 class AdminOptions(RESTOptions):
-
     """Prepare admin handler."""
 
     limit: int = 25
@@ -46,11 +44,11 @@ class AdminOptions(RESTOptions):
 
     actions: Sequence = ()
     columns: Tuple[str, ...] = ()
-    references: ClassVar[Dict[str, str]] = {}
 
-    ra_links: ClassVar[Dict[str, TRAActionLink]] = {}
-    ra_fields: ClassVar[Dict[str, TRAInfo]] = {}
-    ra_inputs: ClassVar[Dict[str, TRAInfo]] = {}
+    ra_refs: Tuple[Tuple[str, str], ...] = ()
+    ra_fields: Tuple[Tuple[str, TRAInfo], ...] = ()
+    ra_inputs: Tuple[Tuple[str, TRAInfo], ...] = ()
+    ra_links: Tuple[Tuple[str, TRAActionLink], ...] = ()
 
     def setup(self, cls: AdminHandler):
         """Check and build required options."""
@@ -86,7 +84,6 @@ class AdminOptions(RESTOptions):
 
 
 class AdminHandler(RESTBase):
-
     """Basic handler class for admin UI."""
 
     meta_class: Type[AdminOptions] = AdminOptions
@@ -135,8 +132,8 @@ class AdminHandler(RESTBase):
         schema_load_only = schema_opts.load_only
         schema_dump_only = schema_opts.dump_only
 
-        fields_customize = cls.meta.ra_fields
-        inputs_customize = cls.meta.ra_inputs
+        fields_customize = dict(cls.meta.ra_fields)
+        inputs_customize = dict(cls.meta.ra_inputs)
 
         fields = []
         inputs = []
@@ -207,7 +204,7 @@ class AdminHandler(RESTBase):
                 "links": cls.meta.ra_links,
                 "fields": fields,
             },
-            "edit": {
+            "edit": cls.meta.edit and {
                 "actions": [action for action in cls.meta.actions if action["view"] == "edit"],
                 "inputs": inputs,
             },
@@ -227,8 +224,9 @@ class AdminHandler(RESTBase):
     @classmethod
     def to_ra_field(cls, field: ma.fields.Field, source: str) -> TRAInfo:
         """Convert self schema field to ra field."""
-        if source in cls.meta.references:
-            ref, _, ref_source = cls.meta.references[source].partition(".")
+        refs = dict(cls.meta.ra_refs)
+        if source in refs:
+            ref, _, ref_source = refs[source].partition(".")
             return "FKField", {
                 "reference": ref_source and ref or source,
                 "refSource": ref_source or ref,

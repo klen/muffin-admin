@@ -22,7 +22,7 @@ export type AdminShowLink = {
 export type AdminShowProps = {
   actions: AdminAction[]
   fields: AdminField[]
-  links: Record<string, AdminShowLink>
+  links: [string, AdminShowLink][]
 }
 
 export type AdminResourceProps = {

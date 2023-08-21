@@ -66,7 +66,7 @@ def setup_admin(app):
                 "load_only": ("password",),
                 "exclude": ("created",),
             }
-            references = {"role_id": "role.name"}
+            ra_refs = (("role_id", "role.name"),)
             filters = ("status",)
 
     @admin.route
@@ -80,7 +80,7 @@ def setup_admin(app):
         class Meta:
             table = Message
             database = db
-            references = {"user_id": "user.email"}
+            ra_refs = (("user_id", "user.email"),)
 
 
 def test_admin(app):
@@ -158,7 +158,7 @@ def test_admin_schemas(app):
     }
     assert ra["show"] == {
         "actions": [],
-        "links": {},
+        "links": (),
         "fields": [
             ("NumberField", {"source": "id"}),
             ("TextField", {"source": "name"}),

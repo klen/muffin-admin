@@ -52,7 +52,7 @@ def test_endpoint(app):
     }
     assert ra["show"] == {
         "actions": [],
-        "links": {},
+        "links": (),
         "fields": [
             ("TextField", {"source": "id"}),
             ("TextField", {"source": "name"}),
@@ -112,9 +112,7 @@ def test_custom_fields_inputs():
                 active = ma.fields.Boolean()
 
             columns = "id", "active", "name", "unknown"
-            ra_inputs = {
-                "id": "NumberInput",
-            }
+            ra_inputs = (("id", "NumberInput"),)
 
     ra = BaseHandler.to_ra()
     assert ra["create"] == [
@@ -150,3 +148,30 @@ def test_schema_opts():
             ("TextInput", {"source": "id"}),
         ],
     }
+
+
+def test_disable_edit():
+    from muffin_admin import AdminHandler
+
+    class BaseHandler(AdminHandler):
+        class Meta:
+            name = "name"
+            filters = "id", "name"
+            sorting = "id", "name"
+            edit = False
+            create = False
+            delete = False
+
+            class Schema(ma.Schema):
+                id = ma.fields.String()
+                name = ma.fields.String(validate=validate.Length(3, 100))
+                active = ma.fields.Boolean()
+
+                class Meta:
+                    fields = "name", "id"
+
+    ra = BaseHandler.to_ra()
+    assert ra
+    assert ra["edit"] is False
+    assert ra["create"] is False
+    assert ra["delete"] is False

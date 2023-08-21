@@ -65,7 +65,7 @@ def _setup_admin(app):
             schema_fields = {
                 "name": fields.String(metadata={"description": "User name"}),
             }
-            references = {"role": "name"}
+            ra_refs = (("role", "role.name"),)
             filters = ("status",)
 
     @admin.route
@@ -164,7 +164,7 @@ async def test_admin(app):
     }
     assert ra["show"] == {
         "actions": [],
-        "links": {},
+        "links": (),
         "fields": [
             ("TextField", {"source": "id"}),
             ("TextField", {"source": "name"}),

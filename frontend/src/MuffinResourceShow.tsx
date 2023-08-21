@@ -26,8 +26,8 @@ setupAdmin(["show-fields"], ({ fields }) => buildRA(fields))
 setupAdmin(["show-actions"], ({ actions, links }) => (
   <TopToolbar>
     <div style={{ marginRight: "auto" }}>
-      {Object.keys(links).map((key) => (
-        <LinkAction key={key} resource={key} {...links[key]} />
+      {links.map(([key, props]) => (
+        <LinkAction key={key} resource={key} {...props} />
       ))}
     </div>
     {actions.map((props, idx) => (
