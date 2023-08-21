@@ -15,8 +15,8 @@ export function MuffinResource({
     <Resource
       name={name}
       icon={findIcon(icon)}
-      create={buildAdmin(["create", name], createProps)}
-      edit={buildAdmin(["edit", name], editProps)}
+      create={createProps ? buildAdmin(["create", name], createProps) : undefined}
+      edit={editProps ? buildAdmin(["edit", name], editProps) : undefined}
       list={buildAdmin(["list", name], listProps)}
       show={buildAdmin(["show", name], showProps)}
       {...props}

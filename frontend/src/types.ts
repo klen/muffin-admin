@@ -29,11 +29,13 @@ export type AdminResourceProps = {
   name: string
   icon?: string
   label: string
-  create: AdminInput[]
-  edit: {
-    actions: AdminAction[]
-    inputs: AdminInput[]
-  }
+  create: AdminInput[] | false
+  edit:
+    | {
+        actions: AdminAction[]
+        inputs: AdminInput[]
+      }
+    | false
   list: {
     limit: number
     limitMax: number
