@@ -80,12 +80,12 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
                 return "JsonInput", props
 
             if isinstance(model_field, pw.ForeignKeyField) and source in refs:
-                ref, _, ref_source = refs[source].partition(".")
+                ref_data = refs[source]
                 return "FKInput", dict(
                     props,
-                    refProp=ref_source or ref,
-                    refSource=model_field.rel_field.name,
-                    reference=ref_source and ref or model_field.rel_model._meta.table_name,
+                    refSource=ref_data.get("source") or model_field.rel_field.name,
+                    refKey=ref_data.get("key") or model_field.rel_model._meta.primary_key.name,
+                    reference=ref_data.get("reference") or model_field.rel_model._meta.table_name,
                 )
 
         return ra_type, props

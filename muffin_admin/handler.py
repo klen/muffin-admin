@@ -23,7 +23,7 @@ from muffin_rest.options import RESTOptions
 if TYPE_CHECKING:
     from http_router.types import TMethods
 
-    from muffin_admin.types import TRAActionLink
+    from muffin_admin.types import TRAActionLink, TRAReference
 
     from .types import TRAConverter, TRAInfo
 
@@ -45,9 +45,9 @@ class AdminOptions(RESTOptions):
     actions: Sequence = ()
     columns: Tuple[str, ...] = ()
 
-    ra_refs: Tuple[Tuple[str, str], ...] = ()
     ra_fields: Tuple[Tuple[str, TRAInfo], ...] = ()
     ra_inputs: Tuple[Tuple[str, TRAInfo], ...] = ()
+    ra_refs: Tuple[Tuple[str, TRAReference], ...] = ()
     ra_links: Tuple[Tuple[str, TRAActionLink], ...] = ()
 
     def setup(self, cls: AdminHandler):
@@ -226,10 +226,11 @@ class AdminHandler(RESTBase):
         """Convert self schema field to ra field."""
         refs = dict(cls.meta.ra_refs)
         if source in refs:
-            ref, _, ref_source = refs[source].partition(".")
+            ref_data = refs[source]
             return "FKField", {
-                "reference": ref_source and ref or source,
-                "refSource": ref_source or ref,
+                "refKey": ref_data.get("key") or "id",
+                "refSource": ref_data.get("source") or source,
+                "reference": ref_data.get("reference") or source,
             }
 
         converter = find_ra(field, MA_TO_RAF)

@@ -46,15 +46,15 @@ class SAAdminHandler(AdminHandler, SARESTHandler):
         column = getattr(cls.meta.table.c, field.attribute or source, None)
         refs = dict(cls.meta.ra_refs)
         if column is not None:
-            if column.foreign_keys:
+            if column.foreign_keys and column.name in refs:
+                ref_data = refs[column.name]
                 fk = list(column.foreign_keys)[0]
-                ref = fk.column.table.name
-                if ref in refs:
-                    return "FKField", {
-                        "reference": ref,
-                        "source": source,
-                        "refSource": refs[ref],
-                    }
+                return "FKField", {
+                    "source": source,
+                    "refKey": ref_data.get("key") or fk.column.name,
+                    "refSource": ref_data.get("source") or fk.column.name,
+                    "reference": ref_data.get("reference") or fk.column.table.name,
+                }
 
             if isinstance(column.type, JSON):
                 return "JsonField", {}
@@ -69,14 +69,14 @@ class SAAdminHandler(AdminHandler, SARESTHandler):
         refs = dict(cls.meta.ra_refs)
         if column is not None:
             if column.foreign_keys and (source in refs):
-                ref, _, ref_source = refs[source].partition(".")
+                ref_data = refs[source]
                 fk = list(column.foreign_keys)[0]
                 return "FKInput", dict(
                     props,
                     emptyValue=None if column.nullable else "",
-                    refSource=fk.column.name,
-                    refProp=ref_source or ref,
-                    reference=ref_source and ref or fk.column.table.name,
+                    refSource=ref_data.get("source") or fk.column.name,
+                    refKey=ref_data.get("key") or fk.column.name,
+                    reference=ref_data.get("reference") or fk.column.table.name,
                 )
 
             if isinstance(column.type, Enum):

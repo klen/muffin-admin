@@ -1,12 +1,18 @@
 import { ReferenceField, TextField } from "react-admin"
 
-export function FKField({ refSource, refID, link, reference, source, ...props }) {
+export function FKField({ reference, refSource, refKey, link, source, ...props }) {
   return (
-    <ReferenceField link={link || "show"} reference={reference} source={source} {...props}>
+    <ReferenceField
+      link={link || "show"}
+      reference={reference}
+      source={source}
+      queryOptions={{ meta: { key: refKey } }}
+      {...props}
+    >
       <>
         <TextField source={refSource} />
         {" (#"}
-        <TextField source={refID || "id"} />
+        <TextField source={refKey || "id"} />
         {")"}
       </>
     </ReferenceField>

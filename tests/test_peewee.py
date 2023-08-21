@@ -65,7 +65,7 @@ def _setup_admin(app):
             schema_fields = {
                 "name": fields.String(metadata={"description": "User name"}),
             }
-            ra_refs = (("role", "role.name"),)
+            ra_refs = (("role", {"source": "name"}),)
             filters = ("status",)
 
     @admin.route
@@ -122,10 +122,10 @@ async def test_admin(app):
         (
             "FKInput",
             {
-                "reference": "role",
-                "refProp": "name",
-                "refSource": "id",
                 "source": "role",
+                "reference": "role",
+                "refKey": "id",
+                "refSource": "name",
             },
         ),
     ]
@@ -154,10 +154,10 @@ async def test_admin(app):
             (
                 "FKInput",
                 {
-                    "reference": "role",
-                    "refProp": "name",
-                    "refSource": "id",
                     "source": "role",
+                    "reference": "role",
+                    "refKey": "id",
+                    "refSource": "name",
                 },
             ),
         ],
@@ -177,6 +177,7 @@ async def test_admin(app):
                 {
                     "source": "role",
                     "refSource": "name",
+                    "refKey": "id",
                     "reference": "role",
                 },
             ),
@@ -213,6 +214,7 @@ async def test_admin(app):
             {
                 "source": "role",
                 "refSource": "name",
+                "refKey": "id",
                 "reference": "role",
                 "sortable": True,
             },

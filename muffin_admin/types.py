@@ -15,3 +15,9 @@ class TRAActionLink(TypedDict):
     icon: NotRequired[str]
     title: NotRequired[str]
     field: NotRequired[str]
+
+
+class TRAReference(TypedDict):
+    key: NotRequired[str]
+    source: NotRequired[str]
+    reference: NotRequired[str]

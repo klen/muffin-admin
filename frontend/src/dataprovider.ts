@@ -66,8 +66,10 @@ export function MuffinDataprovider({ apiUrl }: AdminOpts) {
       return { data: ids }
     },
 
-    getMany: (resource, { ids }) => {
-      return methods.getList(resource, { filter: { id: { $in: ids } } })
+    getMany: (resource, props) => {
+      const { ids, meta } = props
+      const key = meta?.key || "id"
+      return methods.getList(resource, { filter: { [key]: { $in: ids } } })
     },
 
     getManyReference: async (resource, { target, id, filter, ...opts }) => {

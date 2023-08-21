@@ -99,4 +99,4 @@ class MessageResource(SAAdminHandler):
         filters = "status", "user_id"
 
         icon = "Message"
-        ra_refs = (("user_id", "user.email"),)
+        ra_refs = (("user_id", {"reference": "user", "source": "email"}),)

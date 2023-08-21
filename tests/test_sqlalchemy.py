@@ -66,7 +66,7 @@ def setup_admin(app):
                 "load_only": ("password",),
                 "exclude": ("created",),
             }
-            ra_refs = (("role_id", "role.name"),)
+            ra_refs = (("role_id", {"source": "name"}),)
             filters = ("status",)
 
     @admin.route
@@ -80,7 +80,7 @@ def setup_admin(app):
         class Meta:
             table = Message
             database = db
-            ra_refs = (("user_id", "user.email"),)
+            ra_refs = (("user_id", {"source": "email"}),)
 
 
 def test_admin(app):
@@ -122,8 +122,8 @@ def test_admin_schemas(app):
                 "required": True,
                 "reference": "role",
                 "emptyValue": "",
-                "refProp": "name",
-                "refSource": "id",
+                "refSource": "name",
+                "refKey": "id",
                 "source": "role_id",
             },
         ),
@@ -149,8 +149,8 @@ def test_admin_schemas(app):
                     "required": True,
                     "reference": "role",
                     "emptyValue": "",
-                    "refProp": "name",
-                    "refSource": "id",
+                    "refSource": "name",
+                    "refKey": "id",
                     "source": "role_id",
                 },
             ),
@@ -171,6 +171,7 @@ def test_admin_schemas(app):
                 {
                     "source": "role_id",
                     "refSource": "name",
+                    "refKey": "id",
                     "reference": "role",
                 },
             ),
@@ -206,6 +207,7 @@ def test_admin_schemas(app):
             {
                 "source": "role_id",
                 "refSource": "name",
+                "refKey": "id",
                 "reference": "role",
                 "sortable": True,
             },
@@ -226,8 +228,8 @@ def test_admin_schemas2(app):
                     "required": True,
                     "reference": "user",
                     "emptyValue": "",
-                    "refProp": "email",
-                    "refSource": "id",
+                    "refSource": "email",
+                    "refKey": "id",
                     "source": "user_id",
                 },
             ),

@@ -1,27 +1,16 @@
 import { AutocompleteInput, ReferenceInput } from "react-admin"
 
-export function FKInput({ refProp, refSource, fullWidth, reference, source, ...props }) {
-  const filterToQuery = (search) => {
-    const filters = {}
-    filters[refProp] = search
-    return filters
-  }
-
-  refSource = refSource || "id"
-
+export function FKInput({ refKey, refSource, fullWidth, reference, source, ...props }) {
+  refKey = refKey || "id"
   const renderText = (record) => {
-    const pk = record[refSource]
-    return (pk && `${record[refProp]} (#${pk})`) || ""
+    const pk = record[refKey]
+    if (refKey == refSource) return `#${pk}`
+    return (pk && `${record[refSource]} (#${pk})`) || ""
   }
 
   return (
-    <ReferenceInput reference={reference} source={source} filterToQuery={filterToQuery} {...props}>
-      <AutocompleteInput
-        source={refSource}
-        optionText={renderText}
-        fullWidth={fullWidth}
-        {...props}
-      />
+    <ReferenceInput reference={reference} source={source} {...props}>
+      <AutocompleteInput source={refKey} optionText={renderText} fullWidth={fullWidth} {...props} />
     </ReferenceInput>
   )
 }
