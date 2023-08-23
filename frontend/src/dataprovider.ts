@@ -2,7 +2,14 @@ import { AdminOpts } from "./types"
 import { APIParams, makeRequest, setupAdmin } from "./utils"
 
 export function MuffinDataprovider({ apiUrl }: AdminOpts) {
+  async function request(url: string, options?: APIParams) {
+    if (!url.startsWith("/")) url = `${apiUrl}/${url}`
+    const { json, headers } = await makeRequest(url, options)
+    return { data: json, headers }
+  }
+
   const methods = {
+    request,
     getList: async (resource: string, params: any) => {
       const { filter, pagination, sort } = params
       const query: APIParams["query"] = {}
@@ -16,34 +23,26 @@ export function MuffinDataprovider({ apiUrl }: AdminOpts) {
         const { field, order } = sort
         query.sort = order == "ASC" ? field : `-${field}`
       }
-      const { headers, json } = await makeRequest(`${apiUrl}/${resource}`, {
-        query,
-      })
-      return {
-        data: json,
-        total: parseInt(headers.get("x-total"), 10),
-      }
+      const { headers, data } = await request(resource, { query })
+      return { data, total: parseInt(headers.get("x-total"), 10) }
     },
 
     getOne: async (resource, { id }) => {
-      const { json } = await makeRequest(`${apiUrl}/${resource}/${id}`)
-      return { data: json }
+      return await request(`${resource}/${id}`)
     },
 
     create: async (resource, { data }) => {
-      const { json } = await makeRequest(`${apiUrl}/${resource}`, {
+      return await request(resource, {
         data,
         method: "POST",
       })
-      return { data: json }
     },
 
     update: async (resource, { id, data }) => {
-      const { json } = await makeRequest(`${apiUrl}/${resource}/${id}`, {
+      return await makeRequest(`${resource}/${id}`, {
         data,
         method: "PUT",
       })
-      return { data: json }
     },
 
     updateMany: async (resource, { ids, data }) => {
@@ -52,14 +51,12 @@ export function MuffinDataprovider({ apiUrl }: AdminOpts) {
     },
 
     delete: async (resource, { id }) => {
-      await makeRequest(`${apiUrl}/${resource}/${id}`, {
-        method: "DELETE",
-      })
+      await request(`${resource}/${id}`, { method: "DELETE" })
       return { data: { id } }
     },
 
     deleteMany: async (resource, { ids }) => {
-      await makeRequest(`${apiUrl}/${resource}`, {
+      await request(resource, {
         data: ids,
         method: "DELETE",
       })
