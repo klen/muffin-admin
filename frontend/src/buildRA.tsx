@@ -37,7 +37,7 @@ import {
 import { AvatarField, EditableBooleanField, FKField, JsonField } from "./fields"
 import { FKInput, JsonInput } from "./inputs"
 
-export const UI = {
+export const UI: Record<string, JSX.ElementType> = {
   // Fields
   BooleanField,
   ChipField,
