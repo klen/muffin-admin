@@ -37,7 +37,7 @@ import {
 import { AvatarField, EditableBooleanField, FKField, JsonField } from "./fields"
 import { FKInput, JsonInput } from "./inputs"
 
-const UI = {
+export const UI = {
   // Fields
   BooleanField,
   ChipField,

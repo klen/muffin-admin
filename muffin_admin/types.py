@@ -21,3 +21,4 @@ class TRAReference(TypedDict):
     key: NotRequired[str]
     source: NotRequired[str]
     reference: NotRequired[str]
+    searchKey: NotRequired[str]
