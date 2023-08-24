@@ -23,7 +23,7 @@ from muffin_rest.options import RESTOptions
 if TYPE_CHECKING:
     from http_router.types import TMethods
 
-    from muffin_admin.types import TRAActionLink, TRAReference
+    from muffin_admin.types import TRAFields, TRAInput, TRALinks, TRARefs
 
     from .types import TRAConverter, TRAInfo
 
@@ -45,10 +45,10 @@ class AdminOptions(RESTOptions):
     actions: Sequence = ()
     columns: Tuple[str, ...] = ()
 
-    ra_fields: Tuple[Tuple[str, TRAInfo], ...] = ()
-    ra_inputs: Tuple[Tuple[str, TRAInfo], ...] = ()
-    ra_refs: Tuple[Tuple[str, TRAReference], ...] = ()
-    ra_links: Tuple[Tuple[str, TRAActionLink], ...] = ()
+    ra_fields: TRAFields = ()
+    ra_inputs: TRAInput = ()
+    ra_refs: TRARefs = ()
+    ra_links: TRALinks = ()
 
     def setup(self, cls: AdminHandler):
         """Check and build required options."""

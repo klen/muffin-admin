@@ -8,6 +8,17 @@ from typing_extensions import NotRequired
 TRAProps = Dict[str, Any]
 TRAInfo = Tuple[str, TRAProps]
 TRAConverter = Callable[[Field], TRAInfo]
+TRAFields = TRAInput = Tuple[Tuple[str, TRAInfo], ...]
+
+
+class TRAReference(TypedDict):
+    key: NotRequired[str]
+    source: NotRequired[str]
+    reference: NotRequired[str]
+    searchKey: NotRequired[str]
+
+
+TRARefs = Tuple[Tuple[str, TRAReference], ...]
 
 
 class TRAActionLink(TypedDict):
@@ -17,8 +28,4 @@ class TRAActionLink(TypedDict):
     field: NotRequired[str]
 
 
-class TRAReference(TypedDict):
-    key: NotRequired[str]
-    source: NotRequired[str]
-    reference: NotRequired[str]
-    searchKey: NotRequired[str]
+TRALinks = Tuple[Tuple[str, TRAActionLink], ...]
