@@ -45,7 +45,7 @@ export type APIParams = {
   body?: string
 }
 
-export const requestHeaders = {}
+export const requestHeaders: Record<string, string> = {}
 
 export function makeRequest(url: string, params: APIParams = {}) {
   const { data, query, ...opts } = params || {}
