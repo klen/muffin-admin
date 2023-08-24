@@ -23,7 +23,7 @@ from muffin_rest.options import RESTOptions
 if TYPE_CHECKING:
     from http_router.types import TMethods
 
-    from muffin_admin.types import TRAFields, TRAInput, TRALinks, TRARefs
+    from muffin_admin.types import TRAFields, TRAInputs, TRALinks, TRARefs
 
     from .types import TRAConverter, TRAInfo
 
@@ -46,7 +46,7 @@ class AdminOptions(RESTOptions):
     columns: Tuple[str, ...] = ()
 
     ra_fields: TRAFields = ()
-    ra_inputs: TRAInput = ()
+    ra_inputs: TRAInputs = ()
     ra_refs: TRARefs = ()
     ra_links: TRALinks = ()
 

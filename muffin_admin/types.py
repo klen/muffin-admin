@@ -1,6 +1,6 @@
 """Custom types."""
 
-from typing import Any, Callable, Dict, Tuple, TypedDict
+from typing import Any, Callable, Dict, Tuple, TypeAlias, TypedDict
 
 from marshmallow.fields import Field
 from typing_extensions import NotRequired
@@ -8,7 +8,8 @@ from typing_extensions import NotRequired
 TRAProps = Dict[str, Any]
 TRAInfo = Tuple[str, TRAProps]
 TRAConverter = Callable[[Field], TRAInfo]
-TRAFields = TRAInput = Tuple[Tuple[str, TRAInfo], ...]
+TRAFields: TypeAlias = Tuple[Tuple[str, TRAInfo], ...]
+TRAInputs: TypeAlias = Tuple[Tuple[str, TRAInfo], ...]
 
 
 class TRAReference(TypedDict):
