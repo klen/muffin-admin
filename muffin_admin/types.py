@@ -1,9 +1,9 @@
 """Custom types."""
 
-from typing import Any, Callable, Dict, Tuple, TypeAlias, TypedDict
+from typing import Any, Callable, Dict, Tuple, TypedDict
 
 from marshmallow.fields import Field
-from typing_extensions import NotRequired
+from typing_extensions import NotRequired, TypeAlias
 
 TRAProps = Dict[str, Any]
 TRAInfo = Tuple[str, TRAProps]
