@@ -55,7 +55,7 @@ export function MuffinAdmin(props: AdminOpts) {
     <AdminPropsContext.Provider value={props}>
       <Admin
         authProvider={buildAdmin(["authprovider"], auth)}
-        dashboard={buildAdmin(["dashboard"], dashboard)}
+        dashboard={dashboard ? buildAdmin(["dashboard"], dashboard) : null}
         dataProvider={buildAdmin(["dataprovider"], props) as unknown as DataProvider}
         layout={(props) => <Layout {...props} appBar={appBar} />}
         loginPage={findBuilder(["loginpage"])}
