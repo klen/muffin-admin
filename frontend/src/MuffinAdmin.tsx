@@ -20,13 +20,16 @@ const darkTheme = createTheme({
 })
 
 export function MuffinAdmin(props: AdminOpts) {
-  const { resources, auth, appBarLinks, dashboard } = props
+  const { resources, auth, appBarLinks, adminProps, dashboard } = props
   const children = resources.map((resource) =>
     buildAdmin(["resource", resource.name], {
       ...resource,
       key: resource.name,
     })
   )
+
+  document.title = adminProps.title || "Muffin Admin"
+
   const appBar = (props) => (
     <AppBar {...props}>
       <Typography
