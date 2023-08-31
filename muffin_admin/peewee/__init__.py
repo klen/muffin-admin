@@ -81,11 +81,12 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
 
             if isinstance(model_field, pw.ForeignKeyField) and source in refs:
                 ref_data = refs[source]
+                rel_model = model_field.rel_model
                 return "FKInput", dict(
                     props,
                     refSource=ref_data.get("source") or model_field.rel_field.name,
-                    refKey=ref_data.get("key") or model_field.rel_model._meta.primary_key.name,
-                    reference=ref_data.get("reference") or model_field.rel_model._meta.table_name,
+                    refKey=ref_data.get("key") or rel_model._meta.primary_key.name,
+                    reference=ref_data.get("reference") or rel_model._meta.table_name,
                 )
 
         return ra_type, props

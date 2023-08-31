@@ -39,7 +39,7 @@ export function MuffinDataprovider({ apiUrl }: AdminOpts) {
     },
 
     update: async (resource, { id, data }) => {
-      return await makeRequest(`${resource}/${id}`, {
+      return await makeRequest(`${apiUrl}/${resource}/${id}`, {
         data,
         method: "PUT",
       })
