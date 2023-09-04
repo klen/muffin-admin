@@ -202,6 +202,7 @@ class AdminHandler(RESTBase):
             "show": {
                 "actions": [action for action in cls.meta.actions if action["view"] == "show"],
                 "links": cls.meta.ra_links,
+                "edit": bool(cls.meta.edit),
                 "fields": fields,
             },
             "edit": cls.meta.edit and {

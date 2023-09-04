@@ -23,7 +23,7 @@ export function MuffinResourceShow(props: AdminShowProps) {
 
 setupAdmin(["show"], (props) => <MuffinResourceShow {...props} />)
 setupAdmin(["show-fields"], ({ fields }) => buildRA(fields))
-setupAdmin(["show-actions"], ({ actions, links }) => (
+setupAdmin(["show-actions"], ({ actions, links, edit }) => (
   <TopToolbar>
     <div style={{ marginRight: "auto" }}>
       {links.map(([key, props]) => (
@@ -34,6 +34,6 @@ setupAdmin(["show-actions"], ({ actions, links }) => (
       <ActionButton key={idx} {...props} />
     ))}
     <ListButton />
-    <EditButton />
+    {edit && <EditButton />}
   </TopToolbar>
 ))

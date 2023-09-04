@@ -165,6 +165,7 @@ async def test_admin(app):
     assert ra["show"] == {
         "actions": [],
         "links": (),
+        "edit": True,
         "fields": [
             ("TextField", {"source": "id"}),
             ("TextField", {"source": "name"}),
