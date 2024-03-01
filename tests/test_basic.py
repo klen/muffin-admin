@@ -72,6 +72,7 @@ def test_endpoint(app):
         "limitMax": 100,
         "show": True,
         "edit": True,
+        "remove": True,
     }
 
 
