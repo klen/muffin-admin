@@ -91,6 +91,7 @@ class UserResource(PWAdminHandler):
         )
         ra_links = (("message", {"label": "Messages", "title": "Show user messages"}),)
         ra_refs = (("group", {"source": "name"}),)
+        delete = False
 
     @PWAdminHandler.action("/user/error", label="Broken Action", icon="Error")
     async def just_raise_an_error(self, request, resource=None):

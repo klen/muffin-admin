@@ -44,6 +44,7 @@ export type AdminResourceProps = {
     filters: AdminInput[]
     show: boolean
     edit?: boolean
+    remove?: boolean
   }
   show: AdminShowProps
 }

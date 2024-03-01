@@ -15,10 +15,10 @@ import { buildAdmin, setupAdmin } from "./utils"
 
 export function MuffinResourceList(props: AdminResourceProps["list"]) {
   const resourceName = useResourceContext()
-  const { fields, edit, show, limit, limitMax, filters, actions } = props
+  const { fields, edit, show, limit, limitMax, filters, actions, remove } = props
   return (
     <List
-      bulkActionButtons={buildAdmin(["list-actions", resourceName], actions)}
+      bulkActionButtons={buildAdmin(["list-actions", resourceName], { actions, remove })}
       filters={buildAdmin(["list-filters", resourceName], filters) || undefined}
       perPage={limit}
       pagination={
@@ -36,11 +36,14 @@ export function MuffinResourceList(props: AdminResourceProps["list"]) {
 setupAdmin(["list"], (props) => <MuffinResourceList {...props} />)
 setupAdmin(["list-fields"], buildRA)
 setupAdmin(["list-filters"], buildRA)
-setupAdmin(["list-actions"], (actions: AdminAction[]) => (
-  <>
-    {actions.map((props, idx) => (
-      <BulkActionButton key={idx} {...props} />
-    ))}
-    <BulkDeleteButton />
-  </>
-))
+setupAdmin(
+  ["list-actions"],
+  ({ actions, remove }: { actions: AdminAction[]; remove?: boolean }) => (
+    <>
+      {actions.map((props, idx) => (
+        <BulkActionButton key={idx} {...props} />
+      ))}
+      {remove && <BulkDeleteButton />}
+    </>
+  )
+)
