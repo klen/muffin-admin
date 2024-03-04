@@ -130,6 +130,7 @@ def test_admin_schemas(app):
     ]
     assert ra["edit"] == {
         "actions": [],
+        "remove": True,
         "inputs": [
             ("NumberInput", {"source": "id"}),
             ("TextInput", {"required": True, "source": "name"}),
@@ -221,6 +222,7 @@ def test_admin_schemas2(app):
     MessageResource = admin.handlers[2]
     assert MessageResource.to_ra()["edit"] == {
         "actions": [],
+        "remove": True,
         "inputs": [
             ("TextInput", {"source": "body", "required": True, "multiline": True}),
             (
