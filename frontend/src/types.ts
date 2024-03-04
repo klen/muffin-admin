@@ -31,11 +31,12 @@ export type AdminResourceProps = {
   label: string
   create: AdminInput[] | false
   edit:
-    | {
-        actions: AdminAction[]
-        inputs: AdminInput[]
-      }
-    | false
+  | {
+    actions: AdminAction[]
+    inputs: AdminInput[]
+    remove?: boolean
+  }
+  | false
   list: {
     limit: number
     limitMax: number

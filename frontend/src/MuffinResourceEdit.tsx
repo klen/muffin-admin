@@ -1,9 +1,12 @@
 import { useContext } from "react"
 import {
+  DeleteButton,
   Edit,
   ListButton,
+  SaveButton,
   ShowButton,
   SimpleForm,
+  Toolbar,
   TopToolbar,
   useResourceContext,
 } from "react-admin"
@@ -19,7 +22,7 @@ export function MuffinResourceEdit(props: AdminResourceProps["edit"]) {
   } = useContext(AdminPropsContext) as AdminOpts
 
   if (!props) return null
-  const { actions, inputs, ...opts } = props
+  const { actions, inputs, remove, ...opts } = props
 
   return (
     <Edit
@@ -27,7 +30,14 @@ export function MuffinResourceEdit(props: AdminResourceProps["edit"]) {
       mutationMode={mutationMode || "optimistic"}
       {...opts}
     >
-      <SimpleForm>{buildAdmin(["edit-inputs", resourceName], inputs)}</SimpleForm>
+      <SimpleForm toolbar={
+        <Toolbar>
+          <SaveButton />
+          {remove && <DeleteButton sx={{
+            marginLeft: "auto",
+          }} />}
+        </Toolbar>
+      }>{buildAdmin(["edit-inputs", resourceName], inputs)}</SimpleForm>
     </Edit>
   )
 }

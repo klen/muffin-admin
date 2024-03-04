@@ -209,6 +209,7 @@ class AdminHandler(RESTBase):
             "edit": cls.meta.edit and {
                 "actions": [action for action in cls.meta.actions if action["view"] == "edit"],
                 "inputs": inputs,
+                "remove": cls.meta.delete,
             },
             "create": cls.meta.create and inputs,
             "delete": cls.meta.delete,

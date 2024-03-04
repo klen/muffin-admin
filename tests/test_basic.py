@@ -44,6 +44,7 @@ def test_endpoint(app):
     ]
     assert ra["edit"] == {
         "actions": [],
+        "remove": True,
         "inputs": [
             ("TextInput", {"source": "id"}),
             ("TextInput", {"source": "name"}),
@@ -145,6 +146,7 @@ def test_schema_opts():
     assert ra
     assert ra["edit"] == {
         "actions": [],
+        "remove": True,
         "inputs": [
             ("TextInput", {"source": "name"}),
             ("TextInput", {"source": "id"}),
@@ -177,3 +179,28 @@ def test_disable_edit():
     assert ra["edit"] is False
     assert ra["create"] is False
     assert ra["delete"] is False
+
+
+def test_disable_delete():
+    from muffin_admin import AdminHandler
+
+    class BaseHandler(AdminHandler):
+        class Meta:
+            name = "name"
+            filters = "id", "name"
+            sorting = "id", "name"
+            delete = False
+
+            class Schema(ma.Schema):
+                id = ma.fields.String()
+                name = ma.fields.String(validate=validate.Length(3, 100))
+                active = ma.fields.Boolean()
+
+                class Meta:
+                    fields = "name", "id"
+
+    ra = BaseHandler.to_ra()
+    assert ra
+    assert ra["delete"] is False
+    assert ra["list"]["remove"] is False
+    assert ra["edit"]["remove"] is False
