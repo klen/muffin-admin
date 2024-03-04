@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "muffin-admin"
-version = "2.3.9"
+version = "2.3.10"
 description = "Admin interface for Muffin Framework"
 readme = "README.rst"
 license = "MIT"

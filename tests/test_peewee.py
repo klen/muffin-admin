@@ -131,6 +131,7 @@ async def test_admin(app):
     ]
     assert ra["edit"] == {
         "actions": [],
+        "remove": True,
         "inputs": [
             ("TextInput", {"helperText": "User name", "source": "name"}),
             ("TextInput", {"required": True, "source": "password"}),
@@ -225,6 +226,7 @@ async def test_admin(app):
     message_resource_type = admin.handlers[2]
     assert message_resource_type.to_ra()["edit"] == {
         "actions": [],
+        "remove": True,
         "inputs": [
             ("TextInput", {"source": "body", "required": True, "multiline": True}),
             ("TextInput", {"source": "user", "required": True}),
