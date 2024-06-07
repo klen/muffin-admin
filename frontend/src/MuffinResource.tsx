@@ -13,6 +13,7 @@ export function MuffinResource({
 }: AdminResourceProps) {
   return (
     <Resource
+      key={name}
       name={name}
       icon={findIcon(icon)}
       create={createProps ? buildAdmin(["create", name], createProps) : undefined}

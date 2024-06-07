@@ -24,6 +24,3 @@ export function AvatarField({ source, alt, style, nameProp, ...props }) {
 }
 
 AvatarField.displayName = "AvatarField"
-AvatarField.defaultProps = {
-  addLabel: true,
-}

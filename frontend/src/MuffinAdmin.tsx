@@ -3,15 +3,7 @@ import SvgIcon from "@mui/material/SvgIcon"
 import Tooltip from "@mui/material/Tooltip"
 import Typography from "@mui/material/Typography"
 import createTheme from "@mui/material/styles/createTheme"
-import {
-  Admin,
-  AppBar,
-  DataProvider,
-  Layout,
-  Login,
-  ToggleThemeButton,
-  defaultTheme,
-} from "react-admin"
+import { Admin, AppBar, DataProvider, Layout, Login } from "react-admin"
 import { AdminOpts } from "./types"
 import { AdminPropsContext, buildAdmin, findBuilder, findIcon, setupAdmin } from "./utils"
 
@@ -24,7 +16,6 @@ export function MuffinAdmin(props: AdminOpts) {
   const children = resources.map((resource) =>
     buildAdmin(["resource", resource.name], {
       ...resource,
-      key: resource.name,
     })
   )
 
@@ -43,7 +34,6 @@ export function MuffinAdmin(props: AdminOpts) {
           overflow: "hidden",
         }}
       />
-      <ToggleThemeButton lightTheme={defaultTheme} darkTheme={darkTheme} />
       {appBarLinks.map((info) => (
         <Tooltip key={info.url} title={info.title}>
           <IconButton color="inherit" href={info.url}>
@@ -63,6 +53,7 @@ export function MuffinAdmin(props: AdminOpts) {
         layout={(props) => <Layout {...props} appBar={appBar} />}
         loginPage={findBuilder(["loginpage"])}
         requireAuth={auth.required}
+        darkTheme={{ palette: { mode: "dark" } }}
       >
         {children}
       </Admin>
