@@ -14,6 +14,7 @@ from muffin_admin.handler import AdminHandler, AdminOptions
 
 if TYPE_CHECKING:
     import marshmallow as ma
+    from muffin import Request
 
     from muffin_admin.types import TRAInfo
 
@@ -46,6 +47,15 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
 
     meta_class: Type[PWAdminOptions] = PWAdminOptions
     meta: PWAdminOptions
+
+    def get_selected(self, request: Request):
+        """Get selected objects."""
+        ids = request.query.get("ids")
+        qs = self.collection
+        if ids:
+            qs = qs.where(self.meta.model_pk.in_(ids))
+
+        return qs
 
     @classmethod
     def to_ra_field(cls, field: ma.fields.Field, source: str) -> TRAInfo:
