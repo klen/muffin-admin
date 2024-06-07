@@ -10,7 +10,7 @@ def test_endpoint(app):
 
     @admin.route
     class BaseHandler(AdminHandler):
-        class Meta:
+        class Meta:  # type: ignore[]
             name = "base"
             filters = "id", "name"
             sorting = "id", "name"
@@ -96,7 +96,14 @@ async def test_endpoint_action(app):
 
     ra = Handler.to_ra()
     assert ra["list"]["actions"] == [
-        {"view": "list", "icon": None, "action": "/base", "title": None, "label": "base_action"},
+        {
+            "view": "list",
+            "icon": None,
+            "action": "/base",
+            "title": None,
+            "label": "Base action",
+            "id": "base_action",
+        },
     ]
 
 

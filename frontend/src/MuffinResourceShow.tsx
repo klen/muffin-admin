@@ -23,14 +23,18 @@ export function MuffinResourceShow(props: AdminShowProps) {
   )
 }
 
-setupAdmin(["show"], (props) => <MuffinResourceShow {...props} />)
-setupAdmin(["show-fields"], ({ fields }) => buildRA(fields))
 setupAdmin(["record-actions"], ({ actions }: { actions: AdminAction[] }) =>
-  actions.map((props, idx) => <ActionButton key={idx} {...props} />)
+  actions.map((props) => <ActionButton key={props.id} {...props} />)
 )
+
 setupAdmin(["record-links"], ({ links }: { links: AdminShowProps["links"] }) =>
   links.map(([key, props]) => <LinkAction key={key} resource={key} {...props} />)
 )
+
+setupAdmin(["show"], (props) => <MuffinResourceShow {...props} />)
+
+setupAdmin(["show-fields"], ({ fields }) => buildRA(fields))
+
 setupAdmin(["show-actions"], ({ actions, links, edit }: AdminShowProps) => {
   const resourceName = useResourceContext()
   const Actions = findBuilder(["record-actions", resourceName])
