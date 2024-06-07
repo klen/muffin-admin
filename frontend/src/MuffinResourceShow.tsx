@@ -9,7 +9,7 @@ import {
 import { LinkAction } from "./actions"
 import { buildRA } from "./buildRA"
 import { ActionButton } from "./buttons"
-import { AdminShowProps } from "./types"
+import { AdminAction, AdminShowProps } from "./types"
 import { buildAdmin, setupAdmin } from "./utils"
 
 export function MuffinResourceShow(props: AdminShowProps) {
@@ -23,17 +23,21 @@ export function MuffinResourceShow(props: AdminShowProps) {
 
 setupAdmin(["show"], (props) => <MuffinResourceShow {...props} />)
 setupAdmin(["show-fields"], ({ fields }) => buildRA(fields))
-setupAdmin(["show-actions"], ({ actions, links, edit }) => (
-  <TopToolbar>
-    <div style={{ marginRight: "auto" }}>
-      {links.map(([key, props]) => (
-        <LinkAction key={key} resource={key} {...props} />
-      ))}
-    </div>
-    {actions.map((props, idx) => (
-      <ActionButton key={idx} {...props} />
-    ))}
-    <ListButton />
-    {edit && <EditButton />}
-  </TopToolbar>
-))
+setupAdmin(["record-actions"], (actions: AdminAction[]) =>
+  actions.map((props, idx) => <ActionButton key={idx} {...props} />)
+)
+setupAdmin(["show-actions"], ({ actions, links, edit }: AdminShowProps) => {
+  const resourceName = useResourceContext()
+  return (
+    <TopToolbar>
+      <div style={{ marginRight: "auto" }}>
+        {links.map(([key, props]) => (
+          <LinkAction key={key} resource={key} {...props} />
+        ))}
+      </div>
+      {buildAdmin(["record-actions", resourceName], actions)}
+      <ListButton />
+      {edit && <EditButton />}
+    </TopToolbar>
+  )
+})

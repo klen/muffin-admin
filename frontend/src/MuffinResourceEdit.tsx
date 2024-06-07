@@ -30,14 +30,22 @@ export function MuffinResourceEdit(props: AdminResourceProps["edit"]) {
       mutationMode={mutationMode || "optimistic"}
       {...opts}
     >
-      <SimpleForm toolbar={
-        <Toolbar>
-          <SaveButton />
-          {remove && <DeleteButton sx={{
-            marginLeft: "auto",
-          }} />}
-        </Toolbar>
-      }>{buildAdmin(["edit-inputs", resourceName], inputs)}</SimpleForm>
+      <SimpleForm
+        toolbar={
+          <Toolbar>
+            <SaveButton />
+            {remove && (
+              <DeleteButton
+                sx={{
+                  marginLeft: "auto",
+                }}
+              />
+            )}
+          </Toolbar>
+        }
+      >
+        {buildAdmin(["edit-inputs", resourceName], inputs)}
+      </SimpleForm>
     </Edit>
   )
 }
