@@ -1,4 +1,3 @@
-import * as icons from "@mui/icons-material"
 import {
   Button,
   useListContext,
@@ -16,41 +15,59 @@ import { buildIcon, findBuilder } from "../utils"
 export function BulkActionButton({ label, icon, title, action }) {
   const resource = useResourceContext()
   const { selectedIds } = useListContext()
+  const [payload, setPayload] = useState(null)
+  const [payloadActive, setPayloadActive] = useState(false)
+  const actionData = { payload, ids: selectedIds }
+
+  const PayloadBuilder = findBuilder(["action", "payload", action])
+
   const refresh = useRefresh(),
     unselectAll = useUnselectAll(resource),
     notify = useNotify()
 
   const { mutate, isLoading } = useAction(action)
 
-  const onClick = () => {
-    mutate(
-      {
-        action,
-        ids: selectedIds,
-      },
-      {
-        onSuccess: ({ data }) => {
-          if (data && data.message) notify(data.message, { type: "success" })
-          refresh()
+  const process = () =>
+    mutate(actionData, {
+      onSuccess: ({ data }) => {
+        if (data && data.message) notify(data.message, { type: "success" })
+        if (data && data.redirectTo) window.location = data.redirectTo
+        else {
           unselectAll()
-        },
-        onError: (err) => {
-          notify(typeof err === "string" ? err : err.message, { type: "error" })
-        },
-      }
-    )
-  }
+          refresh()
+        }
+      },
+      onError: (err) => {
+        notify(typeof err === "string" ? err : err.message, { type: "error" })
+      },
+    })
 
   return (
-    <Button label={label} title={title} onClick={onClick} disabled={isLoading}>
-      {buildIcon(icon)}
-    </Button>
+    <>
+      <Button
+        label={label}
+        title={title}
+        onClick={PayloadBuilder ? () => setPayloadActive(true) : process}
+        disabled={isLoading}
+      >
+        {buildIcon(icon)}
+      </Button>
+      {PayloadBuilder && (
+        <PayloadBuilder
+          active={payloadActive}
+          onChange={(payload) => {
+            setPayloadActive(false)
+            setPayload(payload)
+            process()
+          }}
+          onClose={() => setPayloadActive(false)}
+        />
+      )}
+    </>
   )
 }
 
-export function ActionButton(props) {
-  const { icon, label, title, action } = props
-
+export function ActionButton({ icon, label, title, action }) {
   const [payload, setPayload] = useState(null)
   const [payloadActive, setPayloadActive] = useState(false)
 
@@ -61,8 +78,7 @@ export function ActionButton(props) {
   const PayloadBuilder = findBuilder(["action", "payload", action])
 
   const refresh = useRefresh(),
-    notify = useNotify(),
-    Icon = icons[icon]
+    notify = useNotify()
 
   const process = () =>
     mutate(actionData, {
@@ -84,7 +100,7 @@ export function ActionButton(props) {
         onClick={PayloadBuilder ? () => setPayloadActive(true) : process}
         disabled={isLoading}
       >
-        {Icon && <Icon />}
+        {buildIcon(icon)}
       </Button>
       {PayloadBuilder && (
         <PayloadBuilder
