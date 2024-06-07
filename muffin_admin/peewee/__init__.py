@@ -53,7 +53,7 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
         ids = request.query.get("ids")
         qs = self.collection
         if ids:
-            qs = qs.where(self.meta.model_pk.in_(ids))
+            qs = qs.where(self.meta.model_pk.in_(ids))  # type: ignore[]
 
         return qs
 

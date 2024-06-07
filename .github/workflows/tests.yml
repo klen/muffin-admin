@@ -34,7 +34,7 @@ jobs:
       run: poetry install --with dev
 
     - name: Check code
-      run: poetry run ruff muffin_admin
+      run: poetry run ruff check muffin_admin
 
     - name: Check typing
       run: poetry run mypy
