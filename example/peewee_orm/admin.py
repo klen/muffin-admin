@@ -132,6 +132,7 @@ class MessageResource(PWAdminHandler):
 
         icon = "Message"
         ra_refs = (("user", {"source": "email"}),)
+        ra_fields = (("status", ("ChipField", {})),)
 
     @PWAdminHandler.action(
         "/message/{id}/publish",
