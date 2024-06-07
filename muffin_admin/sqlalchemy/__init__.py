@@ -45,7 +45,7 @@ class SAAdminHandler(AdminHandler, SARESTHandler):
         ids = request.query.get("ids")
         qs = self.collection
         if ids:
-            qs = qs.where(self.meta.table_pk.in_(ids))
+            qs = qs.where(self.meta.table_pk.in_(ids))  # type: ignore[]
 
         return qs
 
