@@ -1,5 +1,4 @@
 import * as icons from "@mui/icons-material"
-import { Box, Modal } from "@mui/material"
 import {
   Button,
   useListContext,
@@ -12,7 +11,7 @@ import {
 
 import { useState } from "react"
 import { useAction } from "../hooks/useAction"
-import { buildIcon, findBuilder, setupAdmin } from "../utils"
+import { buildIcon, findBuilder } from "../utils"
 
 export function BulkActionButton({ label, icon, title, action }) {
   const resource = useResourceContext()
@@ -89,11 +88,13 @@ export function ActionButton(props) {
       </Button>
       {PayloadBuilder && (
         <PayloadBuilder
+          active={payloadActive}
           onChange={(payload) => {
+            setPayloadActive(false)
             setPayload(payload)
             process()
           }}
-          active={payloadActive}
+          onClose={() => setPayloadActive(false)}
         />
       )}
     </>
