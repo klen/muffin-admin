@@ -77,6 +77,7 @@ def _setup_admin(app):
     class MessageAdmin(PWAdminHandler):
         class Meta:
             model = Message
+            ra_refs = (("user", {"source": "email"}),)
 
 
 async def test_admin(app):
@@ -229,6 +230,15 @@ async def test_admin(app):
         "remove": True,
         "inputs": [
             ("TextInput", {"source": "body", "required": True, "multiline": True}),
-            ("TextInput", {"source": "user", "required": True}),
+            (
+                "FKInput",
+                {
+                    "source": "user",
+                    "required": True,
+                    "refSource": "email",
+                    "refKey": "id",
+                    "reference": "role",
+                },
+            ),
         ],
     }

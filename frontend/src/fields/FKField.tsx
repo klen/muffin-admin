@@ -20,6 +20,3 @@ export function FKField({ reference, refSource, refKey, link, source, ...props }
 }
 
 FKField.displayName = "FKField"
-FKField.defaultProps = {
-  addLabel: true,
-}
