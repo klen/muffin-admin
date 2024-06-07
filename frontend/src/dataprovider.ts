@@ -75,7 +75,7 @@ export function MuffinDataprovider({ apiUrl }: AdminOpts) {
       return await methods.getList(resource, { filter, ...opts })
     },
 
-    runAction: async (resource, action, props) => {
+    runAction: async (resource: string, action: string, props: TActionProps) => {
       const { payload, ids, record } = props
       action = action.replace(/^\/+/, "")
       if (record) {
@@ -92,4 +92,9 @@ export function MuffinDataprovider({ apiUrl }: AdminOpts) {
   return methods
 }
 
+export type TActionProps = {
+  payload?: any
+  ids?: string[]
+  record: any
+}
 setupAdmin(["dataprovider"], MuffinDataprovider)

@@ -16,7 +16,7 @@ export function FKInput({ refKey, refSource, fullWidth, reference, source, ...pr
   }
 
   return (
-    <ReferenceInput reference={reference} source={source} {...props}>
+    <ReferenceInput reference={reference} source={source}>
       <AutocompleteInput source={refKey} optionText={renderText} fullWidth={fullWidth} {...props} />
     </ReferenceInput>
   )

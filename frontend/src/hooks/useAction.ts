@@ -1,9 +1,11 @@
-import { useDataProvider } from "react-admin"
+import { useDataProvider, useResourceContext } from "react-admin"
 import { useMutation } from "react-query"
+import { TActionProps } from "../dataprovider"
 
-export function useAction(resource, action) {
+export function useAction(action) {
   const dataProvider = useDataProvider()
-  return useMutation<{ data: any }, { message: string } | string, any>((params: any) =>
+  const resource = useResourceContext()
+  return useMutation<{ data: any }, { message: string } | string, any>((params: TActionProps) =>
     dataProvider.runAction(resource, action, params)
   )
 }
