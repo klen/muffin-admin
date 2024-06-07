@@ -25,7 +25,7 @@ export function BulkActionButton({ label, icon, title, action }) {
 
   const { mutate, isLoading } = useAction(action)
 
-  const process = (payload) =>
+  const process = (payload?) =>
     mutate(
       { ids: selectedIds, payload },
       {
@@ -48,7 +48,7 @@ export function BulkActionButton({ label, icon, title, action }) {
       <Button
         label={label}
         title={title}
-        onClick={PayloadBuilder ? () => setPayloadActive(true) : process}
+        onClick={() => (PayloadBuilder ? setPayloadActive(true) : process())}
         disabled={isLoading}
       >
         {buildIcon(icon)}
@@ -75,7 +75,7 @@ export function ActionButton({ icon, label, title, action }) {
   const refresh = useRefresh(),
     notify = useNotify()
 
-  const process = (payload) =>
+  const process = (payload?) =>
     mutate(
       { record, payload },
       {
@@ -95,7 +95,7 @@ export function ActionButton({ icon, label, title, action }) {
       <Button
         label={label}
         title={title}
-        onClick={PayloadBuilder ? () => setPayloadActive(true) : process}
+        onClick={() => (PayloadBuilder ? setPayloadActive(true) : process())}
         disabled={isLoading}
       >
         {buildIcon(icon)}
