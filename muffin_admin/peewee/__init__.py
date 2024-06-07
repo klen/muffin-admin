@@ -50,7 +50,7 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
 
     def get_selected(self, request: Request):
         """Get selected objects."""
-        ids = request.query.get("ids")
+        ids = request.query.getall("ids")
         qs = self.collection
         if ids:
             qs = qs.where(self.meta.model_pk.in_(ids))  # type: ignore[]

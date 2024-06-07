@@ -40,7 +40,7 @@ class SAAdminHandler(AdminHandler, SARESTHandler):
     meta: SAAdminOptions
 
     def get_selected(self, request: Request):
-        ids = request.query.get("ids")
+        ids = request.query.getall("ids")
         qs = self.collection
         if ids:
             qs = qs.where(self.meta.table_pk.in_(ids))
