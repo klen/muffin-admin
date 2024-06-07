@@ -116,7 +116,8 @@ class AdminHandler(RESTBase):
                 "icon": icon,
                 "action": path,
                 "title": method.__doc__,
-                "label": label or method.__name__,
+                "id": method.__name__,
+                "label": label or " ".join(method.__name__.split("_")).capitalize(),
             }
             return method
 

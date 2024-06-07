@@ -40,8 +40,8 @@ setupAdmin(
   ["list-actions"],
   ({ actions, remove }: { actions: AdminAction[]; remove?: boolean }) => (
     <>
-      {actions.map((props, idx) => (
-        <BulkActionButton key={idx} {...props} />
+      {actions.map((props) => (
+        <BulkActionButton key={props.id} {...props} />
       ))}
       {remove && <BulkDeleteButton />}
     </>
