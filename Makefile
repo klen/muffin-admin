@@ -61,7 +61,7 @@ dev:
 .PHONY: lint
 lint: $(VIRTUAL_ENV)
 	@poetry run mypy $(PACKAGE)
-	@poetry run ruff $(PACKAGE)
+	@poetry run ruff check $(PACKAGE)
 
 
 BACKEND_PORT ?= 8080

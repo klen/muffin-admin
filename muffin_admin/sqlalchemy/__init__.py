@@ -1,4 +1,5 @@
 """SQLAlchemy core support."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Type
@@ -25,10 +26,7 @@ class SAAdminOptions(AdminOptions, SARESTOptions):
         super(SAAdminOptions, self).setup(cls)
 
         for f in self.filters:
-            if isinstance(f, Filter):
-                f = f.name  # noqa:
-
-            if f == "id":
+            if f == "id" or (isinstance(f, Filter) and f.name == "id"):
                 break
 
         else:
@@ -45,7 +43,7 @@ class SAAdminHandler(AdminHandler, SARESTHandler):
         ids = request.query.get("ids")
         qs = self.collection
         if ids:
-            qs = qs.where(self.meta.table_pk.in_(ids))  # type: ignore[]
+            qs = qs.where(self.meta.table_pk.in_(ids))
 
         return qs
 
@@ -57,7 +55,7 @@ class SAAdminHandler(AdminHandler, SARESTHandler):
         if column is not None:
             if column.foreign_keys and column.name in refs:
                 ref_data = refs[column.name]
-                fk = list(column.foreign_keys)[0]
+                fk = next(iter(column.foreign_keys))
                 return "FKField", {
                     "source": source,
                     "refKey": ref_data.get("key") or fk.column.name,
@@ -79,7 +77,7 @@ class SAAdminHandler(AdminHandler, SARESTHandler):
         if column is not None:
             if column.foreign_keys and (source in refs):
                 ref_data = refs[source]
-                fk = list(column.foreign_keys)[0]
+                fk = next(iter(column.foreign_keys))
                 return "FKInput", dict(
                     props,
                     emptyValue=None if column.nullable else "",

@@ -89,9 +89,12 @@ commands =
 """
 
 [tool.ruff]
+fix = false
 line-length = 100
 target-version = "py38"
 exclude = [".venv", "docs", "examples"]
+
+[tool.ruff.lint]
 select = ["ALL"]
 ignore = [
   "A003",
