@@ -10,14 +10,15 @@ import {
 
 import { useState } from "react"
 import { useAction } from "../hooks/useAction"
+import { AdminAction } from "../types"
 import { buildIcon, findBuilder } from "../utils"
 
-export function BulkActionButton({ label, icon, title, action }) {
+export function BulkActionButton({ label, icon, title, action }: AdminAction) {
   const resource = useResourceContext()
   const { selectedIds } = useListContext()
   const [payloadActive, setPayloadActive] = useState(false)
 
-  const PayloadBuilder = findBuilder(["action", "payload", action])
+  const PayloadBuilder = findBuilder(["action", "payload", label])
 
   const refresh = useRefresh(),
     unselectAll = useUnselectAll(resource),
@@ -64,13 +65,13 @@ export function BulkActionButton({ label, icon, title, action }) {
   )
 }
 
-export function ActionButton({ icon, label, title, action }) {
+export function ActionButton({ icon, label, title, action }: AdminAction) {
   const [payloadActive, setPayloadActive] = useState(false)
 
   const record = useRecordContext()
   const { mutate, isLoading } = useAction(action)
 
-  const PayloadBuilder = findBuilder(["action", "payload", action])
+  const PayloadBuilder = findBuilder(["action", "payload", label])
 
   const refresh = useRefresh(),
     notify = useNotify()

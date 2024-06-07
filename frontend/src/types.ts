@@ -23,6 +23,7 @@ export type AdminShowProps = {
   actions: AdminAction[]
   fields: AdminField[]
   links: [string, AdminShowLink][]
+  edit?: boolean
 }
 
 export type AdminResourceProps = {
@@ -31,12 +32,12 @@ export type AdminResourceProps = {
   label: string
   create: AdminInput[] | false
   edit:
-  | {
-    actions: AdminAction[]
-    inputs: AdminInput[]
-    remove?: boolean
-  }
-  | false
+    | {
+        actions: AdminAction[]
+        inputs: AdminInput[]
+        remove?: boolean
+      }
+    | false
   list: {
     limit: number
     limitMax: number
