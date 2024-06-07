@@ -22,6 +22,7 @@ from muffin_rest.options import RESTOptions
 
 if TYPE_CHECKING:
     from http_router.types import TMethods
+    from muffin import Request
 
     from muffin_admin.types import TRAFields, TRAInputs, TRALinks, TRARefs
 
@@ -88,6 +89,11 @@ class AdminHandler(RESTBase):
 
     meta_class: Type[AdminOptions] = AdminOptions
     meta: AdminOptions
+
+    def get_selected(self, request: Request):
+        """Get selected objects."""
+        ids = request.query.get("ids")
+        return ids
 
     @classmethod
     def action(  # noqa: PLR0913

@@ -12,6 +12,7 @@ from muffin_admin.handler import AdminHandler, AdminOptions
 
 if TYPE_CHECKING:
     import marshmallow as ma
+    from muffin import Request
 
     from muffin_admin.types import TRAInfo
 
@@ -39,6 +40,14 @@ class SAAdminHandler(AdminHandler, SARESTHandler):
 
     meta_class: Type[SAAdminOptions] = SAAdminOptions
     meta: SAAdminOptions
+
+    def get_selected(self, request: Request):
+        ids = request.query.get("ids")
+        qs = self.collection
+        if ids:
+            qs = qs.where(self.meta.table_pk.in_(ids))
+
+        return qs
 
     @classmethod
     def to_ra_field(cls, field: ma.fields.Field, source: str) -> TRAInfo:
