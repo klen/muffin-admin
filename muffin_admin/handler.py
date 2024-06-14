@@ -132,15 +132,16 @@ class AdminHandler(RESTBase):
     @classmethod
     def to_ra(cls) -> Dict[str, Any]:
         """Get JSON params for react-admin."""
-        schema_cls = cls.meta.Schema
+        meta = cls.meta
+        schema_cls = meta.Schema
         schema_opts = schema_cls.opts
         schema_fields = schema_opts.fields
         schema_exclude = schema_opts.exclude
         schema_load_only = schema_opts.load_only
         schema_dump_only = schema_opts.dump_only
 
-        fields_customize = dict(cls.meta.ra_fields)
-        inputs_customize = dict(cls.meta.ra_inputs)
+        fields_customize = dict(meta.ra_fields)
+        inputs_customize = dict(meta.ra_inputs)
 
         fields = []
         inputs = []
@@ -182,47 +183,47 @@ class AdminHandler(RESTBase):
         fields_hash = {
             props["source"]: (
                 ra_type,
-                dict(props, sortable=props["source"] in cls.meta.sorting),
+                dict(props, sortable=props["source"] in meta.sorting),
             )
             for (ra_type, props) in fields
         }
 
         data = {
-            "name": cls.meta.name,
-            "label": cls.meta.label,
-            "icon": cls.meta.icon,
+            "name": meta.name,
+            "label": meta.label,
+            "icon": meta.icon,
             "list": {
-                "limit": cls.meta.limit,
-                "limitMax": cls.meta.limit_max,
-                "edit": bool(cls.meta.edit),
-                "remove": bool(cls.meta.delete),
-                "show": bool(cls.meta.show),
-                "actions": [action for action in cls.meta.actions if action["view"] == "list"],
-                "fields": [fields_hash[name] for name in cls.meta.columns if name in fields_hash],
+                "edit": bool(meta.edit),
+                "limit": meta.limit,
+                "limitMax": meta.limit_max,
+                "remove": bool(meta.delete),
+                "show": bool(meta.show),
+                "actions": [action for action in meta.actions if action["view"] == "list"],
+                "fields": [fields_hash[name] for name in meta.columns if name in fields_hash],
                 "filters": [
                     (ra_type, dict(source=flt.name, **props))
                     for flt, (ra_type, props) in [
                         (flt, cls.to_ra_input(flt.schema_field, flt.name))
-                        for flt in cls.meta.filters.mutations.values()
+                        for flt in meta.filters.mutations.values()
                     ]
                 ],
             },
             "show": {
-                "actions": [action for action in cls.meta.actions if action["view"] == "show"],
-                "links": cls.meta.ra_links,
-                "edit": bool(cls.meta.edit),
+                "actions": [action for action in meta.actions if action["view"] == "show"],
+                "links": meta.ra_links,
+                "edit": bool(meta.edit),
                 "fields": fields,
             },
-            "edit": cls.meta.edit and {
-                "actions": [action for action in cls.meta.actions if action["view"] == "edit"],
+            "edit": meta.edit and {
+                "actions": [action for action in meta.actions if action["view"] == "edit"],
                 "inputs": inputs,
-                "remove": cls.meta.delete,
+                "remove": meta.delete,
             },
-            "create": cls.meta.create and inputs,
-            "delete": cls.meta.delete,
+            "create": meta.create and inputs,
+            "delete": meta.delete,
         }
 
-        default_sort = cls.meta.sorting.default and cls.meta.sorting.default[0]
+        default_sort = meta.sorting.default and meta.sorting.default[0]
         if default_sort:
             data["list"]["sort"] = {  # type: ignore[call-overload, index]
                 "field": default_sort.name,

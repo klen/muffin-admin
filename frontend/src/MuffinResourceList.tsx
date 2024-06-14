@@ -15,12 +15,13 @@ import { buildAdmin, setupAdmin } from "./utils"
 
 export function MuffinResourceList(props: AdminResourceProps["list"]) {
   const resourceName = useResourceContext()
-  const { fields, edit, show, limit, limitMax, filters, actions, remove } = props
+  const { fields, edit, show, limit, limitMax, filters, actions, remove, sort } = props
   return (
     <List
-      bulkActionButtons={buildAdmin(["list-actions", resourceName], { actions, remove })}
-      filters={buildAdmin(["list-filters", resourceName], filters) || undefined}
+      sort={sort}
       perPage={limit}
+      filters={buildAdmin(["list-filters", resourceName], filters) || undefined}
+      bulkActionButtons={buildAdmin(["list-actions", resourceName], { actions, remove })}
       pagination={
         <Pagination rowsPerPageOptions={sortBy(uniq([10, 25, 50, 100, limit, limitMax]))} />
       }
