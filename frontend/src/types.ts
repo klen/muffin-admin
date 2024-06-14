@@ -33,12 +33,12 @@ export type AdminResourceProps = {
   label: string
   create: AdminInput[] | false
   edit:
-  | {
-    actions: AdminAction[]
-    inputs: AdminInput[]
-    remove?: boolean
-  }
-  | false
+    | {
+        actions: AdminAction[]
+        inputs: AdminInput[]
+        remove?: boolean
+      }
+    | false
   list: {
     limit: number
     limitMax: number
@@ -48,6 +48,10 @@ export type AdminResourceProps = {
     show: boolean
     edit?: boolean
     remove?: boolean
+    sort?: {
+      field: string
+      order: "ASC" | "DESC"
+    }
   }
   show: AdminShowProps
 }
