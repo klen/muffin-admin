@@ -1,7 +1,6 @@
-import { AdminOpts } from "./types"
 import { APIParams, makeRequest, setupAdmin } from "./utils"
 
-export function MuffinDataprovider({ apiUrl }: AdminOpts) {
+export function MuffinDataprovider(apiUrl: string) {
   async function request(url: string, options?: APIParams) {
     if (!url.startsWith("/")) url = `${apiUrl}/${url}`
     const { json, headers } = await makeRequest(url, options)

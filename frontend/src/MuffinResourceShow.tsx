@@ -9,16 +9,17 @@ import {
 import { LinkAction } from "./actions"
 import { buildRA } from "./buildRA"
 import { ActionButton } from "./buttons"
+import { useMuffinResourceOpts } from "./hooks"
 import { AdminAction, AdminShowProps } from "./types"
 import { buildAdmin, findBuilder, setupAdmin } from "./utils"
 
-export function MuffinResourceShow(props: AdminShowProps) {
-  const resourceName = useResourceContext()
-  const ShowActions = findBuilder(["show-actions", resourceName])
+export function MuffinResourceShow() {
+  const { show, name } = useMuffinResourceOpts()
+  const ShowActions = findBuilder(["show-actions", name])
 
   return (
-    <Show actions={<ShowActions {...props} />}>
-      <SimpleShowLayout>{buildAdmin(["show-fields", resourceName], props)}</SimpleShowLayout>
+    <Show actions={<ShowActions {...show} />}>
+      <SimpleShowLayout>{buildAdmin(["show-fields", name], show)}</SimpleShowLayout>
     </Show>
   )
 }

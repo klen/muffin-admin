@@ -1,5 +1,5 @@
 import Cookies from "js-cookie"
-import { buildAdmin, makeRequest, requestHeaders, setupAdmin } from "."
+import { findBuilder, makeRequest, requestHeaders, setupAdmin } from "."
 import { AdminOpts } from "./types"
 
 setupAdmin(
@@ -19,8 +19,8 @@ setupAdmin(["auth-storage-set"], ({ storage }) => (name, value) => {
 export function MuffinAuthProvider(props: AdminOpts["auth"]) {
   const { identityURL, authorizeURL, logoutURL, required, storageName } = props
 
-  const authGet = buildAdmin(["auth-storage-get"], props)
-  const authSet = buildAdmin(["auth-storage-set"], props)
+  const authGet = findBuilder(["auth-storage-get"])(props)
+  const authSet = findBuilder(["auth-storage-set"])(props)
 
   // Initialize request headers
   authSet(storageName, authGet(storageName))

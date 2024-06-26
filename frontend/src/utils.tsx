@@ -1,35 +1,32 @@
 import * as icons from "@mui/icons-material"
 import { stringify } from "query-string"
 import { fetchUtils } from "ra-core"
-import { createContext } from "react"
-import { AdminOpts } from "./types"
 
 const builders = new Map<string, (props) => any>()
 
-export function setupAdmin<T>(adminType: string[], fc: (opts, props?) => T) {
+export function setupAdmin<T>(adminType: string[], fc: (props) => T) {
   const key = adminType.join("/")
   builders.set(key, fc)
 }
 
 export function buildAdmin(adminType: string[], props = {}) {
-  if (process.env.NODE_ENV == "development") console.log(adminType, props)
   const builder = findBuilder(adminType)
+  if (process.env.NODE_ENV == "development") console.log(props)
   if (builder) return builder(props)
 
   console.warn(`No admin renderer found for ${adminType.join("/")}`)
   return null
 }
 
-export function findBuilder(adminType: string[]) {
+export function findBuilder(adminType: string[]): (props) => any {
+  if (process.env.NODE_ENV == "development") console.log(adminType)
   const key = [...adminType]
   while (key.length) {
-    const render = builders.get(key.join("/"))
-    if (render) return render
+    const builder = builders.get(key.join("/"))
+    if (builder) return builder
     key.pop()
   }
 }
-
-export const AdminPropsContext = createContext<AdminOpts | null>(null)
 
 export type APIParams = {
   method?: string
