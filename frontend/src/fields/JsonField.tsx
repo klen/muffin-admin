@@ -14,9 +14,9 @@ export function JsonField({ label, source }) {
       <p></p>
       {label}
       <Button
-        variant="contained"
-        color="primary"
         size="small"
+        color="primary"
+        variant="contained"
         label={expand ? "colapse" : "expand"}
         onClick={(e) => {
           setExpand(!expand)

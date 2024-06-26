@@ -6,7 +6,7 @@ import { AdminOpts } from "./types"
 
 const builders = new Map<string, (props) => any>()
 
-export function setupAdmin<T>(adminType: string[], fc: (props) => T) {
+export function setupAdmin<T>(adminType: string[], fc: (opts, props?) => T) {
   const key = adminType.join("/")
   builders.set(key, fc)
 }
