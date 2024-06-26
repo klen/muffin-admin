@@ -1,45 +1,49 @@
 import sortBy from "lodash/sortBy"
 import uniq from "lodash/uniq"
-import {
-  BulkDeleteButton,
-  Datagrid,
-  EditButton,
-  List,
-  Pagination,
-  useResourceContext,
-} from "react-admin"
+import { BulkDeleteButton, Datagrid, EditButton, List, Pagination } from "react-admin"
 import { buildRA } from "./buildRA"
 import { BulkActionButton } from "./buttons"
-import { AdminAction, AdminResourceProps } from "./types"
-import { buildAdmin, setupAdmin } from "./utils"
+import { useMuffinResourceOpts } from "./hooks"
+import { AdminAction } from "./types"
+import { buildAdmin, findBuilder, setupAdmin } from "./utils"
 
-export function MuffinResourceList(props: AdminResourceProps["list"]) {
-  const resourceName = useResourceContext()
-  const { fields, edit, show, limit, limitMax, filters, actions, remove, sort } = props
+export function MuffinResourceList() {
+  const { name, list } = useMuffinResourceOpts()
+  const { fields, edit, show, limit, limitMax, filters, actions, remove, sort } = list
+
+  const Actions = findBuilder(["list-actions", name])
+
   return (
     <List
       sort={sort}
       perPage={limit}
-      filters={buildAdmin(["list-filters", resourceName], filters) || undefined}
-      bulkActionButtons={buildAdmin(["list-actions", resourceName], { actions, remove })}
+      filters={buildAdmin(["list-filters", name], filters)}
+      bulkActionButtons={<Actions actions={actions} remove={remove} />}
       pagination={
         <Pagination rowsPerPageOptions={sortBy(uniq([10, 25, 50, 100, limit, limitMax]))} />
       }
     >
       <Datagrid rowClick={show ? "show" : edit ? "edit" : false}>
-        {buildAdmin(["list-fields", resourceName], fields)}
+        {buildAdmin(["list-fields", name], fields)}
         {edit && <EditButton />}
       </Datagrid>
     </List>
   )
 }
 
-setupAdmin(["list"], (props) => <MuffinResourceList {...props} />)
+setupAdmin(["list"], MuffinResourceList)
 setupAdmin(["list-fields"], buildRA)
+
 setupAdmin(["list-filters"], buildRA)
-setupAdmin(
-  ["list-actions"],
-  ({ actions, remove }: { actions: AdminAction[]; remove?: boolean }) => (
+
+function MuffinResourceListActions({
+  actions,
+  remove,
+}: {
+  actions: AdminAction[]
+  remove?: boolean
+}) {
+  return (
     <>
       {actions.map((props) => (
         <BulkActionButton key={props.id} {...props} />
@@ -47,4 +51,6 @@ setupAdmin(
       {remove && <BulkDeleteButton />}
     </>
   )
-)
+}
+
+setupAdmin(["list-actions"], MuffinResourceListActions)

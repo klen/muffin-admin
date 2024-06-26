@@ -1,25 +1,21 @@
-import { Resource } from "react-admin"
-import { AdminResourceProps } from "./types"
-import { buildAdmin, findIcon, setupAdmin } from "./utils"
+import { Resource, ResourceProps } from "react-admin"
+import { useMuffinAdminOpts } from "./hooks"
+import { findBuilder, findIcon, setupAdmin } from "./utils"
 
-export function MuffinResource({
-  name,
-  create: createProps,
-  edit: editProps,
-  list: listProps,
-  show: showProps,
-  icon,
-  ...props
-}: AdminResourceProps) {
+export function MuffinResource({ name, ...props }: ResourceProps) {
+  const adminOpts = useMuffinAdminOpts()
+  const opts = adminOpts?.resources.find((r) => r.name == name)
+  if (!opts) return null
+
   return (
     <Resource
       key={name}
       name={name}
-      icon={findIcon(icon)}
-      create={createProps ? buildAdmin(["create", name], createProps) : undefined}
-      edit={editProps ? buildAdmin(["edit", name], editProps) : undefined}
-      list={buildAdmin(["list", name], listProps)}
-      show={buildAdmin(["show", name], showProps)}
+      icon={findIcon(opts.icon)}
+      create={findBuilder(["create", name])}
+      edit={findBuilder(["edit", name])}
+      list={findBuilder(["list", name])}
+      show={findBuilder(["show", name])}
       {...props}
     />
   )

@@ -37,7 +37,7 @@ import {
 import { AvatarField, EditableBooleanField, FKField, JsonField } from "./fields"
 import { FKInput, JsonInput } from "./inputs"
 
-export const UI: Record<string, JSX.ElementType> = {
+const UI: Record<string, JSX.ElementType> = {
   // Fields
   BooleanField,
   ChipField,
@@ -97,6 +97,10 @@ export function buildRAComponent(name, props) {
   return <Item key={props.source} {...props} />
 }
 
-export function buildRA(items) {
+export function buildRA(items: [string, Record<string, any>][]) {
   return items.map((item) => buildRAComponent(item[0], item[1]))
+}
+
+export function registerUI(name, component) {
+  UI[name] = component
 }

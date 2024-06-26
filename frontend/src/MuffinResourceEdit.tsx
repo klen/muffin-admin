@@ -1,4 +1,3 @@
-import { useContext } from "react"
 import {
   DeleteButton,
   Edit,
@@ -8,28 +7,25 @@ import {
   SimpleForm,
   Toolbar,
   TopToolbar,
-  useResourceContext,
 } from "react-admin"
 import { buildRA } from "./buildRA"
 import { ActionButton } from "./buttons"
-import { AdminAction, AdminOpts, AdminResourceProps } from "./types"
-import { AdminPropsContext, buildAdmin, setupAdmin } from "./utils"
+import { useMuffinAdminOpts, useMuffinResourceOpts } from "./hooks"
+import { AdminAction } from "./types"
+import { buildAdmin, findBuilder, setupAdmin } from "./utils"
 
-export function MuffinResourceEdit(props: AdminResourceProps["edit"]) {
-  const resourceName = useResourceContext()
+export function MuffinResourceEdit() {
   const {
-    adminProps: { mutationMode },
-  } = useContext(AdminPropsContext) as AdminOpts
+    adminProps: { mutationMode = "optimistic" },
+  } = useMuffinAdminOpts()
+  const { edit, name } = useMuffinResourceOpts()
+  if (!edit) return null
 
-  if (!props) return null
-  const { actions, inputs, remove, ...opts } = props
+  const { actions, inputs, remove, ...opts } = edit
+  const Actions = findBuilder(["edit-actions", name])
 
   return (
-    <Edit
-      actions={buildAdmin(["edit-actions", resourceName], actions)}
-      mutationMode={mutationMode || "optimistic"}
-      {...opts}
-    >
+    <Edit actions={<Actions actions={actions} />} mutationMode={mutationMode} {...opts}>
       <SimpleForm
         toolbar={
           <Toolbar>
@@ -44,20 +40,26 @@ export function MuffinResourceEdit(props: AdminResourceProps["edit"]) {
           </Toolbar>
         }
       >
-        {buildAdmin(["edit-inputs", resourceName], inputs)}
+        {buildAdmin(["edit-inputs", name], inputs)}
       </SimpleForm>
     </Edit>
   )
 }
 
-setupAdmin(["edit"], (props) => <MuffinResourceEdit {...props} />)
-setupAdmin(["edit-actions"], (actions: AdminAction[]) => (
-  <TopToolbar>
-    {actions.map((props, idx) => (
-      <ActionButton key={idx} {...props} />
-    ))}
-    <ListButton />
-    <ShowButton />
-  </TopToolbar>
-))
+setupAdmin(["edit"], MuffinResourceEdit)
+
+function MuffinResourceEditActions({ actions }: { actions: AdminAction[] }) {
+  return (
+    <TopToolbar>
+      {actions.map((props, idx) => (
+        <ActionButton key={idx} {...props} />
+      ))}
+      <ListButton />
+      <ShowButton />
+    </TopToolbar>
+  )
+}
+
+setupAdmin(["edit-actions"], MuffinResourceEditActions)
+
 setupAdmin(["edit-inputs"], buildRA)

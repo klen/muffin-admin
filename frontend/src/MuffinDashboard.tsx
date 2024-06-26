@@ -6,16 +6,20 @@ import TableBody from "@mui/material/TableBody"
 import TableCell from "@mui/material/TableCell"
 import TableRow from "@mui/material/TableRow"
 import Typography from "@mui/material/Typography"
-import { AdminDashboardBlock, AdminOpts } from "./types"
+import { useMuffinAdminOpts } from "./hooks"
+import { AdminDashboardBlock } from "./types"
 import { setupAdmin } from "./utils"
 
-export function MuffinDashboard({ src }: { src: AdminOpts["dashboard"] }) {
+export function MuffinDashboard() {
+  const { dashboard } = useMuffinAdminOpts()
   return (
     <Grid container spacing={1}>
-      <AdminCards src={src} />
+      <AdminCards src={dashboard} />
     </Grid>
   )
 }
+
+setupAdmin(["dashboard"], MuffinDashboard)
 
 function AdminCards({ src }: { src: AdminDashboardBlock | AdminDashboardBlock[] }) {
   if (Array.isArray(src))
@@ -60,5 +64,3 @@ const AdminTableView = ({ src }) => (
     </TableBody>
   </Table>
 )
-
-setupAdmin(["dashboard"], (dashboard) => () => <MuffinDashboard src={dashboard} />)
