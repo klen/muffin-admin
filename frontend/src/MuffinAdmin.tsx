@@ -2,17 +2,12 @@ import IconButton from "@mui/material/IconButton"
 import SvgIcon from "@mui/material/SvgIcon"
 import Tooltip from "@mui/material/Tooltip"
 import Typography from "@mui/material/Typography"
-import createTheme from "@mui/material/styles/createTheme"
-import { Admin, AppBar, DataProvider, Layout, Login } from "react-admin"
+import { Admin, AdminProps, AppBar, DataProvider, Layout, Login } from "react-admin"
 import { AdminOpts } from "./types"
 import { AdminPropsContext, buildAdmin, findBuilder, findIcon, setupAdmin } from "./utils"
 
-const darkTheme = createTheme({
-  palette: { mode: "dark" },
-})
-
-export function MuffinAdmin(props: AdminOpts) {
-  const { resources, auth, appBarLinks, adminProps, dashboard } = props
+export function MuffinAdmin(opts: AdminOpts, props: AdminProps) {
+  const { resources, auth, appBarLinks, adminProps, dashboard } = opts
   const children = resources.map((resource) =>
     buildAdmin(["resource", resource.name], {
       ...resource,
@@ -29,9 +24,9 @@ export function MuffinAdmin(props: AdminOpts) {
         id="react-admin-title"
         style={{
           flex: 1,
-          textOverflow: "ellipsis",
-          whiteSpace: "nowrap",
           overflow: "hidden",
+          whiteSpace: "nowrap",
+          textOverflow: "ellipsis",
         }}
       />
       {appBarLinks.map((info) => (
@@ -45,15 +40,16 @@ export function MuffinAdmin(props: AdminOpts) {
   )
 
   return (
-    <AdminPropsContext.Provider value={props}>
+    <AdminPropsContext.Provider value={opts}>
       <Admin
         authProvider={buildAdmin(["authprovider"], auth)}
-        dashboard={dashboard ? buildAdmin(["dashboard"], dashboard) : null}
-        dataProvider={buildAdmin(["dataprovider"], props) as unknown as DataProvider}
+        dataProvider={buildAdmin(["dataprovider"], opts) as unknown as DataProvider}
         layout={(props) => <Layout {...props} appBar={appBar} />}
         loginPage={findBuilder(["loginpage"])}
+        dashboard={dashboard ? buildAdmin(["dashboard"], dashboard) : null}
         requireAuth={auth.required}
         darkTheme={{ palette: { mode: "dark" } }}
+        {...props}
       >
         {children}
       </Admin>

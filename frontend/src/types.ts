@@ -43,11 +43,14 @@ export type AdminResourceProps = {
     limit: number
     limitMax: number
     actions: AdminAction[]
-    fields: AdminField[]
     filters: AdminInput[]
+    fields: AdminField[]
+    // Enable show button
     show: boolean
+    // Permissions
     edit?: boolean
     remove?: boolean
+    // Default sorting
     sort?: {
       field: string
       order: "ASC" | "DESC"
