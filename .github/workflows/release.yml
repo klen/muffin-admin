@@ -16,6 +16,9 @@ jobs:
     - uses: actions/checkout@main
     - uses: actions/setup-python@main
     - uses: actions/setup-node@main
+      with:
+        node-version: '15.x'
+        registry-url: 'https://registry.npmjs.org'
 
     - name: Install poetry
       run: pipx install poetry
