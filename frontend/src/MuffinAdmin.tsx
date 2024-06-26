@@ -8,13 +8,11 @@ import { AdminPropsContext, buildAdmin, findBuilder, findIcon, setupAdmin } from
 
 export function MuffinAdmin(opts: AdminOpts, props: AdminProps) {
   const { resources, auth, appBarLinks, adminProps, dashboard } = opts
-  const children = resources.map((resource) =>
-    buildAdmin(["resource", resource.name], {
-      ...resource,
-    })
+  const children = resources?.map((resource) =>
+    buildAdmin(["resource", resource.name], { ...resource })
   )
 
-  document.title = adminProps.title || "Muffin Admin"
+  document.title = adminProps?.title || "Muffin Admin"
 
   const appBar = (props) => (
     <AppBar {...props}>
