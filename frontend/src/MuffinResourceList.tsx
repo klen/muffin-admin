@@ -1,6 +1,6 @@
 import sortBy from "lodash/sortBy"
 import uniq from "lodash/uniq"
-import { BulkDeleteButton, Datagrid, EditButton, List, Pagination } from "react-admin"
+import { BulkDeleteButton, Datagrid, EditButton, List, ListActions, Pagination } from "react-admin"
 import { buildRA } from "./buildRA"
 import { BulkActionButton } from "./buttons"
 import { useMuffinResourceOpts } from "./hooks"
@@ -9,7 +9,7 @@ import { buildAdmin, findBuilder, setupAdmin } from "./utils"
 
 export function MuffinResourceList() {
   const { name, list } = useMuffinResourceOpts()
-  const { fields, edit, show, limit, limitMax, filters, actions, remove, sort } = list
+  const { fields, create, edit, show, limit, limitMax, filters, actions, remove, sort } = list
 
   const Actions = findBuilder(["list-actions", name])
 
@@ -17,6 +17,7 @@ export function MuffinResourceList() {
     <List
       sort={sort}
       perPage={limit}
+      actions={<ListActions hasCreate={create} />}
       filters={buildAdmin(["list-filters", name], filters)}
       bulkActionButtons={<Actions actions={actions} remove={remove} />}
       pagination={
