@@ -68,6 +68,7 @@ def test_endpoint(app):
             ("BooleanField", {"source": "active", "sortable": False}),
             ("TextField", {"source": "name", "sortable": True}),
         ],
+        "create": True,
         "filters": [("TextInput", {"source": "id"}), ("TextInput", {"source": "name"})],
         "limit": 25,
         "limitMax": 100,
