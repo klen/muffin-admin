@@ -194,10 +194,10 @@ class AdminHandler(RESTBase):
             "icon": meta.icon,
             "list": {
                 "create": meta.create,
+                "remove": bool(meta.delete),
                 "edit": bool(meta.edit),
                 "limit": meta.limit,
                 "limitMax": meta.limit_max,
-                "remove": bool(meta.delete),
                 "show": bool(meta.show),
                 "actions": [action for action in meta.actions if action["view"] == "list"],
                 "fields": [fields_hash[name] for name in meta.columns if name in fields_hash],
@@ -215,12 +215,12 @@ class AdminHandler(RESTBase):
                 "edit": bool(meta.edit),
                 "fields": fields,
             },
+            "create": meta.create and inputs,
             "edit": meta.edit and {
                 "actions": [action for action in meta.actions if action["view"] == "edit"],
                 "inputs": inputs,
                 "remove": meta.delete,
             },
-            "create": meta.create and inputs,
             "delete": meta.delete,
         }
 
