@@ -193,6 +193,7 @@ class AdminHandler(RESTBase):
             "label": meta.label,
             "icon": meta.icon,
             "list": {
+                "create": meta.create,
                 "edit": bool(meta.edit),
                 "limit": meta.limit,
                 "limitMax": meta.limit_max,

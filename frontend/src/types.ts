@@ -43,6 +43,7 @@ export type AdminResourceProps = {
     limit: number
     limitMax: number
     actions: AdminAction[]
+    create: boolean
     filters: AdminInput[]
     fields: AdminField[]
     // Enable show button
