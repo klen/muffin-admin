@@ -11,7 +11,6 @@ import {
 import { buildRA } from "./buildRA"
 import { ActionButton } from "./buttons"
 import { useMuffinAdminOpts, useMuffinResourceOpts } from "./hooks"
-import { AdminAction } from "./types"
 import { buildAdmin, findBuilder, setupAdmin } from "./utils"
 
 export function MuffinResourceEdit() {
@@ -21,11 +20,11 @@ export function MuffinResourceEdit() {
   const { edit, name } = useMuffinResourceOpts()
   if (!edit) return null
 
-  const { actions, inputs, remove, ...opts } = edit
-  const Actions = findBuilder(["edit-actions", name])
+  const { inputs, remove } = edit
+  const Actions = findBuilder(["edit-actions", name]) as unknown as any
 
   return (
-    <Edit actions={<Actions actions={actions} />} mutationMode={mutationMode} {...opts}>
+    <Edit actions={<Actions />} mutationMode={mutationMode}>
       <SimpleForm
         toolbar={
           <Toolbar>
@@ -48,7 +47,10 @@ export function MuffinResourceEdit() {
 
 setupAdmin(["edit"], MuffinResourceEdit)
 
-function MuffinResourceEditActions({ actions }: { actions: AdminAction[] }) {
+function MuffinResourceEditActions() {
+  const { edit } = useMuffinResourceOpts()
+  if (!edit) return null
+  const { actions = [] } = edit
   return (
     <TopToolbar>
       {actions.map((props, idx) => (
