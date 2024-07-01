@@ -7,10 +7,10 @@ import { buildAdmin, findBuilder, setupAdmin } from "./utils"
 
 export function MuffinShow() {
   const { show, name } = useMuffinResourceOpts()
-  const Toolbar = findBuilder(["show-toolbar", name])
+  const ActionsToolbar = findBuilder(["show-toolbar", name])
 
   return (
-    <Show actions={<Toolbar />}>
+    <Show actions={<ActionsToolbar />}>
       <SimpleShowLayout>{buildAdmin(["show-fields", name], show)}</SimpleShowLayout>
     </Show>
   )
