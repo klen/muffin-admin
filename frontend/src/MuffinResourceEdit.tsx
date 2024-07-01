@@ -5,6 +5,7 @@ import {
   SaveButton,
   ShowButton,
   SimpleForm,
+  Toolbar,
   TopToolbar,
 } from "react-admin"
 import { buildRA } from "./buildRA"
@@ -20,10 +21,10 @@ export function MuffinEdit() {
   if (!edit) return null
 
   const { inputs, remove } = edit
-  const Toolbar = findBuilder(["edit-toolbar", name])
+  const ActionsToolbar = findBuilder(["edit-toolbar", name])
 
   return (
-    <Edit actions={<Toolbar />} mutationMode={mutationMode}>
+    <Edit actions={<ActionsToolbar />} mutationMode={mutationMode}>
       <SimpleForm
         toolbar={
           <Toolbar>
