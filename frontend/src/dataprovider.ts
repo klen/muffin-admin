@@ -41,7 +41,7 @@ export function MuffinDataprovider(apiUrl: string) {
       return await makeRequest(`${apiUrl}/${resource}/${id}`, {
         data,
         method: "PUT",
-      })
+      }).then(({ json }) => ({ data: json }))
     },
 
     updateMany: async (resource, { ids, data }) => {
