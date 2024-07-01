@@ -5,45 +5,26 @@ import { ActionButton } from "./buttons"
 import { useMuffinResourceOpts } from "./hooks"
 import { buildAdmin, findBuilder, setupAdmin } from "./utils"
 
-export function MuffinResourceShow() {
+export function MuffinShow() {
   const { show, name } = useMuffinResourceOpts()
-  const ShowActions = findBuilder(["show-actions", name])
+  const Toolbar = findBuilder(["show-toolbar", name])
 
   return (
-    <Show actions={<ShowActions />}>
+    <Show actions={<Toolbar />}>
       <SimpleShowLayout>{buildAdmin(["show-fields", name], show)}</SimpleShowLayout>
     </Show>
   )
 }
 
-setupAdmin(["record-actions"], () => {
-  const { show } = useMuffinResourceOpts()
-  const { actions } = show
-  return actions.map((props) => <ActionButton key={props.id} {...props} />)
-})
-
-setupAdmin(["record-links"], () => {
-  const { show } = useMuffinResourceOpts()
-  const { links } = show
-  return (
-    <div style={{ marginRight: "auto" }}>
-      {links.map(([key, props]) => (
-        <LinkAction key={key} resource={key} {...props} />
-      ))}
-    </div>
-  )
-})
-
-setupAdmin(["show"], (props) => <MuffinResourceShow {...props} />)
-
+setupAdmin(["show"], (props) => <MuffinShow {...props} />)
 setupAdmin(["show-fields"], ({ fields }) => buildRA(fields))
 
-setupAdmin(["show-actions"], () => {
+export function MuffinShowToolbar() {
   const { show, name } = useMuffinResourceOpts()
   const { edit } = show
 
-  const Links = findBuilder(["record-links", name])
-  const Actions = findBuilder(["record-actions", name])
+  const Links = findBuilder(["show-links", name])
+  const Actions = findBuilder(["show-actions", name])
 
   return (
     <TopToolbar>
@@ -53,4 +34,28 @@ setupAdmin(["show-actions"], () => {
       {edit && <EditButton />}
     </TopToolbar>
   )
-})
+}
+
+setupAdmin(["show-toolbar"], MuffinShowToolbar)
+
+export function MuffinShowActions() {
+  const { show } = useMuffinResourceOpts()
+  const { actions } = show
+  return actions.map((props) => <ActionButton key={props.id} {...props} />)
+}
+
+setupAdmin(["show-actions"], MuffinShowActions)
+
+export function MuffinShowLinks() {
+  const { show } = useMuffinResourceOpts()
+  const { links } = show
+  return (
+    <div style={{ marginRight: "auto" }}>
+      {links.map(([key, props]) => (
+        <LinkAction key={key} resource={key} {...props} />
+      ))}
+    </div>
+  )
+}
+
+setupAdmin(["show-links"], MuffinShowLinks)

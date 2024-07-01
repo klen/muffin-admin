@@ -17,18 +17,18 @@ import { BulkActionButton } from "./buttons"
 import { useMuffinResourceOpts } from "./hooks"
 import { buildAdmin, findBuilder, setupAdmin } from "./utils"
 
-export function MuffinResourceList() {
+export function MuffinList() {
   const { name, list } = useMuffinResourceOpts()
   const { fields, edit, show, limit, limitMax, filters, sort } = list
 
-  const Actions = findBuilder(["list-actions", name])
+  const Toolbar = findBuilder(["list-toolbar", name])
   const BulkActions = findBuilder(["list-bulk-actions", name])
 
   return (
     <List
       sort={sort}
       perPage={limit}
-      actions={<Actions />}
+      actions={<Toolbar />}
       filters={buildAdmin(["list-filters", name], filters)}
       bulkActionButtons={<BulkActions />}
       pagination={
@@ -43,12 +43,11 @@ export function MuffinResourceList() {
   )
 }
 
-setupAdmin(["list"], MuffinResourceList)
+setupAdmin(["list"], MuffinList)
 setupAdmin(["list-fields"], buildRA)
-
 setupAdmin(["list-filters"], buildRA)
 
-function MuffinListActions() {
+function MuffinListToolbar() {
   const {
     list: { create },
   } = useMuffinResourceOpts()
@@ -61,7 +60,7 @@ function MuffinListActions() {
     </TopToolbar>
   )
 }
-setupAdmin(["list-actions"], MuffinListActions)
+setupAdmin(["list-toolbar"], MuffinListToolbar)
 
 function MuffinListBulkActions() {
   const {
