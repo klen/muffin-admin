@@ -5,7 +5,6 @@ import {
   SaveButton,
   ShowButton,
   SimpleForm,
-  Toolbar,
   TopToolbar,
 } from "react-admin"
 import { buildRA } from "./buildRA"
@@ -13,7 +12,7 @@ import { ActionButton } from "./buttons"
 import { useMuffinAdminOpts, useMuffinResourceOpts } from "./hooks"
 import { buildAdmin, findBuilder, setupAdmin } from "./utils"
 
-export function MuffinResourceEdit() {
+export function MuffinEdit() {
   const {
     adminProps: { mutationMode = "optimistic" },
   } = useMuffinAdminOpts()
@@ -21,10 +20,10 @@ export function MuffinResourceEdit() {
   if (!edit) return null
 
   const { inputs, remove } = edit
-  const Actions = findBuilder(["edit-actions", name]) as unknown as any
+  const Toolbar = findBuilder(["edit-toolbar", name])
 
   return (
-    <Edit actions={<Actions />} mutationMode={mutationMode}>
+    <Edit actions={<Toolbar />} mutationMode={mutationMode}>
       <SimpleForm
         toolbar={
           <Toolbar>
@@ -45,23 +44,34 @@ export function MuffinResourceEdit() {
   )
 }
 
-setupAdmin(["edit"], MuffinResourceEdit)
+setupAdmin(["edit"], MuffinEdit)
+setupAdmin(["edit-inputs"], buildRA)
 
-function MuffinResourceEditActions() {
-  const { edit } = useMuffinResourceOpts()
-  if (!edit) return null
-  const { actions = [] } = edit
+export function MuffinEditToolbar() {
+  const { name } = useMuffinResourceOpts()
+  const Actions = findBuilder(["edit-actions", name])
   return (
     <TopToolbar>
-      {actions.map((props, idx) => (
-        <ActionButton key={idx} {...props} />
-      ))}
+      <Actions />
       <ListButton />
       <ShowButton />
     </TopToolbar>
   )
 }
 
-setupAdmin(["edit-actions"], MuffinResourceEditActions)
+setupAdmin(["edit-toolbar"], MuffinEditToolbar)
 
-setupAdmin(["edit-inputs"], buildRA)
+export function MuffinEditActions() {
+  const { edit } = useMuffinResourceOpts()
+  if (!edit) return null
+  const { actions = [] } = edit
+  return (
+    <>
+      {actions.map((props, idx) => (
+        <ActionButton key={idx} {...props} />
+      ))}
+    </>
+  )
+}
+
+setupAdmin(["edit-actions"], MuffinEditActions)

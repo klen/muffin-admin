@@ -7,21 +7,20 @@ export function MuffinResourceCreate() {
   const { name, create } = useMuffinResourceOpts()
   if (!create) return null
 
-  const Actions = findBuilder(["create-actions", name])
+  const Toolbar = findBuilder(["create-toolbar", name])
 
   return (
-    <Create actions={<Actions />}>
+    <Create actions={<Toolbar />}>
       <SimpleForm>{buildAdmin(["create-inputs", name], create)}</SimpleForm>
     </Create>
   )
 }
 
 setupAdmin(["create"], MuffinResourceCreate)
+setupAdmin(["create-inputs"], buildRA)
 
-setupAdmin(["create-actions"], () => (
+setupAdmin(["create-toolbar"], () => (
   <TopToolbar>
     <ListButton />
   </TopToolbar>
 ))
-
-setupAdmin(["create-inputs"], buildRA)
