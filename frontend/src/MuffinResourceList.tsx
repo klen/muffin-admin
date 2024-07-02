@@ -51,7 +51,7 @@ function MuffinListDatagrid() {
   return (
     <DatagridConfigurable rowClick={show ? "show" : edit ? "edit" : false}>
       {buildAdmin(["list-fields", name], fields)}
-      {buildAdmin(["list-grid-buttons"], name)}
+      {buildAdmin(["list-grid-buttons", name])}
     </DatagridConfigurable>
   )
 }
