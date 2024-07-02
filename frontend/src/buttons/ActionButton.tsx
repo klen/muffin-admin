@@ -1,12 +1,4 @@
-import {
-  Button,
-  useListContext,
-  useNotify,
-  useRecordContext,
-  useRefresh,
-  useResourceContext,
-  useUnselectAll,
-} from "react-admin"
+import { Button, useListContext, useRecordContext } from "react-admin"
 
 import { useState } from "react"
 import { useAction } from "../hooks/useAction"
@@ -16,18 +8,7 @@ import { buildIcon, findBuilder } from "../utils"
 export function ActionButton({ icon, label, title, action, id }: AdminAction) {
   const [payloadActive, setPayloadActive] = useState(false)
   const record = useRecordContext()
-  const notify = useNotify()
-  const refresh = useRefresh()
-  const { mutate, isLoading } = useAction(action, {
-    onSuccess: ({ data }) => {
-      if (data && data.message) notify(data.message, { type: "success" })
-      if (data && data.redirectTo) window.location = data.redirectTo
-      else refresh()
-    },
-    onError: (err) => {
-      notify(typeof err === "string" ? err : err.message, { type: "error" })
-    },
-  })
+  const { mutate, isLoading } = useAction(action, {})
 
   const PayloadBuilder = findBuilder(["action", "payload", id])
 
@@ -53,27 +34,9 @@ export function ActionButton({ icon, label, title, action, id }: AdminAction) {
 }
 
 export function BulkActionButton({ label, icon, title, action, id }: AdminAction) {
-  const resource = useResourceContext()
   const { selectedIds } = useListContext()
+  const { mutate, isLoading } = useAction(action)
   const [payloadActive, setPayloadActive] = useState(false)
-
-  const refresh = useRefresh(),
-    unselectAll = useUnselectAll(resource),
-    notify = useNotify()
-
-  const { mutate, isLoading } = useAction(action, {
-    onSuccess: ({ data }) => {
-      if (data && data.message) notify(data.message, { type: "success" })
-      if (data && data.redirectTo) window.location = data.redirectTo
-      else {
-        unselectAll()
-        refresh()
-      }
-    },
-    onError: (err) => {
-      notify(typeof err === "string" ? err : err.message, { type: "error" })
-    },
-  })
 
   const PayloadBuilder = findBuilder(["action", "payload", id])
 
