@@ -91,9 +91,9 @@ export function MuffinDataprovider(apiUrl: string) {
   return methods
 }
 
-export type TActionProps = {
+export type TActionProps<T = any> = {
   payload?: any
   ids?: string[]
-  record: any
+  record?: T
 }
 setupAdmin(["dataprovider"], MuffinDataprovider)

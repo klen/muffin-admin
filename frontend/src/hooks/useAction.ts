@@ -1,11 +1,15 @@
 import { useDataProvider, useResourceContext } from "react-admin"
-import { useMutation } from "react-query"
-import { TActionProps } from "../dataprovider"
+import { UseMutationOptions, useMutation } from "react-query"
+import { MuffinDataprovider, TActionProps } from "../dataprovider"
 
-export function useAction(action) {
-  const dataProvider = useDataProvider()
+export function useAction(
+  action: string,
+  options?: UseMutationOptions<{ data: any }, any, TActionProps>
+) {
   const resource = useResourceContext()
-  return useMutation<{ data: any }, { message: string } | string, any>((params: TActionProps) =>
-    dataProvider.runAction(resource, action, params)
+  const dataProvider = useDataProvider() as ReturnType<typeof MuffinDataprovider>
+  return useMutation(
+    (params: TActionProps) => dataProvider.runAction(resource, action, params),
+    options
   )
 }
