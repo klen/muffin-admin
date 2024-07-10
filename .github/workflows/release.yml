@@ -36,7 +36,7 @@ jobs:
       working-directory: frontend
 
     - name: Publish Frontend
-      run: yarn npm publish
+      run: npm publish
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
