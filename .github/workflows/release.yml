@@ -18,8 +18,7 @@ jobs:
     - uses: actions/setup-node@main
       with:
         always-auth: true
-        node-version: '18.x'
-        registry-url: 'https://registry.npmjs.org'
+        registry-url: 'https://registry.npmjs.org/'
 
     - name: Install poetry
       run: pipx install poetry
@@ -28,9 +27,9 @@ jobs:
 
     - name: Build Frontend
       run: |
-          npm install
+          yarn
           make build
-          npm publish
+          yarn publish
           make pypi
 
       working-directory: frontend
