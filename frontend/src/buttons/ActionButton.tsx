@@ -9,7 +9,7 @@ export function ActionButton({ icon, label, title, action, id }: AdminAction) {
   const [payloadActive, setPayloadActive] = useState(false)
   const record = useRecordContext()
   const resource = useResourceContext()
-  const { mutate, isLoading } = useAction(action, {})
+  const { mutate, isPending } = useAction(action, {})
 
   const PayloadBuilder = findBuilder(["action", "payload", id, resource])
 
@@ -19,7 +19,7 @@ export function ActionButton({ icon, label, title, action, id }: AdminAction) {
         label={label}
         title={title}
         onClick={() => (PayloadBuilder ? setPayloadActive(true) : mutate({ record }))}
-        disabled={isLoading}
+        disabled={isPending}
       >
         {buildIcon(icon)}
       </Button>
@@ -36,7 +36,7 @@ export function ActionButton({ icon, label, title, action, id }: AdminAction) {
 
 export function BulkActionButton({ label, icon, title, action, id }: AdminAction) {
   const { selectedIds } = useListContext()
-  const { mutate, isLoading } = useAction(action)
+  const { mutate, isPending } = useAction(action)
   const resource = useResourceContext()
   const [payloadActive, setPayloadActive] = useState(false)
 
@@ -48,7 +48,7 @@ export function BulkActionButton({ label, icon, title, action, id }: AdminAction
         label={label}
         title={title}
         onClick={() => (PayloadBuilder ? setPayloadActive(true) : mutate({ ids: selectedIds }))}
-        disabled={isLoading}
+        disabled={isPending}
       >
         {buildIcon(icon)}
       </Button>

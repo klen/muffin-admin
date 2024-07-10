@@ -2,6 +2,7 @@ import sortBy from "lodash/sortBy"
 import uniq from "lodash/uniq"
 import {
   BulkDeleteButton,
+  BulkExportButton,
   CreateButton,
   DatagridConfigurable,
   EditButton,
@@ -23,7 +24,6 @@ export function MuffinList() {
 
   const DataGrid = findBuilder(["list-grid", name])
   const Toolbar = findBuilder(["list-toolbar", name])
-  const BulkActions = findBuilder(["list-bulk-actions", name])
 
   return (
     <List
@@ -31,7 +31,6 @@ export function MuffinList() {
       perPage={limit}
       actions={<Toolbar />}
       filters={buildAdmin(["list-filters", name], filters)}
-      bulkActionButtons={<BulkActions />}
       pagination={
         <Pagination rowsPerPageOptions={sortBy(uniq([10, 25, 50, 100, limit, limitMax]))} />
       }
@@ -48,8 +47,12 @@ setupAdmin(["list-filters"], buildRA)
 function MuffinListDatagrid() {
   const { name, list } = useMuffinResourceOpts()
   const { fields, edit, show } = list
+  const BulkActions = findBuilder(["list-bulk-actions", name])
   return (
-    <DatagridConfigurable rowClick={show ? "show" : edit ? "edit" : false}>
+    <DatagridConfigurable
+      rowClick={show ? "show" : edit ? "edit" : false}
+      bulkActionButtons={<BulkActions />}
+    >
       {buildAdmin(["list-fields", name], fields)}
       {buildAdmin(["list-grid-buttons", name])}
     </DatagridConfigurable>
@@ -91,6 +94,7 @@ function MuffinListBulkActions() {
       {actions.map((props) => (
         <BulkActionButton key={props.id} {...props} />
       ))}
+      <BulkExportButton />
       {remove && <BulkDeleteButton />}
     </>
   )
