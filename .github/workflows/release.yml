@@ -17,6 +17,8 @@ jobs:
     - uses: actions/setup-python@main
     - uses: actions/setup-node@main
       with:
+        always-auth: true
+        node-version: '18.x'
         registry-url: 'https://registry.npmjs.org'
 
     - name: Install poetry
