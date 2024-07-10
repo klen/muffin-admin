@@ -1,4 +1,4 @@
-import { Button, useListContext, useRecordContext } from "react-admin"
+import { Button, useListContext, useRecordContext, useResourceContext } from "react-admin"
 
 import { useState } from "react"
 import { useAction } from "../hooks/useAction"
@@ -8,9 +8,10 @@ import { buildIcon, findBuilder } from "../utils"
 export function ActionButton({ icon, label, title, action, id }: AdminAction) {
   const [payloadActive, setPayloadActive] = useState(false)
   const record = useRecordContext()
+  const resource = useResourceContext()
   const { mutate, isLoading } = useAction(action, {})
 
-  const PayloadBuilder = findBuilder(["action", "payload", id])
+  const PayloadBuilder = findBuilder(["action", "payload", id, resource])
 
   return (
     <>
@@ -36,9 +37,10 @@ export function ActionButton({ icon, label, title, action, id }: AdminAction) {
 export function BulkActionButton({ label, icon, title, action, id }: AdminAction) {
   const { selectedIds } = useListContext()
   const { mutate, isLoading } = useAction(action)
+  const resource = useResourceContext()
   const [payloadActive, setPayloadActive] = useState(false)
 
-  const PayloadBuilder = findBuilder(["action", "payload", id])
+  const PayloadBuilder = findBuilder(["action", "payload", id, resource])
 
   return (
     <>
