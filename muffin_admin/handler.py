@@ -92,7 +92,7 @@ class AdminHandler(RESTBase):
 
     def get_selected(self, request: Request):
         """Get selected objects."""
-        ids = request.query.getall("ids")
+        ids = request.query.getall("ids", None)
         return ids
 
     @classmethod
