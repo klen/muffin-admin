@@ -26,7 +26,7 @@ jobs:
 
     - name: Build Frontend
       run: |
-          yarn
+          npm install
           make build
           npm publish
           make pypi
