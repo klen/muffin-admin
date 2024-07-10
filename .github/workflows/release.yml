@@ -32,13 +32,14 @@ jobs:
       run: |
           yarn install --imutable
           yarn build
-          yarn npm publish
           make pypi
+      working-directory: frontend
 
+    - name: Publish Frontend
+      run: yarn npm publish
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
       working-directory: frontend
 
     - name: Build Package
