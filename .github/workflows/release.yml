@@ -15,26 +15,30 @@ jobs:
 
     - uses: actions/checkout@main
     - uses: actions/setup-python@main
-    - uses: actions/setup-node@main
+    - uses: actions/setup-node@v3
       with:
-        always-auth: true
-        registry-url: 'https://registry.npmjs.org/'
+        node-version: lts/*
+        registry-url: https://registry.npmjs.org
+        cache: yarn
 
     - name: Install poetry
       run: pipx install poetry
+
     - name: Setup poetry
       run: poetry config pypi-token.pypi ${{ secrets.pypy }}
 
     - name: Build Frontend
       run: |
-          yarn
-          make build
-          yarn publish
+          yarn install --imutable
+          yarn build
+          yarn npm publish
           make pypi
 
-      working-directory: frontend
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      working-directory: frontend
 
     - name: Build Package
       run: poetry publish --build
