@@ -104,6 +104,7 @@ class AdminHandler(RESTBase):
         icon: Optional[str] = None,
         label: Optional[str] = None,
         view: str = "list",
+        **opts,
     ):
         """Register an action for the handler.
 
@@ -124,6 +125,7 @@ class AdminHandler(RESTBase):
                 "title": method.__doc__,
                 "id": method.__name__,
                 "label": label or " ".join(method.__name__.split("_")).capitalize(),
+                **opts,
             }
             return method
 

@@ -135,10 +135,7 @@ class MessageResource(PWAdminHandler):
         ra_fields = (("status", ("ChipField", {})),)
 
     @PWAdminHandler.action(
-        "/message/{id}/publish",
-        label="Publish",
-        icon="Publish",
-        view="show",
+        "/message/{id}/publish", label="Publish", icon="Publish", view="show", confirm=True
     )
     async def publish_message(self, request, resource=None):
         if resource is None:
