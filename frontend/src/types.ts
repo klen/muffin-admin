@@ -9,6 +9,7 @@ export type AdminAction = {
   title: string
   icon: string
   action: string
+  confirm?: string | false
 }
 
 export type AdminField = [string, { source: string }]

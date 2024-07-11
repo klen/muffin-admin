@@ -3,17 +3,19 @@ import SvgIcon from "@mui/material/SvgIcon"
 import Tooltip from "@mui/material/Tooltip"
 import Typography from "@mui/material/Typography"
 import {
-  Admin,
+  AdminContext,
   AdminProps,
+  AdminUI,
   AppBar,
   AppBarProps,
-  AuthProvider,
-  DataProvider,
+  defaultI18nProvider,
   Layout,
   LayoutProps,
+  localStorageStore,
   Login,
 } from "react-admin"
 
+import { ConfirmationProvider } from "./common"
 import { useMuffinAdminOpts } from "./hooks"
 import { buildAdmin, findBuilder, findIcon, setupAdmin } from "./utils"
 
@@ -22,22 +24,64 @@ export function MuffinAdmin(props: AdminProps) {
   const { resources = [], auth, adminProps, apiUrl } = opts
 
   document.title = adminProps?.title || "Muffin Admin"
-  const authProvider = findBuilder(["authprovider"])(auth) as AuthProvider
-  const dataProvider = findBuilder(["dataprovider"])(apiUrl) as DataProvider
+
+  const {
+    basename,
+    authProvider = findBuilder(["authprovider"])(auth),
+    dataProvider = findBuilder(["dataprovider"])(apiUrl),
+    catchAll,
+    dashboard = findBuilder(["dashboard"]),
+    disableTelemetry,
+    error,
+    i18nProvider = defaultI18nProvider,
+    layout = findBuilder(["layout"]),
+    loading,
+    loginPage = findBuilder(["loginpage"]),
+    authCallbackPage,
+    notification,
+    queryClient,
+    requireAuth = auth.required,
+    store = localStorageStore(),
+    ready,
+    theme,
+    lightTheme,
+    darkTheme,
+    defaultTheme,
+    title = "React Admin",
+  } = props
 
   return (
-    <Admin
-      requireAuth={auth.required}
+    <AdminContext
       authProvider={authProvider}
+      basename={basename}
       dataProvider={dataProvider}
-      layout={findBuilder(["layout"])}
-      loginPage={findBuilder(["loginpage"])}
-      dashboard={findBuilder(["dashboard"])}
-      darkTheme={{ palette: { mode: "dark" } }}
-      {...props}
+      i18nProvider={i18nProvider}
+      store={store}
+      queryClient={queryClient}
+      theme={theme}
+      lightTheme={lightTheme}
+      darkTheme={darkTheme}
+      defaultTheme={defaultTheme}
     >
-      {resources?.map(({ name }) => buildAdmin(["resource", name], { name }))}
-    </Admin>
+      <ConfirmationProvider>
+        <AdminUI
+          layout={layout}
+          dashboard={dashboard}
+          disableTelemetry={disableTelemetry}
+          catchAll={catchAll}
+          error={error}
+          title={title}
+          loading={loading}
+          loginPage={loginPage}
+          authCallbackPage={authCallbackPage}
+          notification={notification}
+          requireAuth={requireAuth}
+          ready={ready}
+        >
+          {resources?.map(({ name }) => buildAdmin(["resource", name], { name }))}
+        </AdminUI>
+      </ConfirmationProvider>
+    </AdminContext>
   )
 }
 
