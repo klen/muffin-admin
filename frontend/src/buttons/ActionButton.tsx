@@ -123,7 +123,13 @@ export function CommonPayload({ active, onClose, onHandle, schema, title }) {
           open={active}
           onClose={onClose}
           title={translate(title, { _: title })}
-          actions={<PayloadButtons onClose={onClose} onSubmit={formHandleSubmit} />}
+          actions={
+            <PayloadButtons
+              onClose={onClose}
+              onSubmit={formHandleSubmit}
+              isValid={form.formState.isValid}
+            />
+          }
         >
           {inputs}
         </AdminModal>
