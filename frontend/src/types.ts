@@ -3,7 +3,7 @@ export type TProps = {
 }
 
 export type AdminAction = {
-  view: ("show" | "edit" | "list" | "bulk")[]
+  view?: ("show" | "edit" | "list" | "bulk")[]
   id: string
   label: string
   title: string

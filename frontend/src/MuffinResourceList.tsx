@@ -93,7 +93,7 @@ function MuffinListBulkActions() {
     actions: baseActions = [],
     list: { remove },
   } = useMuffinResourceOpts()
-  const actions = baseActions.filter((a) => a.view.includes("bulk"))
+  const actions = baseActions.filter((a) => a.view?.includes("bulk"))
   return (
     <>
       {actions.map((props) => (
