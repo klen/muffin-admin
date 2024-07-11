@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import inspect
+from functools import wraps
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -17,14 +18,17 @@ from typing import (
 )
 
 import marshmallow as ma
+from muffin_rest import APIError
 from muffin_rest.handler import RESTBase
 from muffin_rest.options import RESTOptions
+
+from muffin_admin.types import TActionView, TRAFields, TRAInputs
 
 if TYPE_CHECKING:
     from http_router.types import TMethods
     from muffin import Request
 
-    from muffin_admin.types import TRAFields, TRAInputs, TRALinks, TRARefs
+    from muffin_admin.types import TRALinks, TRARefs
 
     from .types import TRAConverter, TRAInfo
 
@@ -103,7 +107,8 @@ class AdminHandler(RESTBase):
         methods: Optional[TMethods] = None,
         icon: Optional[str] = None,
         label: Optional[str] = None,
-        view: Optional[list[str] | str] = None,
+        view: Optional[list[TActionView] | TActionView] = None,
+        schema: Optional[Type[ma.Schema]] = None,
         **opts,
     ):
         """Register an action for the handler.
@@ -117,17 +122,35 @@ class AdminHandler(RESTBase):
         """
 
         def decorator(method):
-            method.__route__ = (path,), methods
-            method.__action__ = {
+            if schema is None:
+                wrapper = method
+            else:
+
+                @wraps(method)
+                async def wrapper(self, request: Request, **kwargs):
+                    try:
+                        raw_data = cast(dict, await request.json())
+                        data = schema().load(raw_data)  # type: ignore[]
+                    except ValueError:
+                        raise APIError.BAD_REQUEST("Invalid data") from None
+                    except ma.ValidationError as exc:
+                        raise APIError.BAD_REQUEST("Invalid data", errors=exc.messages) from None
+
+                    return await method(self, request, data=data, **kwargs)
+
+            wrapper.__route__ = (path,), methods  # type: ignore[]
+            wrapper.__action__ = {  # type: ignore[]
                 "view": [view] if isinstance(view, str) else view or ["show"],
                 "icon": icon,
                 "action": path,
                 "title": method.__doc__,
                 "id": method.__name__,
                 "label": label or " ".join(method.__name__.split("_")).capitalize(),
+                "schema": schema,
                 **opts,
             }
-            return method
+
+            return wrapper
 
         return decorator
 
@@ -135,52 +158,7 @@ class AdminHandler(RESTBase):
     def to_ra(cls) -> Dict[str, Any]:
         """Get JSON params for react-admin."""
         meta = cls.meta
-        schema_cls = meta.Schema
-        schema_opts = schema_cls.opts
-        schema_fields = schema_opts.fields
-        schema_exclude = schema_opts.exclude
-        schema_load_only = schema_opts.load_only
-        schema_dump_only = schema_opts.dump_only
-
-        fields_customize = dict(meta.ra_fields)
-        inputs_customize = dict(meta.ra_inputs)
-
-        fields = []
-        inputs = []
-
-        if not schema_fields:
-            schema_fields = list(schema_cls._declared_fields.keys())
-
-        for name in schema_fields:
-            field = schema_cls._declared_fields.get(name)
-
-            if not field or name in schema_exclude:
-                continue
-
-            source = field.data_key or name
-            if not field.load_only and name not in schema_load_only:
-                field_info = (
-                    fields_customize[source]
-                    if source in fields_customize
-                    else cls.to_ra_field(field, source)
-                )
-                if isinstance(field_info, str):
-                    field_info = field_info, {}
-
-                field_info[1].setdefault("source", source)
-                fields.append(field_info)
-
-            if not field.dump_only and name not in schema_dump_only:
-                input_info = (
-                    inputs_customize[source]
-                    if source in inputs_customize
-                    else cls.to_ra_input(field, source)
-                )
-                if isinstance(input_info, str):
-                    input_info = input_info, {}
-
-                input_info[1].setdefault("source", source)
-                inputs.append(input_info)
+        fields, inputs = cls.to_ra_schema(meta.Schema)  # type: ignore[]
 
         fields_hash = {
             props["source"]: (
@@ -190,11 +168,19 @@ class AdminHandler(RESTBase):
             for (ra_type, props) in fields
         }
 
+        actions = []
+        for source in meta.actions:
+            info = dict(source)
+            if info["schema"]:
+                _, inputs = cls.to_ra_schema(info["schema"])
+                info["schema"] = inputs
+            actions.append(info)
+
         data = {
             "name": meta.name,
             "label": meta.label,
             "icon": meta.icon,
-            "actions": meta.actions,
+            "actions": actions,
             "list": {
                 "create": meta.create,
                 "remove": bool(meta.delete),
@@ -232,6 +218,56 @@ class AdminHandler(RESTBase):
             }
 
         return data
+
+    @classmethod
+    def to_ra_schema(cls, schema_cls: Type[ma.Schema]):
+        meta = cls.meta
+        schema_opts = schema_cls.opts
+        schema_fields = schema_opts.fields
+        schema_exclude = schema_opts.exclude
+        schema_load_only = schema_opts.load_only
+        schema_dump_only = schema_opts.dump_only
+
+        fields_customize = dict(meta.ra_fields)
+        inputs_customize = dict(meta.ra_inputs)
+        fields = []
+        inputs = []
+
+        if not schema_fields:
+            schema_fields = list(schema_cls._declared_fields.keys())
+
+        for name in schema_fields:
+            field = schema_cls._declared_fields.get(name)
+
+            if not field or name in schema_exclude:
+                continue
+
+            source = field.data_key or name
+            if not field.load_only and name not in schema_load_only:
+                field_info = (
+                    fields_customize[source]
+                    if source in fields_customize
+                    else cls.to_ra_field(field, source)
+                )
+                if isinstance(field_info, str):
+                    field_info = field_info, {}
+
+                field_info[1].setdefault("source", source)
+                fields.append(field_info)
+
+            if not field.dump_only and name not in schema_dump_only:
+                input_info = (
+                    inputs_customize[source]
+                    if source in inputs_customize
+                    else cls.to_ra_input(field, source)
+                )
+                if isinstance(input_info, str):
+                    input_info = input_info, {}
+
+                input_info[1].setdefault("source", source)
+                inputs.append(input_info)
+
+        return cast(TRAFields, fields), cast(TRAInputs, inputs)
 
     @classmethod
     def to_ra_field(cls, field: ma.fields.Field, source: str) -> TRAInfo:

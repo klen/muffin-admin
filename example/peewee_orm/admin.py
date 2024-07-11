@@ -4,6 +4,7 @@ import marshmallow as ma
 from muffin import ResponseJSON
 from muffin_rest import APIError
 
+from example.peewee_orm.schemas import GreetActionSchema
 from muffin_admin import Plugin, PWAdminHandler
 
 from . import app
@@ -93,12 +94,12 @@ class UserResource(PWAdminHandler):
         ra_refs = (("group", {"source": "name"}),)
         delete = False
 
-    @PWAdminHandler.action("/user/error", label="Broken Action", view=["list"], icon="Error")
+    @PWAdminHandler.action("/user/error", label="Broken Action", icon="Error", view=["bulk"])
     async def just_raise_an_error(self, request, resource=None):
         """Just show an error."""
         raise APIError.BAD_REQUEST(message="The action is broken")
 
-    @PWAdminHandler.action("/user/disable", label="Disable Users", icon="Clear", view=["list"])
+    @PWAdminHandler.action("/user/disable", label="Disable Users", icon="Clear", view=["bulk"])
     async def disable_users(self, request, resource=None):
         """Mark selected users as inactive."""
         import asyncio
@@ -107,6 +108,16 @@ class UserResource(PWAdminHandler):
         await User.update(is_active=False).where(User.id << ids)
         await asyncio.sleep(1)
         return {"status": True, "ids": ids, "message": "Users is disabled"}
+
+    @PWAdminHandler.action(
+        "/user/greet",
+        label="Greeter",
+        view=["list"],
+        schema=GreetActionSchema,
+    )
+    async def greet(self, request, resource=None, data=None):
+        """Mark selected users as inactive."""
+        return {"status": True, "message": "Hello {name}".format(**data)}
 
 
 @admin.route

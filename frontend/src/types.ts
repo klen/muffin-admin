@@ -3,13 +3,14 @@ export type TProps = {
 }
 
 export type AdminAction = {
-  view: string[]
+  view: ("show" | "edit" | "list" | "bulk")[]
   id: string
   label: string
   title: string
   icon: string
   action: string
   confirm?: string | false
+  schema?: AdminInput[]
 }
 
 export type AdminField = [string, { source: string }]
@@ -34,11 +35,11 @@ export type AdminResourceProps = {
   actions: AdminAction[]
   create: AdminInput[] | false
   edit:
-  | {
-    inputs: AdminInput[]
-    remove?: boolean
-  }
-  | false
+    | {
+        inputs: AdminInput[]
+        remove?: boolean
+      }
+    | false
   list: {
     limit: number
     limitMax: number

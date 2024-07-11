@@ -14,7 +14,7 @@ import {
   TopToolbar,
 } from "react-admin"
 import { buildRA } from "./buildRA"
-import { BulkActionButton } from "./buttons"
+import { ActionButton, BulkActionButton } from "./buttons"
 import { useMuffinResourceOpts } from "./hooks"
 import { buildAdmin, findBuilder, setupAdmin } from "./utils"
 
@@ -72,12 +72,15 @@ setupAdmin(["list-grid-buttons"], MuffinListGridButtons)
 
 function MuffinListToolbar() {
   const {
+    actions: baseActions = [],
     list: { create },
   } = useMuffinResourceOpts()
+  const actions = baseActions.filter((a) => a.view.includes("list"))
   return (
     <TopToolbar>
       <SelectColumnsButton />
       <FilterButton />
+      {actions.length && actions.map((props) => <ActionButton key={props.id} {...props} />)}
       {create && <CreateButton />}
       <ExportButton />
     </TopToolbar>
@@ -90,7 +93,7 @@ function MuffinListBulkActions() {
     actions: baseActions = [],
     list: { remove },
   } = useMuffinResourceOpts()
-  const actions = baseActions.filter((a) => a.view.includes("list"))
+  const actions = baseActions.filter((a) => a.view.includes("bulk"))
   return (
     <>
       {actions.map((props) => (
