@@ -4,7 +4,7 @@ import { PropsWithChildren } from "react"
 interface IProps {
   open: boolean
   onClose: () => void
-  title?: string
+  title?: React.ReactNode
   actions?: React.ReactNode
 }
 
