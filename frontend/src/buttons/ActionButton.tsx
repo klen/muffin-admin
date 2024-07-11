@@ -13,7 +13,7 @@ import { useState } from "react"
 import { buildRA } from "../buildRA"
 import { AdminModal, PayloadButtons, useConfirmation } from "../common"
 import { useAction } from "../hooks/useAction"
-import { AdminAction } from "../types"
+import { AdminAction, AdminPayloadProps } from "../types"
 import { buildIcon, findBuilder } from "../utils"
 
 export type ActionPayloadProps = {
@@ -102,7 +102,7 @@ function ActionButtonBase({
   )
 }
 
-export function CommonPayload({ active, onClose, onHandle, schema, title }) {
+export function CommonPayload({ active, onClose, onHandle, schema, title }: AdminPayloadProps) {
   schema[0][1] = { ...schema[0][1], autoFocus: true }
   const inputs = buildRA(schema)
   const translate = useTranslate()
