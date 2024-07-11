@@ -80,7 +80,7 @@ function MuffinListToolbar() {
     <TopToolbar>
       <SelectColumnsButton />
       <FilterButton />
-      {actions.length && actions.map((props) => <ActionButton key={props.id} {...props} />)}
+      {actions.length ? actions.map((props) => <ActionButton key={props.id} {...props} />) : null}
       {create && <CreateButton />}
       <ExportButton />
     </TopToolbar>
