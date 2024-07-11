@@ -111,8 +111,9 @@ class UserResource(PWAdminHandler):
 
     @PWAdminHandler.action(
         "/user/greet",
+        "/user/{id}/greet",
         label="Greeter",
-        view=["list"],
+        view=["list", "show"],
         schema=GreetActionSchema,
     )
     async def greet(self, request, resource=None, data=None):
