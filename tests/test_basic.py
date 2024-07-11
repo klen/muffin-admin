@@ -98,7 +98,7 @@ async def test_endpoint_action(app):
         {
             "view": ["show"],
             "icon": None,
-            "action": "/base",
+            "paths": ("/base",),
             "title": None,
             "label": "Base action",
             "id": "base_action",

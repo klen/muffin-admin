@@ -20,11 +20,12 @@ export type ActionPayloadProps = {
   onHandle: (payload: any) => void
 }
 
-export function ActionButton({ action, confirm, ...props }: AdminAction) {
+export function ActionButton({ paths, confirm, ...props }: AdminAction) {
   const translate = useTranslate()
   const record = useRecordContext()
   const confirmation = useConfirmation()
-  const { mutate, isPending } = useAction(action)
+  const path = paths.find((p) => p.includes("{id}")) || paths[paths.length - 1]
+  const { mutate, isPending } = useAction(path)
 
   const confirmMessage =
     typeof confirm === "string" ? translate(confirm) : "Do you confirm this action?"
@@ -37,10 +38,11 @@ export function ActionButton({ action, confirm, ...props }: AdminAction) {
   return <ActionButtonBase {...props} isPending={isPending} onHandle={onHandle} />
 }
 
-export function BulkActionButton({ action, confirm, ...props }: AdminAction) {
+export function BulkActionButton({ paths, confirm, ...props }: AdminAction) {
   const translate = useTranslate()
   const { selectedIds } = useListContext()
-  const { mutate, isPending } = useAction(action)
+  const path = paths.find((p) => !p.includes("{id}")) || paths[0]
+  const { mutate, isPending } = useAction(path)
   const confirmation = useConfirmation()
 
   const confirmMessage =
@@ -85,7 +87,7 @@ function ActionButtonBase({
   icon,
   schema,
   id,
-}: Omit<AdminAction, "action"> & {
+}: Omit<AdminAction, "paths"> & {
   isPending?: boolean
   onHandle: (payload?: any) => void
 }) {

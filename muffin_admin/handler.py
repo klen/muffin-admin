@@ -102,8 +102,7 @@ class AdminHandler(RESTBase):
     @classmethod
     def action(  # noqa: PLR0913
         cls,
-        path: str,
-        *,
+        *paths: str,
         methods: Optional[TMethods] = None,
         icon: Optional[str] = None,
         label: Optional[str] = None,
@@ -138,11 +137,11 @@ class AdminHandler(RESTBase):
 
                     return await method(self, request, data=data, **kwargs)
 
-            wrapper.__route__ = (path,), methods  # type: ignore[]
+            wrapper.__route__ = paths, methods  # type: ignore[]
             wrapper.__action__ = {  # type: ignore[]
                 "view": [view] if isinstance(view, str) else view or ["show"],
                 "icon": icon,
-                "action": path,
+                "paths": paths,
                 "title": method.__doc__,
                 "id": method.__name__,
                 "label": label or " ".join(method.__name__.split("_")).capitalize(),
