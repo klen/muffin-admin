@@ -90,8 +90,6 @@ export function buildRAComponent(name, props) {
     delete props.required
   }
 
-  props.fullWidth = props.fullWidth ?? true
-
   if (props.children) props.children = buildRA(props.children)[0]
 
   return <Item key={props.source} {...props} />

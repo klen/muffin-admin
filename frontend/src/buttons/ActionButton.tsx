@@ -1,11 +1,13 @@
 import {
   Button,
-  Form,
+  FormGroupsProvider,
+  useAugmentedForm,
   useListContext,
   useRecordContext,
   useResourceContext,
   useTranslate,
 } from "react-admin"
+import { FormProvider } from "react-hook-form"
 
 import { useState } from "react"
 import { buildRA } from "../buildRA"
@@ -56,29 +58,6 @@ export function BulkActionButton({ paths, confirm, ...props }: AdminAction) {
   return <ActionButtonBase {...props} onHandle={onHandle} isPending={isPending} />
 }
 
-export function CommonPayload({ active, onClose, onHandle, schema, title }) {
-  const inputs = buildRA(schema)
-  const translate = useTranslate()
-  return (
-    <AdminModal
-      maxWidth="sm"
-      open={active}
-      onClose={onClose}
-      title={translate(title, { _: title })}
-    >
-      <Form
-        onSubmit={(data) => {
-          onClose()
-          onHandle(data)
-        }}
-      >
-        {inputs}
-        <PayloadButtons onClose={onClose} />
-      </Form>
-    </AdminModal>
-  )
-}
-
 function ActionButtonBase({
   label,
   title,
@@ -120,5 +99,37 @@ function ActionButtonBase({
         />
       )}
     </>
+  )
+}
+
+export function CommonPayload({ active, onClose, onHandle, schema, title }) {
+  schema[0][1] = { ...schema[0][1], autoFocus: true }
+  const inputs = buildRA(schema)
+  const translate = useTranslate()
+  const { form, formHandleSubmit } = useAugmentedForm({
+    onSubmit: (data) => {
+      onClose()
+      onHandle(data)
+      form.reset()
+    },
+    record: {},
+  })
+
+  return (
+    <AdminModal
+      maxWidth="sm"
+      open={active}
+      onClose={onClose}
+      title={translate(title, { _: title })}
+    >
+      <FormProvider {...form}>
+        <FormGroupsProvider>
+          <form onSubmit={formHandleSubmit}>
+            {inputs}
+            <PayloadButtons onClose={onClose} />
+          </form>
+        </FormGroupsProvider>
+      </FormProvider>
+    </AdminModal>
   )
 }
