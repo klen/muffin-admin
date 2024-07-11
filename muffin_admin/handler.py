@@ -174,7 +174,7 @@ class AdminHandler(RESTBase):
         for source in meta.actions:
             info = dict(source)
             if info.get("schema"):
-                _, inputs = cls.to_ra_schema(info["schema"])
+                _, inputs = cls.to_ra_schema(info["schema"], resource=False)
                 info["schema"] = inputs
             actions.append(info)
 
@@ -222,7 +222,7 @@ class AdminHandler(RESTBase):
         return data
 
     @classmethod
-    def to_ra_schema(cls, schema_cls: Type[ma.Schema]):
+    def to_ra_schema(cls, schema_cls: Type[ma.Schema], *, resource: bool = True):
         meta = cls.meta
         schema_opts = schema_cls.opts
         schema_fields = schema_opts.fields
@@ -261,7 +261,7 @@ class AdminHandler(RESTBase):
                 input_info = (
                     inputs_customize[source]
                     if source in inputs_customize
-                    else cls.to_ra_input(field, source)
+                    else cls.to_ra_input(field, source, resource=resource)
                 )
                 if isinstance(input_info, str):
                     input_info = input_info, {}
@@ -287,7 +287,7 @@ class AdminHandler(RESTBase):
         return converter(field)
 
     @classmethod
-    def to_ra_input(cls, field: ma.fields.Field, _: str) -> TRAInfo:
+    def to_ra_input(cls, field: ma.fields.Field, source: str, *, resource: bool = True) -> TRAInfo:
         """Convert a field to react-admin."""
         converter = find_ra(field, MA_TO_RAI)
         rtype, props = converter(field)
