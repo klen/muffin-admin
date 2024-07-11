@@ -298,9 +298,14 @@ class AdminHandler(RESTBase):
         if field.required:
             props.setdefault("required", True)
 
-        desc = field.metadata.get("description")
+        metadata = field.metadata
+        desc = metadata.get("description")
         if desc:
             props.setdefault("helperText", desc)
+
+        label = metadata.get("label")
+        if label:
+            props.setdefault("label", label)
 
         return rtype, props
 
