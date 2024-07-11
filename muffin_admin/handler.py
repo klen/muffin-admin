@@ -140,7 +140,7 @@ class AdminHandler(RESTBase):
 
             wrapper.__route__ = paths, methods  # type: ignore[]
             wrapper.__action__ = {  # type: ignore[]
-                "view": [view] if isinstance(view, str) else view or ["show"],
+                "view": [view] if isinstance(view, str) else view,
                 "icon": icon,
                 "paths": paths,
                 "title": method.__doc__,

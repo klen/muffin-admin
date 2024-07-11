@@ -89,7 +89,7 @@ async def test_endpoint_action(app):
             filters = "id", "name"
             sorting = "id", "name"
 
-        @AdminHandler.action("/base")
+        @AdminHandler.action("/base", view="show")
         async def base_action(self, request, response=None):
             pass
 
