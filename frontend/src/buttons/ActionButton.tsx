@@ -1,5 +1,6 @@
 import {
   Button,
+  Form,
   useListContext,
   useRecordContext,
   useResourceContext,
@@ -7,7 +8,8 @@ import {
 } from "react-admin"
 
 import { useMemo, useState } from "react"
-import { useConfirmation } from "../common"
+import { buildRA } from "../buildRA"
+import { AdminModal, PayloadButtons, useConfirmation } from "../common"
 import { useAction } from "../hooks/useAction"
 import { AdminAction } from "../types"
 import { buildIcon, findBuilder } from "../utils"
@@ -18,7 +20,7 @@ export type ActionPayloadProps = {
   onHandle: (payload: any) => void
 }
 
-export function ActionButton({ icon, label, title, action, id, confirm }: AdminAction) {
+export function ActionButton({ icon, label, title, action, id, confirm, schema }: AdminAction) {
   const translate = useTranslate()
   const record = useRecordContext()
   const resource = useResourceContext()
@@ -26,28 +28,26 @@ export function ActionButton({ icon, label, title, action, id, confirm }: AdminA
   const { mutate, isPending } = useAction(action)
 
   const [payloadActive, setPayloadActive] = useState(false)
-  const [payloadResolver, setPayloadResolver] = useState<(data: any) => void>()
 
-  const PayloadBuilder = findBuilder(["action", "payload", id, resource])
-  const buildPayload = useMemo(() => {
-    if (PayloadBuilder) {
-      return new Promise((resolve) => setPayloadResolver(() => resolve))
-    }
-    return Promise.resolve()
-  }, [PayloadBuilder])
+  const PayloadBuilder =
+    findBuilder(["action", "payload", id, resource]) || (schema && CommonPayload)
+
   const confirmMessage =
     typeof confirm === "string" ? translate(confirm) : "Do you confirm this action?"
+
+  const onHandle = async (payload?) => {
+    const process = confirm ? await confirmation.confirm({ message: confirmMessage }) : true
+    if (process) await mutate({ record, payload })
+  }
 
   return (
     <>
       <Button
         label={label}
         title={title}
-        onClick={async () => {
+        onClick={() => {
           if (PayloadBuilder) setPayloadActive(true)
-          const payload = await buildPayload
-          const process = confirm ? await confirmation.confirm({ message: confirmMessage }) : true
-          if (process) await mutate({ record, payload })
+          else onHandle()
         }}
         disabled={isPending}
       >
@@ -56,8 +56,10 @@ export function ActionButton({ icon, label, title, action, id, confirm }: AdminA
       {PayloadBuilder && (
         <PayloadBuilder
           active={payloadActive}
-          onHandle={payloadResolver}
+          onHandle={onHandle}
           onClose={() => setPayloadActive(false)}
+          title={title || label}
+          schema={schema}
         />
       )}
     </>
@@ -106,5 +108,28 @@ export function BulkActionButton({ label, icon, title, action, id, confirm }: Ad
         />
       )}
     </>
+  )
+}
+
+export function CommonPayload({ active, onClose, onHandle, schema, title }) {
+  const inputs = buildRA(schema)
+  const translate = useTranslate()
+  return (
+    <AdminModal
+      maxWidth="sm"
+      open={active}
+      onClose={onClose}
+      title={translate(title, { _: title })}
+    >
+      <Form
+        onSubmit={(data) => {
+          onClose()
+          onHandle(data)
+        }}
+      >
+        {inputs}
+        <PayloadButtons onClose={onClose} />
+      </Form>
+    </AdminModal>
   )
 }

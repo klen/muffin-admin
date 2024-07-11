@@ -1,10 +1,11 @@
 """Custom types."""
 
-from typing import Any, Callable, Dict, Tuple, TypedDict
+from typing import Any, Callable, Dict, Literal, Tuple, TypedDict
 
 from marshmallow.fields import Field
 from typing_extensions import NotRequired, TypeAlias
 
+TActionView = Literal["show", "edit", "list", "bulk"]
 TRAProps = Dict[str, Any]
 TRAInfo = Tuple[str, TRAProps]
 TRAConverter = Callable[[Field], TRAInfo]
