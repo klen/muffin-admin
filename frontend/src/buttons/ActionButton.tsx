@@ -116,20 +116,18 @@ export function CommonPayload({ active, onClose, onHandle, schema, title }) {
   })
 
   return (
-    <AdminModal
-      maxWidth="sm"
-      open={active}
-      onClose={onClose}
-      title={translate(title, { _: title })}
-    >
-      <FormProvider {...form}>
-        <FormGroupsProvider>
-          <form onSubmit={formHandleSubmit}>
-            {inputs}
-            <PayloadButtons onClose={onClose} />
-          </form>
-        </FormGroupsProvider>
-      </FormProvider>
-    </AdminModal>
+    <FormProvider {...form}>
+      <FormGroupsProvider>
+        <AdminModal
+          maxWidth="sm"
+          open={active}
+          onClose={onClose}
+          title={translate(title, { _: title })}
+          actions={<PayloadButtons onClose={onClose} onSubmit={formHandleSubmit} />}
+        >
+          {inputs}
+        </AdminModal>
+      </FormGroupsProvider>
+    </FormProvider>
   )
 }
