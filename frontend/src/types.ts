@@ -8,7 +8,7 @@ export type AdminAction = {
   label: string
   title: string
   icon: string
-  action: string
+  paths: string[]
   confirm?: string | false
   schema?: AdminInput[]
 }
@@ -35,11 +35,11 @@ export type AdminResourceProps = {
   actions: AdminAction[]
   create: AdminInput[] | false
   edit:
-    | {
-        inputs: AdminInput[]
-        remove?: boolean
-      }
-    | false
+  | {
+    inputs: AdminInput[]
+    remove?: boolean
+  }
+  | false
   list: {
     limit: number
     limitMax: number
