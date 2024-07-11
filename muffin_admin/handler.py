@@ -146,9 +146,11 @@ class AdminHandler(RESTBase):
                 "title": method.__doc__,
                 "id": method.__name__,
                 "label": label or " ".join(method.__name__.split("_")).capitalize(),
-                "schema": schema,
                 **opts,
             }
+
+            if schema:
+                wrapper.__action__["schema"] = schema  # type: ignore[]
 
             return wrapper
 
@@ -171,7 +173,7 @@ class AdminHandler(RESTBase):
         actions = []
         for source in meta.actions:
             info = dict(source)
-            if info["schema"]:
+            if info.get("schema"):
                 _, inputs = cls.to_ra_schema(info["schema"])
                 info["schema"] = inputs
             actions.append(info)
