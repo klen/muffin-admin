@@ -69,7 +69,7 @@ class SAAdminHandler(AdminHandler, SARESTHandler):
         return super(SAAdminHandler, cls).to_ra_field(field, source)
 
     @classmethod
-    def to_ra_input(cls, field: ma.fields.Field, source: str) -> TRAInfo:
+    def to_ra_input(cls, field: ma.fields.Field, source: str, *, resource: bool = True) -> TRAInfo:
         """Setup RA inputs."""
         column = getattr(cls.meta.table.c, field.attribute or source, None)
         ra_type, props = super(SAAdminHandler, cls).to_ra_input(field, source)

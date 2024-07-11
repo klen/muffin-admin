@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "muffin-admin"
-version = "3.8.0"
+version = "3.8.1"
 description = "Admin interface for Muffin Framework"
 readme = "README.rst"
 license = "MIT"
@@ -98,6 +98,7 @@ exclude = [".venv", "docs", "examples"]
 select = ["ALL"]
 ignore = [
   "A003",
+  "ARG003",
   "ANN",
   "COM",
   "D",
