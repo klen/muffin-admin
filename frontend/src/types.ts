@@ -14,7 +14,7 @@ export type AdminAction = {
 }
 
 export type AdminField = [string, { source: string }]
-export type AdminInput = [string, { required: boolean; source: string }]
+export type AdminInput = [string, { required: boolean; source: string; [key: string]: any }]
 
 export type AdminShowLink = {
   label: string
@@ -28,6 +28,14 @@ export type AdminShowProps = {
   edit?: boolean
 }
 
+export type AdminPayloadProps = {
+  active: boolean
+  onClose: () => void
+  onHandle: (payload?: any) => void
+  title?: string
+  schema?: AdminInput[]
+}
+
 export type AdminResourceProps = {
   name: string
   icon?: string
@@ -35,11 +43,11 @@ export type AdminResourceProps = {
   actions: AdminAction[]
   create: AdminInput[] | false
   edit:
-  | {
-    inputs: AdminInput[]
-    remove?: boolean
-  }
-  | false
+    | {
+        inputs: AdminInput[]
+        remove?: boolean
+      }
+    | false
   list: {
     limit: number
     limitMax: number
