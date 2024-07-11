@@ -21,6 +21,7 @@ import marshmallow as ma
 from muffin_rest import APIError
 from muffin_rest.handler import RESTBase
 from muffin_rest.options import RESTOptions
+from muffin_rest.schemas import EnumField
 
 from muffin_admin.types import TActionView, TRAFields, TRAInputs
 
@@ -327,6 +328,10 @@ MA_TO_RAI: Dict[Type, TRAConverter] = {
     ma.fields.DateTime: lambda _: ("DateTimeInput", {}),
     ma.fields.Number: lambda _: ("NumberInput", {}),
     ma.fields.Field: lambda _: ("TextInput", {}),
+    EnumField: lambda field: (
+        "SelectInput",
+        {"choices": [{"id": choice.value, "name": choice.name} for choice in field.enum]},  # type: ignore[attr-defined]
+    ),
     # Default
     object: lambda _: ("TextField", {}),
 }
