@@ -103,7 +103,7 @@ class AdminHandler(RESTBase):
         methods: Optional[TMethods] = None,
         icon: Optional[str] = None,
         label: Optional[str] = None,
-        view: str = "list",
+        view: Optional[list[str] | str] = None,
         **opts,
     ):
         """Register an action for the handler.
@@ -119,7 +119,7 @@ class AdminHandler(RESTBase):
         def decorator(method):
             method.__route__ = (path,), methods
             method.__action__ = {
-                "view": view,
+                "view": [view] if isinstance(view, str) else view or ["show"],
                 "icon": icon,
                 "action": path,
                 "title": method.__doc__,
@@ -194,6 +194,7 @@ class AdminHandler(RESTBase):
             "name": meta.name,
             "label": meta.label,
             "icon": meta.icon,
+            "actions": meta.actions,
             "list": {
                 "create": meta.create,
                 "remove": bool(meta.delete),
@@ -201,7 +202,6 @@ class AdminHandler(RESTBase):
                 "limit": meta.limit,
                 "limitMax": meta.limit_max,
                 "show": bool(meta.show),
-                "actions": [action for action in meta.actions if action["view"] == "list"],
                 "fields": [fields_hash[name] for name in meta.columns if name in fields_hash],
                 "filters": [
                     (ra_type, dict(source=flt.name, **props))
@@ -212,14 +212,12 @@ class AdminHandler(RESTBase):
                 ],
             },
             "show": {
-                "actions": [action for action in meta.actions if action["view"] == "show"],
                 "links": meta.ra_links,
                 "edit": bool(meta.edit),
                 "fields": fields,
             },
             "create": meta.create and inputs,
             "edit": meta.edit and {
-                "actions": [action for action in meta.actions if action["view"] == "edit"],
                 "inputs": inputs,
                 "remove": meta.delete,
             },

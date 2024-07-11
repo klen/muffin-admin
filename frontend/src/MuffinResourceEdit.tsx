@@ -63,9 +63,9 @@ export function MuffinEditToolbar() {
 setupAdmin(["edit-toolbar"], MuffinEditToolbar)
 
 export function MuffinEditActions() {
-  const { edit } = useMuffinResourceOpts()
+  const { edit, actions: baseActions = [] } = useMuffinResourceOpts()
   if (!edit) return null
-  const { actions = [] } = edit
+  const actions = baseActions.filter((a => a.view.includes("edit")))
   return (
     <>
       {actions.map((props, idx) => (

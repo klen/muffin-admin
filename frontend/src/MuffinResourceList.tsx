@@ -87,8 +87,10 @@ setupAdmin(["list-toolbar"], MuffinListToolbar)
 
 function MuffinListBulkActions() {
   const {
-    list: { actions, remove },
+    actions: baseActions = [],
+    list: { remove },
   } = useMuffinResourceOpts()
+  const actions = baseActions.filter((a) => a.view.includes("list"))
   return (
     <>
       {actions.map((props) => (

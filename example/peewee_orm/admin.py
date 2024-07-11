@@ -93,12 +93,12 @@ class UserResource(PWAdminHandler):
         ra_refs = (("group", {"source": "name"}),)
         delete = False
 
-    @PWAdminHandler.action("/user/error", label="Broken Action", icon="Error")
+    @PWAdminHandler.action("/user/error", label="Broken Action", view=["list"], icon="Error")
     async def just_raise_an_error(self, request, resource=None):
         """Just show an error."""
         raise APIError.BAD_REQUEST(message="The action is broken")
 
-    @PWAdminHandler.action("/user/disable", label="Disable Users", icon="Clear")
+    @PWAdminHandler.action("/user/disable", label="Disable Users", icon="Clear", view=["list"])
     async def disable_users(self, request, resource=None):
         """Mark selected users as inactive."""
         import asyncio
