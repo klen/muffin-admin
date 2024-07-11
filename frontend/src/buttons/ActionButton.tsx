@@ -6,7 +6,7 @@ import {
   useTranslate,
 } from "react-admin"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { useConfirmation } from "../common"
 import { useAction } from "../hooks/useAction"
 import { AdminAction } from "../types"
@@ -23,15 +23,18 @@ export function ActionButton({ icon, label, title, action, id, confirm }: AdminA
   const record = useRecordContext()
   const resource = useResourceContext()
   const confirmation = useConfirmation()
-  const { mutate, isPending } = useAction(action, {})
+  const { mutate, isPending } = useAction(action)
 
   const [payloadActive, setPayloadActive] = useState(false)
   const [payloadResolver, setPayloadResolver] = useState<(data: any) => void>()
 
   const PayloadBuilder = findBuilder(["action", "payload", id, resource])
-  const buildPayload = PayloadBuilder
-    ? new Promise((resolve) => setPayloadResolver(() => resolve))
-    : Promise.resolve()
+  const buildPayload = useMemo(() => {
+    if (PayloadBuilder) {
+      return new Promise((resolve) => setPayloadResolver(() => resolve))
+    }
+    return Promise.resolve()
+  }, [PayloadBuilder])
   const confirmMessage =
     typeof confirm === "string" ? translate(confirm) : "Do you confirm this action?"
 
@@ -71,9 +74,12 @@ export function BulkActionButton({ label, icon, title, action, id, confirm }: Ad
   const [payloadResolver, setPayloadResolver] = useState<(data: any) => void>()
 
   const PayloadBuilder = findBuilder(["action", "payload", id, resource])
-  const buildPayload = PayloadBuilder
-    ? new Promise((resolve) => setPayloadResolver(() => resolve))
-    : Promise.resolve()
+  const buildPayload = useMemo(() => {
+    if (PayloadBuilder) {
+      return new Promise((resolve) => setPayloadResolver(() => resolve))
+    }
+    return Promise.resolve()
+  }, [PayloadBuilder])
   const confirmMessage =
     typeof confirm === "string" ? translate(confirm) : "Do you confirm this action?"
 
