@@ -39,8 +39,8 @@ export function MuffinShowToolbar() {
 setupAdmin(["show-toolbar"], MuffinShowToolbar)
 
 export function MuffinShowActions() {
-  const { show } = useMuffinResourceOpts()
-  const { actions } = show
+  const { actions: baseActions = [] } = useMuffinResourceOpts()
+  const actions = baseActions.filter((a) => a.view.includes("show"))
   return actions.map((props) => <ActionButton key={props.id} {...props} />)
 }
 

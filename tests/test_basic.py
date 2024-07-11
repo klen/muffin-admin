@@ -35,6 +35,7 @@ def test_endpoint(app):
     ra = BaseHandler.to_ra()
     assert ra["name"] == "base"
     assert ra["label"] == "base"
+    assert ra["actions"] == []
     assert not ra["icon"]
     assert ra["delete"] is True
     assert ra["create"] == [
@@ -43,7 +44,6 @@ def test_endpoint(app):
         ("BooleanInput", {"source": "active", "helperText": "Is active?"}),
     ]
     assert ra["edit"] == {
-        "actions": [],
         "remove": True,
         "inputs": [
             ("TextInput", {"source": "id"}),
@@ -52,7 +52,6 @@ def test_endpoint(app):
         ],
     }
     assert ra["show"] == {
-        "actions": [],
         "links": (),
         "edit": True,
         "fields": [
@@ -62,7 +61,6 @@ def test_endpoint(app):
         ],
     }
     assert ra["list"] == {
-        "actions": [],
         "fields": [
             ("TextField", {"source": "id", "sortable": True}),
             ("BooleanField", {"source": "active", "sortable": False}),
@@ -96,9 +94,9 @@ async def test_endpoint_action(app):
             pass
 
     ra = Handler.to_ra()
-    assert ra["list"]["actions"] == [
+    assert ra["actions"] == [
         {
-            "view": "list",
+            "view": ["show"],
             "icon": None,
             "action": "/base",
             "title": None,
@@ -153,7 +151,6 @@ def test_schema_opts():
     ra = BaseHandler.to_ra()
     assert ra
     assert ra["edit"] == {
-        "actions": [],
         "remove": True,
         "inputs": [
             ("TextInput", {"source": "name"}),

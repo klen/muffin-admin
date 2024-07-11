@@ -131,7 +131,6 @@ async def test_admin(app):
         ),
     ]
     assert ra["edit"] == {
-        "actions": [],
         "remove": True,
         "inputs": [
             ("TextInput", {"helperText": "User name", "source": "name"}),
@@ -165,7 +164,6 @@ async def test_admin(app):
         ],
     }
     assert ra["show"] == {
-        "actions": [],
         "links": (),
         "edit": True,
         "fields": [
@@ -188,7 +186,6 @@ async def test_admin(app):
     }
     assert ra["list"]
     assert ra["list"]["create"]
-    assert ra["list"]["actions"] == []
     assert ra["list"]["sort"] == {"field": "id", "order": "DESC"}
     assert ra["list"]["limit"] == 25
     assert ra["list"]["limitMax"] == 100
@@ -227,7 +224,6 @@ async def test_admin(app):
 
     message_resource_type = admin.handlers[2]
     assert message_resource_type.to_ra()["edit"] == {
-        "actions": [],
         "remove": True,
         "inputs": [
             ("TextInput", {"source": "body", "required": True, "multiline": True}),

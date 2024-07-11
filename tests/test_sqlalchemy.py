@@ -129,7 +129,6 @@ def test_admin_schemas(app):
         ),
     ]
     assert ra["edit"] == {
-        "actions": [],
         "remove": True,
         "inputs": [
             ("NumberInput", {"source": "id"}),
@@ -158,7 +157,6 @@ def test_admin_schemas(app):
         ],
     }
     assert ra["show"] == {
-        "actions": [],
         "edit": True,
         "links": (),
         "fields": [
@@ -181,7 +179,6 @@ def test_admin_schemas(app):
     }
 
     assert ra["list"]
-    assert ra["list"]["actions"] == []
     assert ra["list"]["sort"] == {"field": "id", "order": "DESC"}
     assert ra["list"]["limit"] == 25
     assert ra["list"]["limitMax"] == 100
@@ -221,7 +218,6 @@ def test_admin_schemas2(app):
     admin = app.plugins["admin"]
     MessageResource = admin.handlers[2]
     assert MessageResource.to_ra()["edit"] == {
-        "actions": [],
         "remove": True,
         "inputs": [
             ("TextInput", {"source": "body", "required": True, "multiline": True}),
