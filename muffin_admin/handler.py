@@ -160,15 +160,6 @@ class AdminHandler(RESTBase):
     def to_ra(cls) -> Dict[str, Any]:
         """Get JSON params for react-admin."""
         meta = cls.meta
-        fields, inputs = cls.to_ra_schema(meta.Schema)  # type: ignore[]
-
-        fields_hash = {
-            props["source"]: (
-                ra_type,
-                dict(props, sortable=props["source"] in meta.sorting),
-            )
-            for (ra_type, props) in fields
-        }
 
         actions = []
         for source in meta.actions:
@@ -177,6 +168,15 @@ class AdminHandler(RESTBase):
                 _, inputs = cls.to_ra_schema(info["schema"], resource=False)
                 info["schema"] = inputs
             actions.append(info)
+
+        fields, inputs = cls.to_ra_schema(meta.Schema)  # type: ignore[]
+        fields_hash = {
+            props["source"]: (
+                ra_type,
+                dict(props, sortable=props["source"] in meta.sorting),
+            )
+            for (ra_type, props) in fields
+        }
 
         data = {
             "name": meta.name,

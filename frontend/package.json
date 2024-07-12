@@ -1,6 +1,6 @@
 {
   "name": "muffin-admin",
-  "version": "3.8.4",
+  "version": "3.8.5",
   "description": "NPM package for https://github.com/klen/muffin-admin",
   "files": [
     "src",
