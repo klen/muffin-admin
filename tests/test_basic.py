@@ -82,6 +82,9 @@ async def test_endpoint_action(app):
     admin = Plugin(app)
     assert admin
 
+    class ActionSchema(ma.Schema):
+        name = ma.fields.String()
+
     @admin.route
     class Handler(AdminHandler):
         class Meta:
@@ -89,7 +92,7 @@ async def test_endpoint_action(app):
             filters = "id", "name"
             sorting = "id", "name"
 
-        @AdminHandler.action("/base", view="show")
+        @AdminHandler.action("/base", view="show", schema=ActionSchema)
         async def base_action(self, request, response=None):
             pass
 
@@ -102,8 +105,10 @@ async def test_endpoint_action(app):
             "title": None,
             "label": "Base action",
             "id": "base_action",
+            "schema": [("TextInput", {"source": "name"})],
         },
     ]
+    assert ra["edit"]["inputs"] == []
 
 
 def test_custom_fields_inputs():
