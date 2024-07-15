@@ -80,8 +80,8 @@ function MuffinListToolbar() {
   const actions = baseActions.filter((a) => a.view.includes("list"))
   return (
     <TopToolbar>
-      <SelectColumnsButton />
       {help && <HelpLink href={help} />}
+      <SelectColumnsButton />
       <FilterButton />
       {actions.length ? actions.map((props) => <ActionButton key={props.id} {...props} />) : null}
       {create && <CreateButton />}
