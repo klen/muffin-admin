@@ -37,13 +37,14 @@ class Plugin(BasePlugin):
         "login_url": None,
         "logout_url": None,
         "menu_sort": True,
-        "help": None,
         "auth_storage": "localstorage",  # localstorage|cookies
         "auth_storage_name": "muffin_admin_auth",
         "app_bar_links": [
             {"url": "/", "icon": "Home", "title": "Home"},
         ],
         "mutation_mode": "optimistic",
+        "help": None,
+        "locales": None,
     }
 
     def __init__(self, app: Optional[Application] = None, **kwargs):
@@ -193,4 +194,5 @@ class Plugin(BasePlugin):
             "version": VERSION,
             "help": cfg.help,
             "resources": [res.to_ra() for res in handlers],
+            "locales": cfg.locales,
         }

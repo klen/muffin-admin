@@ -10,7 +10,77 @@ from muffin_admin import Plugin, PWAdminHandler
 from . import app
 from .database import Group, Message, User
 
-admin = Plugin(app, custom_css_url="/admin.css")
+admin = Plugin(
+    app,
+    custom_css_url="/admin.css",
+    locales={
+        "en": {
+            "resources": {
+                "user": {
+                    "fields": {
+                        "name": "Full Name",
+                        "picture": "Avatar",
+                        "is_active": "Active",
+                        "role": "Role",
+                    },
+                    "actions": {
+                        "disable": "Disable Users",
+                        "greet": "Greeter",
+                        "error": "Broken Action",
+                    },
+                },
+                "group": {
+                    "fields": {
+                        "name": "Group Name",
+                    },
+                },
+                "message": {
+                    "fields": {
+                        "status": "Status",
+                        "user": "User",
+                    },
+                    "actions": {
+                        "publish": "Publish",
+                    },
+                },
+            },
+        },
+        "ru": {
+            "resources": {
+                "user": {
+                    "name": "Пользователи",
+                    "fields": {
+                        "name": "Полное имя",
+                        "picture": "Аватар",
+                        "is_active": "Активный",
+                        "role": "Роль",
+                    },
+                    "actions": {
+                        "disable": "Отключить пользователей",
+                        "greet": "Приветствие",
+                        "error": "Сломанное действие",
+                    },
+                },
+                "group": {
+                    "name": "Группы",
+                    "fields": {
+                        "name": "Имя группы",
+                    },
+                },
+                "message": {
+                    "name": "Сообщения",
+                    "fields": {
+                        "status": "Статус",
+                        "user": "Пользователь",
+                    },
+                    "actions": {
+                        "publish": "Опубликовать",
+                    },
+                },
+            },
+        },
+    },
+)
 
 
 # Setup authorization
