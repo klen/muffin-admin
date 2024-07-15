@@ -16,14 +16,26 @@ import {
 
 import { ConfirmationProvider } from "./common"
 import { useMuffinAdminOpts } from "./hooks"
-import { muffinI18nProvider } from "./i18n"
+import { buildProvider, muffinTranslations } from "./i18n"
 import { buildAdmin, findBuilder, findIcon, setupAdmin } from "./utils"
 
 export function MuffinAdmin(props: AdminProps) {
   const opts = useMuffinAdminOpts()
-  const { resources = [], auth, adminProps, apiUrl } = opts
+  const { resources = [], auth, adminProps, apiUrl, locales } = opts
 
   document.title = adminProps?.title || "Muffin Admin"
+  const muffinI18nProvider = buildProvider(
+    locales
+      ? Object.fromEntries(
+          Object.entries(muffinTranslations).map(([locale, messages]) => [
+            locale,
+            { ...messages, ...locales[locale] },
+          ])
+        )
+      : muffinTranslations
+  )
+
+  console.log(999, muffinI18nProvider.getLocale())
 
   const {
     basename,
