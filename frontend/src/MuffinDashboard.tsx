@@ -1,21 +1,34 @@
 import Card from "@mui/material/Card"
 import CardContent from "@mui/material/CardContent"
 import Grid from "@mui/material/Grid"
+import Stack from "@mui/material/Stack"
 import Table from "@mui/material/Table"
 import TableBody from "@mui/material/TableBody"
 import TableCell from "@mui/material/TableCell"
 import TableRow from "@mui/material/TableRow"
 import Typography from "@mui/material/Typography"
+import { useTranslate } from "react-admin"
+import { HelpLink } from "./common/HelpLink"
 import { useMuffinAdminOpts } from "./hooks"
 import { AdminDashboardBlock } from "./types"
 import { setupAdmin } from "./utils"
 
 export function MuffinDashboard() {
-  const { dashboard } = useMuffinAdminOpts()
+  const { dashboard, help } = useMuffinAdminOpts()
+  const translate = useTranslate()
   return (
-    <Grid container spacing={1}>
-      <AdminCards src={dashboard} />
-    </Grid>
+    <Stack gap={2}>
+      {help && (
+        <Card>
+          <CardContent>
+            <HelpLink size="large" href={help} label={translate("muffin.how_to_use_admin")} />
+          </CardContent>
+        </Card>
+      )}
+      <Grid container spacing={1}>
+        <AdminCards src={dashboard} />
+      </Grid>
+    </Stack>
   )
 }
 
