@@ -4,6 +4,7 @@ export type TProps = {
 
 export type AdminAction = {
   view?: ("show" | "edit" | "list" | "bulk")[]
+  help?: string
   id: string
   label: string
   title: string
@@ -34,12 +35,14 @@ export type AdminPayloadProps = {
   onHandle: (payload?: any) => void
   title?: string
   schema?: AdminInput[]
+  help?: string
 }
 
 export type AdminResourceProps = {
   name: string
   icon?: string
   label: string
+  help?: string
   actions: AdminAction[]
   create: AdminInput[] | false
   edit:

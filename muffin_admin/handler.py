@@ -50,6 +50,7 @@ class AdminOptions(RESTOptions):
 
     actions: Sequence = ()
     columns: Tuple[str, ...] = ()
+    help: Optional[str] = None
 
     ra_fields: TRAFields = ()
     ra_inputs: TRAInputs = ()
@@ -182,6 +183,7 @@ class AdminHandler(RESTBase):
             "name": meta.name,
             "label": meta.label,
             "icon": meta.icon,
+            "help": meta.help,
             "actions": actions,
             "list": {
                 "create": meta.create,

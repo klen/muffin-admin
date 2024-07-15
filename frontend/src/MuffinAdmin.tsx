@@ -8,7 +8,6 @@ import {
   AdminUI,
   AppBar,
   AppBarProps,
-  defaultI18nProvider,
   Layout,
   LayoutProps,
   localStorageStore,
@@ -17,6 +16,7 @@ import {
 
 import { ConfirmationProvider } from "./common"
 import { useMuffinAdminOpts } from "./hooks"
+import { muffinI18nProvider } from "./i18n"
 import { buildAdmin, findBuilder, findIcon, setupAdmin } from "./utils"
 
 export function MuffinAdmin(props: AdminProps) {
@@ -33,7 +33,7 @@ export function MuffinAdmin(props: AdminProps) {
     dashboard = findBuilder(["dashboard"]),
     disableTelemetry,
     error,
-    i18nProvider = defaultI18nProvider,
+    i18nProvider = muffinI18nProvider,
     layout = findBuilder(["layout"]),
     loading,
     loginPage = findBuilder(["loginpage"]),
