@@ -86,6 +86,7 @@ class UserResource(PWAdminHandler):
         }
 
         icon = "Person"
+        help = "https://fakeHelpLink.com"
         columns = "id", "picture", "email", "name", "is_active", "role"
         ra_fields = (
             ("picture", ("AvatarField", {"alt": "picture", "nameProp": "name", "sortable": False})),
@@ -115,6 +116,7 @@ class UserResource(PWAdminHandler):
         label="Greeter",
         view=["list", "show"],
         schema=GreetActionSchema,
+        help="http://fakeHelpLink.com",
     )
     async def greet(self, request, resource=None, data=None):
         """Mark selected users as inactive."""

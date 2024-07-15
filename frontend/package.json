@@ -1,6 +1,6 @@
 {
   "name": "muffin-admin",
-  "version": "3.8.5",
+  "version": "3.9.0",
   "description": "NPM package for https://github.com/klen/muffin-admin",
   "files": [
     "src",
@@ -24,6 +24,7 @@
   "homepage": "https://github.com/klen/muffin-admin#readme",
   "dependencies": {
     "js-cookie": "^3.0.5",
+    "ra-language-russian": "^4.14.2",
     "react": "^18.3.1",
     "react-admin": "^5.0.3",
     "react-dom": "^18.3.1",

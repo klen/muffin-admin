@@ -15,6 +15,7 @@ import {
 } from "react-admin"
 import { buildRA } from "./buildRA"
 import { ActionButton, BulkActionButton } from "./buttons"
+import { HelpLink } from "./common/HelpLink"
 import { useMuffinResourceOpts } from "./hooks"
 import { buildAdmin, findBuilder, setupAdmin } from "./utils"
 
@@ -73,12 +74,14 @@ setupAdmin(["list-grid-buttons"], MuffinListGridButtons)
 function MuffinListToolbar() {
   const {
     actions: baseActions = [],
+    help,
     list: { create },
   } = useMuffinResourceOpts()
   const actions = baseActions.filter((a) => a.view.includes("list"))
   return (
     <TopToolbar>
       <SelectColumnsButton />
+      {help && <HelpLink href={help} />}
       <FilterButton />
       {actions.length ? actions.map((props) => <ActionButton key={props.id} {...props} />) : null}
       {create && <CreateButton />}

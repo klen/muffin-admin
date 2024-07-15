@@ -9,9 +9,11 @@ import {
 } from "react-admin"
 import { FormProvider } from "react-hook-form"
 
+import { Stack } from "@mui/material"
 import { useState } from "react"
 import { buildRA } from "../buildRA"
 import { AdminModal, PayloadButtons, useConfirmation } from "../common"
+import { HelpLink } from "../common/HelpLink"
 import { useAction } from "../hooks/useAction"
 import { AdminAction, AdminPayloadProps } from "../types"
 import { buildIcon, findBuilder } from "../utils"
@@ -66,6 +68,7 @@ function ActionButtonBase({
   icon,
   schema,
   id,
+  help,
 }: Omit<AdminAction, "paths"> & {
   isPending?: boolean
   onHandle: (payload?: any) => void
@@ -96,13 +99,21 @@ function ActionButtonBase({
           onClose={() => setPayloadActive(false)}
           title={title || label}
           schema={schema}
+          help={help}
         />
       )}
     </>
   )
 }
 
-export function CommonPayload({ active, onClose, onHandle, schema, title }: AdminPayloadProps) {
+export function CommonPayload({
+  active,
+  onClose,
+  onHandle,
+  schema,
+  title,
+  help,
+}: AdminPayloadProps) {
   schema[0][1] = { ...schema[0][1], autoFocus: true }
   const inputs = buildRA(schema)
   const translate = useTranslate()
@@ -122,7 +133,16 @@ export function CommonPayload({ active, onClose, onHandle, schema, title }: Admi
           maxWidth="sm"
           open={active}
           onClose={onClose}
-          title={translate(title, { _: title })}
+          title={
+            help
+              ? ((
+                  <Stack alignItems="flex-start">
+                    <span>{translate(title, { _: title })}</span>
+                    <HelpLink href={help} style={{ alignSelf: "flex-end" }} />
+                  </Stack>
+                ) as any)
+              : translate(title, { _: title })
+          }
           actions={
             <PayloadButtons
               onClose={onClose}
