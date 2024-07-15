@@ -25,7 +25,6 @@ async def page404(_: Request) -> ResponseError:
 
 
 class Plugin(BasePlugin):
-
     """Admin interface for Muffin Framework."""
 
     name = "admin"
@@ -38,6 +37,7 @@ class Plugin(BasePlugin):
         "login_url": None,
         "logout_url": None,
         "menu_sort": True,
+        "help": None,
         "auth_storage": "localstorage",  # localstorage|cookies
         "auth_storage_name": "muffin_admin_auth",
         "app_bar_links": [
@@ -177,18 +177,20 @@ class Plugin(BasePlugin):
     def to_ra(self) -> Dict[str, Any]:
         """Prepare params for react-admin."""
         handlers = self.handlers
-        if self.cfg.menu_sort:
+        cfg = self.cfg
+        if cfg.menu_sort:
             handlers = sorted(handlers, key=lambda r: r.meta.name)
 
         return {
-            "apiUrl": f"{self.cfg.prefix}/api",
+            "apiUrl": f"{cfg.prefix}/api",
             "auth": self.auth,
             "adminProps": {
-                "title": self.cfg.title,
+                "title": cfg.title,
                 "disableTelemetry": True,
-                "mutationMode": self.cfg.mutation_mode,
+                "mutationMode": cfg.mutation_mode,
             },
-            "appBarLinks": self.cfg.app_bar_links,
-            "resources": [res.to_ra() for res in handlers],
+            "appBarLinks": cfg.app_bar_links,
             "version": VERSION,
+            "help": cfg.help,
+            "resources": [res.to_ra() for res in handlers],
         }
