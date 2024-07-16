@@ -17,7 +17,7 @@ import {
 import { ConfirmationProvider } from "./common"
 import { useMuffinAdminOpts } from "./hooks"
 import { buildProvider, muffinTranslations } from "./i18n"
-import { buildAdmin, findBuilder, findIcon, setupAdmin } from "./utils"
+import { buildAdmin, deepMerge, findBuilder, findIcon, setupAdmin } from "./utils"
 
 export function MuffinAdmin(props: AdminProps) {
   const opts = useMuffinAdminOpts()
@@ -29,7 +29,7 @@ export function MuffinAdmin(props: AdminProps) {
       ? Object.fromEntries(
           Object.entries(muffinTranslations).map(([locale, messages]) => [
             locale,
-            { ...messages, ...backendLocales[locale], ...(buildAdmin(["locale", locale]) || {}) },
+            deepMerge({}, messages, backendLocales[locale], buildAdmin(["locale", locale]) || {}),
           ])
         )
       : muffinTranslations
