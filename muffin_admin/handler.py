@@ -53,6 +53,7 @@ class AdminOptions(RESTOptions):
     help: Optional[str] = None
     locales: Optional[dict[str, dict[str, Any]]] = None
 
+    ra_order: int = 0
     ra_fields: TRAFields = ()
     ra_inputs: TRAInputs = ()
     ra_refs: TRARefs = ()
