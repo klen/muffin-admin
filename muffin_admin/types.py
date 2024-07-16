@@ -24,7 +24,7 @@ TRARefs = Tuple[Tuple[str, TRAReference], ...]
 
 
 class TRAActionLink(TypedDict):
-    label: str
+    label: NotRequired[str]
     icon: NotRequired[str]
     title: NotRequired[str]
     field: NotRequired[str]
