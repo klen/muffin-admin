@@ -23,6 +23,7 @@ export function MuffinDashboard() {
         {buildAdmin(["dashboard-actions"])}
       </Stack>
       <Grid container spacing={1}>
+        {buildAdmin(["dashboard-content"])}
         <AdminCards src={dashboard} />
       </Grid>
     </Stack>
