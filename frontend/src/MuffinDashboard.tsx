@@ -19,7 +19,7 @@ export function MuffinDashboard() {
   return (
     <Stack gap={2} pt={1}>
       <Stack direction="row">
-        {help && <HelpLink size="large" href={help} label={translate("muffin.how_to_use_admin")} />}
+        {help && <HelpLink href={help} label={translate("muffin.how_to_use_admin")} />}
         {buildAdmin(["dashboard-actions"])}
       </Stack>
       <Grid container spacing={1}>
