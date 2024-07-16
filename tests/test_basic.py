@@ -14,6 +14,9 @@ def test_endpoint(app):
             name = "base"
             filters = "id", "name"
             sorting = "id", "name"
+            locales = {
+                "en": {"test": "Test"},
+            }
 
             class Schema(ma.Schema):
                 id = ma.fields.String()
@@ -74,6 +77,9 @@ def test_endpoint(app):
         "edit": True,
         "remove": True,
     }
+
+    ra = admin.to_ra()
+    assert ra["locales"] == {"en": {"test": "Test"}}
 
 
 async def test_endpoint_action(app):
