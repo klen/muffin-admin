@@ -77,7 +77,7 @@ function MuffinListToolbar() {
     help,
     list: { create },
   } = useMuffinResourceOpts()
-  const actions = baseActions.filter((a) => a.view.includes("list"))
+  const actions = baseActions.filter((a) => a.view?.includes("list"))
   return (
     <TopToolbar>
       {help && <HelpLink href={help} />}
