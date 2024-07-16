@@ -182,7 +182,7 @@ class Plugin(BasePlugin):
         handlers = self.handlers
         cfg = self.cfg
         if cfg.menu_sort:
-            handlers = sorted(handlers, key=lambda r: (r.meta.ra_order, r.meta.name))
+            handlers = sorted(handlers, key=lambda r: (1000000 - r.meta.ra_order, r.meta.name))
 
         locales = cfg.locales or {}
         for res in handlers:
