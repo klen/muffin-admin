@@ -4,7 +4,7 @@ def deepmerge(dest: dict, source: dict):
         if isinstance(value, dict):
             # get node or create one
             node = dest.setdefault(key, {})
-            deepmerge(value, node)
+            deepmerge(node, value)
         else:
             dest[key] = value
 
