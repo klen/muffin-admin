@@ -51,6 +51,7 @@ class AdminOptions(RESTOptions):
     actions: Sequence = ()
     columns: Tuple[str, ...] = ()
     help: Optional[str] = None
+    locales: Optional[dict[str, dict[str, Any]]] = None
 
     ra_fields: TRAFields = ()
     ra_inputs: TRAInputs = ()

@@ -12,6 +12,8 @@ from muffin.plugins import BasePlugin
 from muffin_rest.api import API
 from muffin_rest.types import TAuth
 
+from muffin_admin.utils import deepmerge
+
 from .handler import AdminHandler
 
 PACKAGE_DIR: Path = Path(__file__).parent
@@ -182,6 +184,10 @@ class Plugin(BasePlugin):
         if cfg.menu_sort:
             handlers = sorted(handlers, key=lambda r: r.meta.name)
 
+        locales = cfg.locales or {}
+        for res in handlers:
+            deepmerge(locales, res.meta.locales or {})
+
         return {
             "apiUrl": f"{cfg.prefix}/api",
             "auth": self.auth,
@@ -194,5 +200,5 @@ class Plugin(BasePlugin):
             "version": VERSION,
             "help": cfg.help,
             "resources": [res.to_ra() for res in handlers],
-            "locales": cfg.locales,
+            "locales": locales,
         }
