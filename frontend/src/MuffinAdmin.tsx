@@ -21,21 +21,19 @@ import { buildAdmin, findBuilder, findIcon, setupAdmin } from "./utils"
 
 export function MuffinAdmin(props: AdminProps) {
   const opts = useMuffinAdminOpts()
-  const { resources = [], auth, adminProps, apiUrl, locales } = opts
+  const { resources = [], auth, adminProps, apiUrl, locales: backendLocales } = opts
 
   document.title = adminProps?.title || "Muffin Admin"
   const muffinI18nProvider = buildProvider(
-    locales
+    backendLocales
       ? Object.fromEntries(
           Object.entries(muffinTranslations).map(([locale, messages]) => [
             locale,
-            { ...messages, ...locales[locale] },
+            { ...messages, ...backendLocales[locale], ...(buildAdmin(["locale", locale]) || {}) },
           ])
         )
       : muffinTranslations
   )
-
-  console.log(999, muffinI18nProvider.getLocale())
 
   const {
     basename,

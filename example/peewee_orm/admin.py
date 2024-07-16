@@ -13,6 +13,7 @@ from .database import Group, Message, User
 admin = Plugin(
     app,
     custom_css_url="/admin.css",
+    help="https://fakeHelpLink.com",
     locales={
         "en": {
             "resources": {

@@ -11,20 +11,17 @@ import { useTranslate } from "react-admin"
 import { HelpLink } from "./common/HelpLink"
 import { useMuffinAdminOpts } from "./hooks"
 import { AdminDashboardBlock } from "./types"
-import { setupAdmin } from "./utils"
+import { buildAdmin, setupAdmin } from "./utils"
 
 export function MuffinDashboard() {
   const { dashboard, help } = useMuffinAdminOpts()
   const translate = useTranslate()
   return (
-    <Stack gap={2}>
-      {help && (
-        <Card>
-          <CardContent>
-            <HelpLink size="large" href={help} label={translate("muffin.how_to_use_admin")} />
-          </CardContent>
-        </Card>
-      )}
+    <Stack gap={2} pt={1}>
+      <Stack direction="row">
+        {help && <HelpLink size="large" href={help} label={translate("muffin.how_to_use_admin")} />}
+        {buildAdmin(["dashboard-actions"])}
+      </Stack>
       <Grid container spacing={1}>
         <AdminCards src={dashboard} />
       </Grid>
