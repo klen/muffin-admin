@@ -3,7 +3,7 @@ import LinkButton from "../buttons/LinkButton"
 import { useMuffinAdminOpts } from "../hooks"
 import { AdminShowLink } from "../types"
 
-export function LinkAction({ field, icon, ...props }: AdminShowLink & { resource: string }) {
+export function LinkAction({ field, icon, label, ...props }: AdminShowLink & { resource: string }) {
   const { resources } = useMuffinAdminOpts()
   const record = useRecordContext()
   const currentResource = useResourceContext()
@@ -15,6 +15,7 @@ export function LinkAction({ field, icon, ...props }: AdminShowLink & { resource
     <LinkButton
       {...props}
       icon={icon || resource?.icon}
+      label={label || `resources.${props.resource}.name`}
       filters={{ [currentResource]: encodeURIComponent(record[field || "id"]) }}
     />
   )
