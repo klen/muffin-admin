@@ -1,7 +1,7 @@
 """Setup admin UI."""
 
 import marshmallow as ma
-from muffin import ResponseJSON
+from muffin import Response, ResponseJSON
 from muffin_rest import APIError
 
 from example.peewee_orm.schemas import GreetActionSchema
@@ -230,3 +230,19 @@ class MessageResource(PWAdminHandler):
         await resource.save()
 
         return {"status": True, "message": "Message is published"}
+
+    @PWAdminHandler.action(
+        "/message/data.csv",
+        label="Download CSV",
+        icon="Download",
+        view="list",
+        file=True,
+    )
+    async def csv(self, request, resource=None):
+        """Download CSV file."""
+        return Response(
+            content="id,created,text,user\n"
+            + "\n".join(f"{m.id},{m.created},{m.title}" for m in await Message.select()),
+            content_type="text/csv",
+            headers={"Content-Disposition": "attachment; filename=messages.csv"},
+        )
