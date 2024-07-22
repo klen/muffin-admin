@@ -10,7 +10,7 @@ const LinkButton = ({
   resource,
   id,
   title,
-}: AdminShowLink & { resource: string; filters: any; id?: string }) => {
+}: AdminShowLink & { resource: string; filters?: any; id?: string }) => {
   const linkParams = {
     pathname: `/${resource}`,
     search: filters ? `filter=${JSON.stringify(filters)}` : undefined,
@@ -19,7 +19,13 @@ const LinkButton = ({
   if (id) linkParams.pathname += `/${id}/show`
 
   return (
-    <Button label={label} title={title} component={Link} to={linkParams}>
+    <Button
+      label={label}
+      title={title}
+      component={Link}
+      to={linkParams}
+      onClick={(e) => e.stopPropagation()}
+    >
       {buildIcon(icon)}
     </Button>
   )
