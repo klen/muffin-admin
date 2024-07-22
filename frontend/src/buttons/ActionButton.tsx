@@ -2,6 +2,7 @@ import {
   Button,
   FormGroupsProvider,
   useAugmentedForm,
+  useDataProvider,
   useListContext,
   useRecordContext,
   useResourceContext,
@@ -9,7 +10,7 @@ import {
 } from "react-admin"
 import { FormProvider } from "react-hook-form"
 
-import { Stack } from "@mui/material"
+import { Link, Stack } from "@mui/material"
 import { useState } from "react"
 import { buildRA } from "../buildRA"
 import { AdminModal, PayloadButtons, useConfirmation } from "../common"
@@ -24,12 +25,28 @@ export type ActionPayloadProps = {
   onHandle: (payload: any) => void
 }
 
-export function ActionButton({ paths, confirm, ...props }: AdminAction) {
+export function ActionButton({ paths, confirm, file, ...props }: AdminAction) {
   const translate = useTranslate()
   const record = useRecordContext()
   const confirmation = useConfirmation()
   const path = paths.find((p) => p.includes("{id}")) || paths[paths.length - 1]
   const { mutate, isPending } = useAction(path)
+  const dataprovider = useDataProvider()
+
+  if (file) {
+    return (
+      <Button
+        component={Link}
+        label={props.label}
+        onClick={(e) => {
+          e.stopPropagation()
+          dataprovider.downloadFile(path)
+        }}
+      >
+        {buildIcon(props.icon)}
+      </Button>
+    )
+  }
 
   const confirmMessage =
     typeof confirm === "string" ? translate(confirm) : "Do you confirm this action?"

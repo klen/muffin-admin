@@ -12,6 +12,7 @@ export type AdminAction = {
   paths: string[]
   confirm?: string | false
   schema?: AdminInput[]
+  file?: boolean
 }
 
 export type AdminField = [string, { source: string }]
