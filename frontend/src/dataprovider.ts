@@ -96,7 +96,10 @@ export function MuffinDataprovider(apiUrl: string) {
       const url = window.URL.createObjectURL(await response.blob())
       const link = document.createElement("a")
       link.href = url
-      link.setAttribute("download", path)
+      const filename =
+        response.headers.get("content-disposition")?.split("filename=")[1] || path.split("/").pop()
+      link.setAttribute("download", filename)
+      if (filename) link.setAttribute("download", filename)
       link.click()
       // no need to append link as child to body.
       setTimeout(() => window.URL.revokeObjectURL(url), 0) // this is important too, otherwise we will be unnecessarily spiking memory!
