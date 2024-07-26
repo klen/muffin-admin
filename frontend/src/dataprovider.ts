@@ -89,6 +89,7 @@ export function MuffinDataprovider(apiUrl: string) {
     },
 
     downloadFile: async (path: string) => {
+      path = path.replace(/^\/+/, "")
       const response = await fetch(`${apiUrl}/${path}`, {
         headers: requestHeaders,
       })
