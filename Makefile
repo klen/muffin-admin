@@ -89,13 +89,17 @@ example-sqlalchemy: $(VIRTUAL_ENV) front
 VERSION?=minor
 # target: release - Bump version
 release: $(VIRTUAL_ENV)
+	git checkout develop
+	git pull
+	git checkout master
+	git merge develop
+	git pull
 	@poetry version $(VERSION)
-	@git commit -am "build(release): `poetry version -s`"
-	@git tag `poetry version -s`
-	@git checkout master
-	@git merge develop
-	@git checkout develop
-	@git push --tags origin develop master
+	git commit -am "build(release): `poetry version -s`"
+	git tag `poetry version -s`
+	git checkout develop
+	git merge master
+	git push --tags origin develop master
 
 .PHONY: minor
 minor: release
