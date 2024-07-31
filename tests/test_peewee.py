@@ -19,7 +19,7 @@ class User(pw.Model):
     password = pw.CharField()
     is_active = pw.BooleanField(default=True, help_text="Disable to block the user")
     status = pw.IntegerField(default=1, choices=[(1, "new"), (2, "old")])
-    meta = muffin_peewee.JSONLikeField(default={})
+    meta: muffin_peewee.JSONLikeField = muffin_peewee.JSONLikeField(default={})
 
     created = pw.DateTimeField(default=dt.datetime.utcnow)
     is_super = pw.BooleanField(default=True)

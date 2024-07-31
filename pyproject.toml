@@ -46,8 +46,8 @@ sqlalchemy = ["muffin-databases", "marshmallow-sqlalchemy", "sqlalchemy"]
 [tool.poetry.group.dev.dependencies]
 aiofile = "*"
 aiosqlite = "*"
-marshmallow-peewee = "^4.0.3"
-marshmallow-sqlalchemy = "^0.27.0"
+marshmallow-peewee = "*"
+marshmallow-sqlalchemy = "*"
 muffin-databases = "*"
 muffin-peewee-aio = "*"
 pytest = "*"
@@ -78,12 +78,15 @@ legacy_tox_ini = """
 envlist = py39,py310,py311,py312,pypy39
 
 [testenv]
-deps = -e .[tests]
+deps = -e .[dev]
+allowlist_externals =
+  poetry
 commands =
-	pytest --mypy tests
+  poetry install --with dev
+	poetry run pytest --mypy tests
 
 [testenv:pypy39]
-deps = -e .[tests]
+deps = -e .[dev]
 commands =
 	pytest tests
 """
