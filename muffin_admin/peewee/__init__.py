@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Tuple, Type, cast
+from typing import TYPE_CHECKING, cast
 
 import peewee as pw
 from muffin_peewee import JSONLikeField
@@ -45,7 +45,7 @@ class PWAdminOptions(AdminOptions, PWRESTOptions):
 class PWAdminHandler(AdminHandler, PWRESTBase):
     """Work with Peewee Models."""
 
-    meta_class: Type[PWAdminOptions] = PWAdminOptions
+    meta_class: type[PWAdminOptions] = PWAdminOptions
     meta: PWAdminOptions
 
     def get_selected(self, request: Request):
@@ -105,7 +105,7 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
 class PWSearchFilter(PWFilter):
     """Search in query by value."""
 
-    def query(self, qs: pw.Query, column: pw.Field, *ops: Tuple, **_) -> pw.Query:
+    def query(self, qs: pw.Query, column: pw.Field, *ops: tuple, **_) -> pw.Query:
         """Apply the filters to Peewee QuerySet.."""
         _, value = ops[0]
         return cast(pw.Query, qs.where(column.contains(value)))

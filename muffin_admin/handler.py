@@ -4,18 +4,7 @@ from __future__ import annotations
 
 import inspect
 from functools import wraps
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Dict,
-    List,
-    Optional,
-    Sequence,
-    Tuple,
-    Type,
-    Union,
-    cast,
-)
+from typing import TYPE_CHECKING, Any, Iterable, Optional, Sequence, Union, cast
 
 import marshmallow as ma
 from muffin_rest import APIError
@@ -49,7 +38,7 @@ class AdminOptions(RESTOptions):
     show: bool = True
 
     actions: Sequence = ()
-    columns: Tuple[str, ...] = ()
+    columns: tuple[str, ...] = ()
     help: Optional[str] = None
     locales: Optional[dict[str, dict[str, Any]]] = None
 
@@ -87,7 +76,7 @@ class AdminOptions(RESTOptions):
             )
 
         if not self.sorting and self.columns:
-            sorting: List[Union[str, Tuple]] = list(self.columns)
+            sorting: list[Union[str, tuple]] = list(self.columns)
             sorting[0] = (sorting[0], {"default": "desc"})
             self.sorting = sorting  # type: ignore[assignment]
 
@@ -95,23 +84,23 @@ class AdminOptions(RESTOptions):
 class AdminHandler(RESTBase):
     """Basic handler class for admin UI."""
 
-    meta_class: Type[AdminOptions] = AdminOptions
+    meta_class: type[AdminOptions] = AdminOptions
     meta: AdminOptions
 
-    def get_selected(self, request: Request):
+    def get_selected(self, request: Request) -> Optional[Iterable]:
         """Get selected objects."""
         ids = request.query.getall("ids", None)
         return ids
 
     @classmethod
-    def action(  # noqa: PLR0913
+    def action(
         cls,
         *paths: str,
         methods: Optional[TMethods] = None,
         icon: Optional[str] = None,
         label: Optional[str] = None,
         view: Optional[list[TActionView] | TActionView] = None,
-        schema: Optional[Type[ma.Schema]] = None,
+        schema: Optional[type[ma.Schema]] = None,
         **opts,
     ):
         """Register an action for the handler.
@@ -160,7 +149,7 @@ class AdminHandler(RESTBase):
         return decorator
 
     @classmethod
-    def to_ra(cls) -> Dict[str, Any]:
+    def to_ra(cls) -> dict[str, Any]:
         """Get JSON params for react-admin."""
         meta = cls.meta
 
@@ -174,10 +163,7 @@ class AdminHandler(RESTBase):
 
         fields, inputs = cls.to_ra_schema(meta.Schema)  # type: ignore[]
         fields_hash = {
-            props["source"]: (
-                ra_type,
-                dict(props, sortable=props["source"] in meta.sorting),
-            )
+            props["source"]: (ra_type, dict(props, sortable=props["source"] in meta.sorting))
             for (ra_type, props) in fields
         }
 
@@ -226,7 +212,7 @@ class AdminHandler(RESTBase):
         return data
 
     @classmethod
-    def to_ra_schema(cls, schema_cls: Type[ma.Schema], *, resource: bool = True):
+    def to_ra_schema(cls, schema_cls: type[ma.Schema], *, resource: bool = True):
         meta = cls.meta
         schema_opts = schema_cls.opts
         schema_fields = schema_opts.fields
@@ -314,7 +300,7 @@ class AdminHandler(RESTBase):
         return rtype, props
 
 
-MA_TO_RAF: Dict[Type, TRAConverter] = {
+MA_TO_RAF: dict[type, TRAConverter] = {
     ma.fields.Boolean: lambda _: ("BooleanField", {}),
     ma.fields.Date: lambda _: ("DateField", {}),
     ma.fields.DateTime: lambda _: ("DateField", {"showTime": True}),
@@ -326,7 +312,7 @@ MA_TO_RAF: Dict[Type, TRAConverter] = {
     object: lambda _: ("TextField", {}),
 }
 
-MA_TO_RAI: Dict[Type, TRAConverter] = {
+MA_TO_RAI: dict[type, TRAConverter] = {
     ma.fields.Boolean: lambda _: ("BooleanInput", {}),
     ma.fields.Date: lambda _: ("DateInput", {}),
     ma.fields.DateTime: lambda _: ("DateTimeInput", {}),
@@ -341,7 +327,7 @@ MA_TO_RAI: Dict[Type, TRAConverter] = {
 }
 
 
-def find_ra(field: ma.fields.Field, types: Dict[Type, TRAConverter]) -> TRAConverter:
+def find_ra(field: ma.fields.Field, types: dict[type, TRAConverter]) -> TRAConverter:
     """Find a converter for first supported field class."""
     for fcls in type(field).mro():
         if fcls in types:

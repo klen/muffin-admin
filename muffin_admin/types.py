@@ -1,16 +1,16 @@
 """Custom types."""
 
-from typing import Any, Callable, Dict, Literal, Tuple, TypedDict
+from typing import Any, Callable, Literal, TypedDict
 
 from marshmallow.fields import Field
 from typing_extensions import NotRequired, TypeAlias
 
 TActionView = Literal["show", "edit", "list", "bulk"]
-TRAProps = Dict[str, Any]
-TRAInfo = Tuple[str, TRAProps]
+TRAProps = dict[str, Any]
+TRAInfo = tuple[str, TRAProps]
 TRAConverter = Callable[[Field], TRAInfo]
-TRAFields: TypeAlias = Tuple[Tuple[str, TRAInfo], ...]
-TRAInputs: TypeAlias = Tuple[Tuple[str, TRAInfo], ...]
+TRAFields: TypeAlias = tuple[tuple[str, TRAInfo], ...]
+TRAInputs: TypeAlias = tuple[tuple[str, TRAInfo], ...]
 
 
 class TRAReference(TypedDict):
@@ -20,7 +20,7 @@ class TRAReference(TypedDict):
     searchKey: NotRequired[str]
 
 
-TRARefs = Tuple[Tuple[str, TRAReference], ...]
+TRARefs = tuple[tuple[str, TRAReference], ...]
 
 
 class TRAActionLink(TypedDict):
@@ -30,4 +30,4 @@ class TRAActionLink(TypedDict):
     field: NotRequired[str]
 
 
-TRALinks = Tuple[Tuple[str, TRAActionLink], ...]
+TRALinks = tuple[tuple[str, TRAActionLink], ...]
