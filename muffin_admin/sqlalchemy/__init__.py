@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Type
+from typing import TYPE_CHECKING
 
 from muffin_rest.filters import Filter
 from muffin_rest.sqlalchemy import SARESTHandler, SARESTOptions
@@ -36,7 +36,7 @@ class SAAdminOptions(AdminOptions, SARESTOptions):
 class SAAdminHandler(AdminHandler, SARESTHandler):
     """Work with SQLAlchemy Core."""
 
-    meta_class: Type[SAAdminOptions] = SAAdminOptions
+    meta_class: type[SAAdminOptions] = SAAdminOptions
     meta: SAAdminOptions
 
     def get_selected(self, request: Request):
