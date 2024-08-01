@@ -160,11 +160,11 @@ export function CommonPayload({
           title={
             help
               ? ((
-                  <Stack alignItems="flex-start">
-                    <span>{translate(title, { _: title })}</span>
-                    <HelpLink href={help} style={{ alignSelf: "flex-end" }} />
-                  </Stack>
-                ) as any)
+                <Stack alignItems="flex-start">
+                  <span>{translate(title, { _: title })}</span>
+                  <HelpLink href={help} style={{ alignSelf: "flex-end" }} />
+                </Stack>
+              ) as any)
               : translate(title, { _: title })
           }
           actions={
@@ -203,7 +203,7 @@ function FileButton({
   if (Object.keys(filterValues).length) url += `&where=${JSON.stringify(filterValues)}`
 
   return (
-    <Button href={url} label={label} component={Link} target="_blank">
+    <Button href={url} label={label} component={Link}>
       {buildIcon(icon)}
     </Button>
   )
