@@ -196,11 +196,12 @@ function FileButton({
   filterValues?: any
 }) {
   const { apiUrl } = useMuffinAdminOpts()
-  let url = `${apiUrl}${path}`
+  let url = `${apiUrl}${path}?f`
   if (record) url = url.replace("{id}", record.id as string)
   const authorization = requestHeaders["Authorization"]
-  if (authorization) url += `?t=${authorization}`
+  if (authorization) url += `&t=${authorization}`
   if (Object.keys(filterValues).length) url += `&where=${JSON.stringify(filterValues)}`
+
   return (
     <Button href={url} label={label} component={Link} target="_blank">
       {buildIcon(icon)}
