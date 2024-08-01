@@ -4,7 +4,7 @@ db.sqlite:
 
 BACKEND_PORT ?= 8080
 peewee: db.sqlite
-	uvicorn peewee_orm:app --reload --port=$(BACKEND_PORT)
+	uvicorn peewee_orm:app --reload --port=$(BACKEND_PORT) --http=httptools
 
 sqlalchemy: db.sqlite
-	uvicorn sqlalchemy_core:app --reload --port=8080
+	uvicorn sqlalchemy_core:app --reload --port=8080 --http=httptools

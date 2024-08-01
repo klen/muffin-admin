@@ -64,6 +64,7 @@ mixer = "*"
 peewee = "*"
 muffin-peewee-aio = "*"
 muffin-databases = "*"
+httptools = "*"
 
 [tool.pytest.ini_options]
 addopts = "-xsv"

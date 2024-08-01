@@ -1,4 +1,4 @@
-import { APIParams, makeRequest, requestHeaders, setupAdmin } from "./utils"
+import { APIParams, makeRequest, setupAdmin } from "./utils"
 
 export function MuffinDataprovider(apiUrl: string) {
   async function request(url: string, options?: APIParams) {
@@ -86,23 +86,6 @@ export function MuffinDataprovider(apiUrl: string) {
         data: payload,
       })
       return { data: json }
-    },
-
-    downloadFile: async (path: string) => {
-      path = path.replace(/^\/+/, "")
-      const response = await fetch(`${apiUrl}/${path}`, {
-        headers: requestHeaders,
-      })
-      const url = window.URL.createObjectURL(await response.blob())
-      const link = document.createElement("a")
-      link.href = url
-      const filename =
-        response.headers.get("content-disposition")?.split("filename=")[1] || path.split("/").pop()
-      link.setAttribute("download", filename)
-      if (filename) link.setAttribute("download", filename)
-      link.click()
-      // no need to append link as child to body.
-      setTimeout(() => window.URL.revokeObjectURL(url), 0) // this is important too, otherwise we will be unnecessarily spiking memory!
     },
   }
   return methods

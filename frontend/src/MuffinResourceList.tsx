@@ -78,14 +78,15 @@ function MuffinListToolbar() {
     list: { create },
   } = useMuffinResourceOpts()
   const actions = baseActions.filter((a) => a.view?.includes("list"))
+  const hasExport = actions.some((a) => a.id === "export")
   return (
     <TopToolbar>
       {help && <HelpLink href={help} />}
       <SelectColumnsButton />
       <FilterButton />
-      {actions.length ? actions.map((props) => <ActionButton key={props.id} {...props} />) : null}
       {create && <CreateButton />}
-      <ExportButton />
+      {actions.length ? actions.map((props) => <ActionButton key={props.id} {...props} />) : null}
+      {!hasExport && <ExportButton />}
     </TopToolbar>
   )
 }

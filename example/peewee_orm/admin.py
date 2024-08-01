@@ -1,5 +1,7 @@
 """Setup admin UI."""
 
+from typing import ClassVar
+
 import marshmallow as ma
 from muffin import Response, ResponseJSON
 from muffin_rest import APIError
@@ -91,7 +93,7 @@ admin = Plugin(
 @admin.check_auth
 async def auth(request, redirect=True):
     """Fake authorization method. Do not use in production."""
-    pk = request.headers.get("authorization")
+    pk = request.headers.get("authorization") or request.query.get("t")
     return await User.select().where(User.id == pk).first()
 
 
@@ -146,11 +148,11 @@ class UserResource(PWAdminHandler):
         model = User
         filters = "created", "is_active", "role", ("email", {"operator": "$contains"})
         sorting = ("id", {"default": "desc"}), "created", "email", "is_active", "role"
-        schema_meta = {
+        schema_meta: ClassVar = {
             "load_only": ("password",),
             "dump_only": ("created",),
         }
-        schema_fields = {
+        schema_fields: ClassVar = {
             "name": ma.fields.Function(
                 lambda user: f"{user.first_name} {user.last_name}",
             ),
@@ -193,6 +195,12 @@ class UserResource(PWAdminHandler):
         """Mark selected users as inactive."""
         return {"status": True, "message": "Hello {name}".format(**data)}
 
+    @PWAdminHandler.action(
+        "/user/export", label="ra.action.export", icon="Download", view=["list"], file=True
+    )
+    async def export(self, request, **_):
+        pass
+
 
 @admin.route
 class GroupResource(PWAdminHandler):
@@ -200,7 +208,7 @@ class GroupResource(PWAdminHandler):
 
     class Meta:
         model = Group
-        schema_meta = {"dump_only": ("created",)}
+        schema_meta: ClassVar = {"dump_only": ("created",)}
         icon = "People"
 
 
@@ -213,7 +221,7 @@ class MessageResource(PWAdminHandler):
 
         model = Message
         filters = "status", "user"
-        schema_meta = {"dump_only": ("created",)}
+        schema_meta: ClassVar = {"dump_only": ("created",)}
 
         icon = "Message"
         ra_refs = (("user", {"source": "email"}),)
@@ -222,7 +230,7 @@ class MessageResource(PWAdminHandler):
     @PWAdminHandler.action(
         "/message/{id}/publish", label="Publish", icon="Publish", view="show", confirm=True
     )
-    async def publish_message(self, request, resource=None):
+    async def publish_message(self, _, resource=None):
         if resource is None:
             raise APIError.NOT_FOUND()
 
@@ -232,13 +240,9 @@ class MessageResource(PWAdminHandler):
         return {"status": True, "message": "Message is published"}
 
     @PWAdminHandler.action(
-        "/message/data.csv",
-        label="Download CSV",
-        icon="Download",
-        view="list",
-        file=True,
+        "/message/data.csv", label="Download CSV", icon="Download", view="list", file=True
     )
-    async def csv(self, request, resource=None):
+    async def csv(self, _, **__):
         """Download CSV file."""
         return Response(
             content="id,created,text,user\n"
