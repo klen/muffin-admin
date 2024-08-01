@@ -29,23 +29,11 @@ export function ActionButton({ paths, confirm, file, ...props }: AdminAction) {
   const translate = useTranslate()
   const record = useRecordContext()
   const confirmation = useConfirmation()
+
   const path = paths.find((p) => p.includes("{id}")) || paths[paths.length - 1]
   const { mutate, isPending } = useAction(path)
-  const { apiUrl } = useMuffinAdminOpts()
 
-  if (file) {
-    let url = `${apiUrl}${path}`
-    if (record) url.replace("{id}", record.id as string)
-
-    const authorization = requestHeaders["Authorization"]
-    if (authorization) url += `?t=${authorization}`
-
-    return (
-      <Button href={url} label={props.label} component={Link} target="_blank">
-        {buildIcon(props.icon)}
-      </Button>
-    )
-  }
+  if (file) return <FileButton path={path} record={record} {...props} />
 
   const confirmMessage =
     typeof confirm === "string" ? translate(confirm) : "Do you confirm this action?"
@@ -53,6 +41,26 @@ export function ActionButton({ paths, confirm, file, ...props }: AdminAction) {
   const onHandle = async (payload?) => {
     const process = confirm ? await confirmation.confirm({ message: confirmMessage }) : true
     if (process) await mutate({ record, payload })
+  }
+
+  return <ActionButtonBase {...props} isPending={isPending} onHandle={onHandle} />
+}
+
+export function ListActionButton({ paths, confirm, file, ...props }: AdminAction) {
+  const translate = useTranslate()
+  const confirmation = useConfirmation()
+  const path = paths.find((p) => !p.includes("{id}")) || paths[paths.length - 1]
+  const { mutate, isPending } = useAction(path)
+
+  const { filterValues } = useListContext()
+  if (file) return <FileButton path={path} filterValues={filterValues} {...props} />
+
+  const confirmMessage =
+    typeof confirm === "string" ? translate(confirm) : "Do you confirm this action?"
+
+  const onHandle = async (payload?) => {
+    const process = confirm ? await confirmation.confirm({ message: confirmMessage }) : true
+    if (process) await mutate({ payload })
   }
 
   return <ActionButtonBase {...props} isPending={isPending} onHandle={onHandle} />
@@ -171,5 +179,31 @@ export function CommonPayload({
         </AdminModal>
       </FormGroupsProvider>
     </FormProvider>
+  )
+}
+
+function FileButton({
+  path,
+  record,
+  label,
+  icon,
+  filterValues,
+}: {
+  path: string
+  label: string
+  icon: string
+  record?: any
+  filterValues?: any
+}) {
+  const { apiUrl } = useMuffinAdminOpts()
+  let url = `${apiUrl}${path}`
+  if (record) url = url.replace("{id}", record.id as string)
+  const authorization = requestHeaders["Authorization"]
+  if (authorization) url += `?t=${authorization}`
+  if (Object.keys(filterValues).length) url += `&where=${JSON.stringify(filterValues)}`
+  return (
+    <Button href={url} label={label} component={Link} target="_blank">
+      {buildIcon(icon)}
+    </Button>
   )
 }

@@ -14,7 +14,7 @@ import {
   TopToolbar,
 } from "react-admin"
 import { buildRA } from "./buildRA"
-import { ActionButton, BulkActionButton } from "./buttons"
+import { BulkActionButton, ListActionButton } from "./buttons"
 import { HelpLink } from "./common/HelpLink"
 import { useMuffinResourceOpts } from "./hooks"
 import { buildAdmin, findBuilder, setupAdmin } from "./utils"
@@ -85,7 +85,9 @@ function MuffinListToolbar() {
       <SelectColumnsButton />
       <FilterButton />
       {create && <CreateButton />}
-      {actions.length ? actions.map((props) => <ActionButton key={props.id} {...props} />) : null}
+      {actions.length
+        ? actions.map((props) => <ListActionButton key={props.id} {...props} />)
+        : null}
       {!hasExport && <ExportButton />}
     </TopToolbar>
   )
