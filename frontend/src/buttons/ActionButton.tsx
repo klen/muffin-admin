@@ -2,7 +2,6 @@ import {
   Button,
   FormGroupsProvider,
   useAugmentedForm,
-  useDataProvider,
   useListContext,
   useRecordContext,
   useResourceContext,
@@ -15,9 +14,10 @@ import { useState } from "react"
 import { buildRA } from "../buildRA"
 import { AdminModal, PayloadButtons, useConfirmation } from "../common"
 import { HelpLink } from "../common/HelpLink"
+import { useMuffinAdminOpts } from "../hooks"
 import { useAction } from "../hooks/useAction"
 import { AdminAction, AdminPayloadProps } from "../types"
-import { buildIcon, findBuilder } from "../utils"
+import { buildIcon, findBuilder, requestHeaders } from "../utils"
 
 export type ActionPayloadProps = {
   active: boolean
@@ -31,18 +31,17 @@ export function ActionButton({ paths, confirm, file, ...props }: AdminAction) {
   const confirmation = useConfirmation()
   const path = paths.find((p) => p.includes("{id}")) || paths[paths.length - 1]
   const { mutate, isPending } = useAction(path)
-  const dataprovider = useDataProvider()
+  const { apiUrl } = useMuffinAdminOpts()
 
   if (file) {
+    let url = `${apiUrl}${path}`
+    if (record) url.replace("{id}", record.id as string)
+
+    const authorization = requestHeaders["Authorization"]
+    if (authorization) url += `?t=${authorization}`
+
     return (
-      <Button
-        component={Link}
-        label={props.label}
-        onClick={(e) => {
-          e.stopPropagation()
-          dataprovider.downloadFile(path)
-        }}
-      >
+      <Button href={url} label={props.label} component={Link} target="_blank">
         {buildIcon(props.icon)}
       </Button>
     )

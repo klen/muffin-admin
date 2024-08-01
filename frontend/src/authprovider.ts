@@ -71,6 +71,8 @@ export function MuffinAuthProvider(props: AdminOpts["auth"]) {
         return user
       },
 
+      getAuthorization: () => authGet(storageName),
+
       logout: async () => {
         // Clean storage
         authSet(storageName, "")

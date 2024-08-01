@@ -47,6 +47,7 @@ class Plugin(BasePlugin):
         "mutation_mode": "optimistic",
         "help": None,
         "locales": None,
+        "secret": None,
     }
 
     def __init__(self, app: Optional[Application] = None, **kwargs):
@@ -87,6 +88,7 @@ class Plugin(BasePlugin):
 
             return decorator
 
+        @app.route(f"/{prefix.lstrip('/')}")
         @authorize
         async def render_admin(_):
             """Render admin page."""
@@ -98,8 +100,7 @@ class Plugin(BasePlugin):
                 custom_css=f"<link rel='stylesheet' href={custom_css} />" if custom_css else "",
             )
 
-        app.route(f"/{prefix.lstrip('/')}")(render_admin)
-
+        @app.route(f"{prefix}/ra.json")
         @authorize
         async def ra(request):
             data = self.to_ra()
@@ -109,22 +110,17 @@ class Plugin(BasePlugin):
 
             return data
 
-        app.route(f"{prefix}/ra.json")(ra)
-
+        @app.route(f"{prefix}/main.js")
         async def render_admin_static(_):
             return ResponseFile(PACKAGE_DIR / "main.js")
 
-        app.route(f"{prefix}/main.js")(render_admin_static)
-
+        @app.route(f"{prefix}/login")
         async def login(request):
             return await self.__login__(request)
 
-        app.route(f"{prefix}/login")(login)
-
+        @app.route(f"{prefix}/ident")
         async def ident(request):
             return await self.__ident__(request)
-
-        app.route(f"{prefix}/ident")(ident)
 
     def route(self, path: Any, *paths: str, **params) -> Callable:
         """Route an handler."""
