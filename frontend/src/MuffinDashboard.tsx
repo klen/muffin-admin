@@ -18,7 +18,7 @@ export function MuffinDashboard() {
   const translate = useTranslate()
   return (
     <Stack gap={2} pt={1}>
-      <Stack direction="row">
+      <Stack direction="row" flexWrap="wrap" gap={1}>
         {help && <HelpLink href={help} label={translate("muffin.how_to_use_admin")} />}
         {buildAdmin(["dashboard-actions"])}
       </Stack>
