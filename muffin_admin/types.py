@@ -1,9 +1,13 @@
 """Custom types."""
 
-from typing import Any, Callable, Literal, TypedDict
+from typing import Any, Callable, Literal, TypeAlias, TypedDict
 
 from marshmallow.fields import Field
-from typing_extensions import NotRequired, TypeAlias
+
+try:
+    from typing import NotRequired
+except ImportError:
+    from typing_extensions import NotRequired
 
 TActionView = Literal["show", "edit", "list", "bulk"]
 TRAProps = dict[str, Any]

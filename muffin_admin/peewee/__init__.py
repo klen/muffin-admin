@@ -105,7 +105,8 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
 class PWSearchFilter(PWFilter):
     """Search in query by value."""
 
-    def query(self, qs: pw.Query, column: pw.Field, *ops: tuple, **_) -> pw.Query:
+    async def filter(self, collection: pw.ModelSelect, *ops: tuple, **_) -> pw.ModelSelect:
         """Apply the filters to Peewee QuerySet.."""
         _, value = ops[0]
-        return cast(pw.Query, qs.where(column.contains(value)))
+        column = self.field
+        return cast(pw.ModelSelect, collection.where(column.contains(value)))

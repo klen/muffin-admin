@@ -7,6 +7,7 @@ import {
   SimpleForm,
   Toolbar,
   TopToolbar,
+  useResourceContext,
 } from "react-admin"
 import { buildRA } from "./buildRA"
 import { ActionButton } from "./buttons"
@@ -49,8 +50,8 @@ setupAdmin(["edit"], MuffinEdit)
 setupAdmin(["edit-inputs"], buildRA)
 
 export function MuffinEditToolbar() {
-  const { name } = useMuffinResourceOpts()
-  const Actions = findBuilder(["edit-actions", name])
+  const resource = useResourceContext()
+  const Actions = findBuilder(["edit-actions", resource])
   return (
     <TopToolbar>
       <Actions />
