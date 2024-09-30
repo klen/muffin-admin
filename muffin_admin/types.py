@@ -5,9 +5,9 @@ from typing import Any, Callable, Literal, TypeAlias, TypedDict
 from marshmallow.fields import Field
 
 try:
-    from typing import NotRequired  # type: ignore[attr-defined]
+    from typing import NotRequired, TypeAlias  # type: ignore[attr-defined]
 except ImportError:
-    from typing_extensions import NotRequired
+    from typing_extensions import NotRequired, TypeAlias
 
 TActionView = Literal["show", "edit", "list", "bulk"]
 TRAProps = dict[str, Any]
