@@ -5,7 +5,7 @@ from typing import Any, Callable, Literal, TypeAlias, TypedDict
 from marshmallow.fields import Field
 
 try:
-    from typing import NotRequired
+    from typing import NotRequired  # type: ignore[attr-defined]
 except ImportError:
     from typing_extensions import NotRequired
 
