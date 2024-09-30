@@ -29,6 +29,7 @@ include = ["muffin_admin/main.js", "muffin_admin/main.js.LICENSE.txt"]
 python = "^3.9"
 muffin = "*"
 muffin-rest = "*"
+typing-extensions = { version = "*", python = "<=3.10" }
 
 # Optional dependencies
 pyyaml = { version = "*", optional = true }
