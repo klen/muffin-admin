@@ -1,6 +1,6 @@
 """Custom types."""
 
-from typing import Any, Callable, Literal, TypeAlias, TypedDict
+from typing import Any, Callable, Literal, TypedDict
 
 from marshmallow.fields import Field
 
