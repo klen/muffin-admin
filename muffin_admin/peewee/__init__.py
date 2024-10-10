@@ -76,7 +76,7 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
         model_field = resource and getattr(cls.meta.model, field.attribute or source, None)
         ra_type, props = super(PWAdminHandler, cls).to_ra_input(field, source)
         refs = dict(cls.meta.ra_refs)
-        if model_field:
+        if model_field and isinstance(model_field, pw.Field):
             if model_field.choices:
                 return "SelectInput", dict(
                     props,
