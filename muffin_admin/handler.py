@@ -318,13 +318,16 @@ MA_TO_RAI: dict[type, TRAConverter] = {
     ma.fields.DateTime: lambda _: ("DateTimeInput", {}),
     ma.fields.Number: lambda _: ("NumberInput", {}),
     ma.fields.Field: lambda _: ("TextInput", {}),
-    EnumField: lambda field: (
+    ma.fields.Enum: lambda field: (
         "SelectInput",
         {"choices": [{"id": choice.value, "name": choice.name} for choice in field.enum]},  # type: ignore[attr-defined]
     ),
     # Default
     object: lambda _: ("TextField", {}),
 }
+
+# Support EnumField from muffin-rest
+MA_TO_RAI[EnumField] = MA_TO_RAI[ma.fields.Enum]
 
 
 def find_ra(field: ma.fields.Field, types: dict[type, TRAConverter]) -> TRAConverter:
