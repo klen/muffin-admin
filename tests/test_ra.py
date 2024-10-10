@@ -1,4 +1,4 @@
-from enum import StrEnum
+from enum import Enum
 
 import marshmallow as ma
 
@@ -6,7 +6,7 @@ from muffin_admin.handler import AdminHandler
 
 
 def test_ma_enum_to_ra():
-    class TestEnum(StrEnum):
+    class TestEnum(Enum):
         a = "a"
         b = "b"
         c = "c"
