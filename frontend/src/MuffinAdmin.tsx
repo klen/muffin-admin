@@ -37,8 +37,8 @@ export function MuffinAdmin(props: AdminProps) {
 
   const {
     basename,
-    authProvider = findBuilder(["authprovider"])(auth),
-    dataProvider = findBuilder(["dataprovider"])(apiUrl),
+    authProvider = findBuilder(["auth-provider"])(auth),
+    dataProvider = findBuilder(["data-provider"])(apiUrl),
     catchAll,
     dashboard = findBuilder(["dashboard"]),
     disableTelemetry,

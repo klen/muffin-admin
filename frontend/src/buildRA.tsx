@@ -81,7 +81,7 @@ const UI: Record<string, JSX.ElementType> = {
   FKInput,
 }
 
-export function buildRAComponent(name, props) {
+export function buildRAComponent(name: string, props: any) {
   const Item = UI[name]
   if (!Item) return null
 
@@ -99,6 +99,6 @@ export function buildRA(items: [string, Record<string, any>][]) {
   return items.map((item) => buildRAComponent(item[0], item[1]))
 }
 
-export function registerUI(name, component) {
+export function registerUI(name: string, component: JSX.ElementType) {
   UI[name] = component
 }

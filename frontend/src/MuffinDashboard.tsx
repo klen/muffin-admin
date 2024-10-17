@@ -65,9 +65,9 @@ function DashboardCard({ title, value }: AdminDashboardBlock) {
 const AdminTableView = ({ src }) => (
   <Table>
     <TableBody>
-      {src.map((row, idx) => (
+      {src.map((row: any, idx: number) => (
         <TableRow key={idx} hover>
-          {row.map((cell, idx) => (
+          {row.map((cell: any, idx: number) => (
             <TableCell key={idx}>{cell}</TableCell>
           ))}
         </TableRow>

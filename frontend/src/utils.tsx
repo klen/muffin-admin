@@ -1,15 +1,16 @@
 import * as icons from "@mui/icons-material"
 import { stringify } from "query-string"
 import { fetchUtils } from "ra-core"
+import { TAdminPath } from "./types"
 
-const builders = new Map<string, (props) => any>()
+const builders = new Map<string, (props: any) => any>()
 
-export function setupAdmin<T>(adminType: string[], fc: (props) => T) {
+export function setupAdmin<T>(adminType: TAdminPath, fc: (props: any) => T) {
   const key = adminType.join("/")
   builders.set(key, fc)
 }
 
-export function buildAdmin(adminType: string[], props = {}) {
+export function buildAdmin(adminType: TAdminPath, props = {}) {
   const builder = findBuilder(adminType)
   if (process.env.NODE_ENV == "development") console.log(props)
   if (builder) return builder(props)
@@ -18,7 +19,7 @@ export function buildAdmin(adminType: string[], props = {}) {
   return null
 }
 
-export function findBuilder(adminType: string[]): (props) => any {
+export function findBuilder(adminType: TAdminPath): (props: any) => any {
   if (process.env.NODE_ENV == "development") console.log(adminType)
   const key = [...adminType]
   while (key.length) {

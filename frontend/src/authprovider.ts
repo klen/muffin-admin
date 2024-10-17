@@ -89,4 +89,4 @@ export function MuffinAuthProvider(props: AdminOpts["auth"]) {
     }
 }
 
-setupAdmin(["authprovider"], MuffinAuthProvider)
+setupAdmin(["auth-provider"], MuffinAuthProvider)

@@ -1,6 +1,44 @@
+export type TID = string | number
+
 export type TProps = {
   [key: string]: any
 }
+
+export type TAdminType =
+  | "action-payload"
+  | "admin"
+  | "appbar"
+  | "auth-provider"
+  | "auth-storage-get"
+  | "auth-storage-set"
+  | "create"
+  | "create-inputs"
+  | "create-toolbar"
+  | "dashboard"
+  | "dashboard-actions"
+  | "dashboard-content"
+  | "data-provider"
+  | "edit"
+  | "edit-actions"
+  | "edit-inputs"
+  | "edit-toolbar"
+  | "layout"
+  | "list"
+  | "list-toolbar"
+  | "list-grid"
+  | "list-grid-buttons"
+  | "list-filters"
+  | "list-fields"
+  | "list-bulk-actions"
+  | "locale"
+  | "loginpage"
+  | "resource"
+  | "show"
+  | "show-actions"
+  | "show-toolbar"
+  | "show-fields"
+  | "show-links"
+export type TAdminPath = [type: TAdminType, ...ids: string[]]
 
 export type AdminAction = {
   view?: ("show" | "edit" | "list" | "bulk")[]

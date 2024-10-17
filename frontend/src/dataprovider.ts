@@ -1,3 +1,4 @@
+import { TID } from "./types"
 import { APIParams, makeRequest, setupAdmin } from "./utils"
 
 export function MuffinDataprovider(apiUrl: string) {
@@ -26,35 +27,35 @@ export function MuffinDataprovider(apiUrl: string) {
       return { data, total: parseInt(headers.get("x-total"), 10) }
     },
 
-    getOne: async (resource, { id }) => {
+    getOne: async (resource: string, { id }: { id: TID }) => {
       return await request(`${resource}/${id}`)
     },
 
-    create: async (resource, { data }) => {
+    create: async (resource: string, { data }) => {
       return await request(resource, {
         data,
         method: "POST",
       })
     },
 
-    update: async (resource, { id, data }) => {
+    update: async (resource: string, { id, data }: { id: TID; data: any }) => {
       return await makeRequest(`${apiUrl}/${resource}/${id}`, {
         data,
         method: "PUT",
       }).then(({ json }) => ({ data: json }))
     },
 
-    updateMany: async (resource, { ids, data }) => {
+    updateMany: async (resource: string, { ids, data }: { ids: TID[]; data: any }) => {
       await Promise.all(ids.map((id) => methods.update(resource, { id, data })))
       return { data: ids }
     },
 
-    delete: async (resource, { id }) => {
+    delete: async (resource: string, { id }: { id: TID }) => {
       await request(`${resource}/${id}`, { method: "DELETE" })
       return { data: { id } }
     },
 
-    deleteMany: async (resource, { ids }) => {
+    deleteMany: async (resource: string, { ids }: { ids: TID[][] }) => {
       await request(resource, {
         data: ids,
         method: "DELETE",
@@ -62,13 +63,13 @@ export function MuffinDataprovider(apiUrl: string) {
       return { data: ids }
     },
 
-    getMany: (resource, props) => {
+    getMany: (resource: string, props: { ids: TID[]; meta: any }) => {
       const { ids, meta } = props
       const key = meta?.key || "id"
       return methods.getList(resource, { filter: { [key]: { $in: ids } } })
     },
 
-    getManyReference: async (resource, { target, id, filter, ...opts }) => {
+    getManyReference: async (resource: string, { target, id, filter, ...opts }) => {
       filter = filter || {}
       filter[target] = id
       return await methods.getList(resource, { filter, ...opts })
@@ -96,4 +97,4 @@ export type TActionProps<T = any> = {
   ids?: string[]
   record?: T
 }
-setupAdmin(["dataprovider"], MuffinDataprovider)
+setupAdmin(["data-provider"], MuffinDataprovider)

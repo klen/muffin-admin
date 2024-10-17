@@ -76,7 +76,7 @@ export function BulkActionButton({ paths, confirm, ...props }: AdminAction) {
   const confirmMessage =
     typeof confirm === "string" ? translate(confirm) : "Do you confirm this action?"
 
-  const onHandle = async (payload?) => {
+  const onHandle = async (payload?: any) => {
     const process = confirm ? await confirmation.confirm({ message: confirmMessage }) : true
     if (process) await mutate({ ids: selectedIds, payload })
   }
@@ -100,8 +100,7 @@ function ActionButtonBase({
   const resource = useResourceContext()
   const [payloadActive, setPayloadActive] = useState(false)
 
-  const PayloadBuilder =
-    findBuilder(["action", "payload", id, resource]) || (schema && CommonPayload)
+  const PayloadBuilder = findBuilder(["action-payload", id, resource]) || (schema && CommonPayload)
 
   return (
     <>

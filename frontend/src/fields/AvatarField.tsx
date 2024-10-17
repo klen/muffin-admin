@@ -12,7 +12,7 @@ export function AvatarField({ source, alt, style, nameProp, ...props }) {
         .trim(" ")
         .split(/\s+/)
         .slice(0, 2)
-        .map((n) => n[0].toUpperCase())
+        .map((n: string) => n[0].toUpperCase())
         .join("")
     : ""
 
