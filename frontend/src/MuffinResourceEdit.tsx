@@ -1,3 +1,4 @@
+import { PropsWithChildren } from "react"
 import {
   DeleteButton,
   Edit,
@@ -14,7 +15,7 @@ import { ActionButton } from "./buttons"
 import { useMuffinAdminOpts, useMuffinResourceOpts } from "./hooks"
 import { buildAdmin, findBuilder, setupAdmin } from "./utils"
 
-export function MuffinEdit() {
+export function MuffinEdit({ children }: PropsWithChildren) {
   const {
     adminProps: { mutationMode = "optimistic" },
   } = useMuffinAdminOpts()
@@ -26,6 +27,7 @@ export function MuffinEdit() {
 
   return (
     <Edit actions={<ActionsToolbar />} mutationMode={mutationMode}>
+      {children}
       <SimpleForm
         toolbar={
           <Toolbar>
@@ -49,12 +51,13 @@ export function MuffinEdit() {
 setupAdmin(["edit"], MuffinEdit)
 setupAdmin(["edit-inputs"], buildRA)
 
-export function MuffinEditToolbar() {
+export function MuffinEditToolbar({ children }: PropsWithChildren) {
   const resource = useResourceContext()
   const Actions = findBuilder(["edit-actions", resource])
   return (
     <TopToolbar>
       <Actions />
+      {children}
       <ListButton />
       <ShowButton />
     </TopToolbar>
@@ -63,12 +66,13 @@ export function MuffinEditToolbar() {
 
 setupAdmin(["edit-toolbar"], MuffinEditToolbar)
 
-export function MuffinEditActions() {
+export function MuffinEditActions({ children }: PropsWithChildren) {
   const { edit, actions: baseActions = [] } = useMuffinResourceOpts()
   if (!edit) return null
   const actions = baseActions.filter((a) => a.view?.includes("edit"))
   return (
     <>
+      {children}
       {actions.map((props, idx) => (
         <ActionButton key={idx} {...props} />
       ))}

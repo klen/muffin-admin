@@ -1,9 +1,10 @@
+import { PropsWithChildren } from "react"
 import { Create, ListButton, SimpleForm, TopToolbar } from "react-admin"
 import { buildRA } from "./buildRA"
 import { useMuffinResourceOpts } from "./hooks"
 import { buildAdmin, findBuilder, setupAdmin } from "./utils"
 
-export function MuffinResourceCreate() {
+export function MuffinResourceCreate({ children }: PropsWithChildren) {
   const { name, create } = useMuffinResourceOpts()
   if (!create) return null
 
@@ -11,6 +12,7 @@ export function MuffinResourceCreate() {
 
   return (
     <Create actions={<ActionsToolbar />}>
+      {children}
       <SimpleForm>{buildAdmin(["create-inputs", name], create)}</SimpleForm>
     </Create>
   )
@@ -19,8 +21,13 @@ export function MuffinResourceCreate() {
 setupAdmin(["create"], MuffinResourceCreate)
 setupAdmin(["create-inputs"], buildRA)
 
-setupAdmin(["create-toolbar"], () => (
-  <TopToolbar>
-    <ListButton />
-  </TopToolbar>
-))
+export function MuffinCreateToolbar({ children }: PropsWithChildren) {
+  return (
+    <TopToolbar>
+      {children}
+      <ListButton />
+    </TopToolbar>
+  )
+}
+
+setupAdmin(["create-toolbar"], MuffinCreateToolbar)

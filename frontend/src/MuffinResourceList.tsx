@@ -1,5 +1,6 @@
 import sortBy from "lodash/sortBy"
 import uniq from "lodash/uniq"
+import { PropsWithChildren } from "react"
 import {
   BulkDeleteButton,
   BulkExportButton,
@@ -19,7 +20,7 @@ import { HelpLink } from "./common/HelpLink"
 import { useMuffinResourceOpts } from "./hooks"
 import { buildAdmin, findBuilder, setupAdmin } from "./utils"
 
-export function MuffinList() {
+export function MuffinList({ children }: PropsWithChildren) {
   const { name, list } = useMuffinResourceOpts()
   const { limit, limitMax, filters, sort } = list
 
@@ -36,6 +37,7 @@ export function MuffinList() {
         <Pagination rowsPerPageOptions={sortBy(uniq([10, 25, 50, 100, limit, limitMax]))} />
       }
     >
+      {children}
       <DataGrid />
     </List>
   )
