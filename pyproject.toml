@@ -129,6 +129,10 @@ preview = true
 search = '"version": "{current_version}"'
 replace = '"version": "{new_version}"'
 
+[tool.poetry_bumpversion.file."frontend/src/index.ts"]
+search = 'export const VERSION = "{current_version}"'
+replace = 'export const VERSION = "{new_version}"'
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"

@@ -1,6 +1,5 @@
 const path = require("path"),
   webpack = require("webpack"),
-  package = require("./package.json"),
   mode = process.env.NODE_ENV
 
 module.exports = {
@@ -23,7 +22,7 @@ module.exports = {
   },
 
   plugins: [
-    new webpack.EnvironmentPlugin({ NODE_ENV: "production", MUFFIN_ADMIN_VERSION: package.version }),
+    new webpack.EnvironmentPlugin({ NODE_ENV: "production" }),
   ],
 
   mode: mode || "production",
