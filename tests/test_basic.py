@@ -73,6 +73,7 @@ def test_endpoint(app):
         "filters": [("TextInput", {"source": "id"}), ("TextInput", {"source": "name"})],
         "limit": 25,
         "limitMax": 100,
+        "limitTotal": False,
         "show": True,
         "edit": True,
         "remove": True,

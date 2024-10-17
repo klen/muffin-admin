@@ -9,6 +9,7 @@ import {
   EditButton,
   ExportButton,
   FilterButton,
+  InfiniteList,
   List,
   Pagination,
   SelectColumnsButton,
@@ -22,12 +23,12 @@ import { buildAdmin, findBuilder, setupAdmin } from "./utils"
 
 export function MuffinList({ children }: PropsWithChildren) {
   const { name, list } = useMuffinResourceOpts()
-  const { limit, limitMax, filters, sort } = list
+  const { limit, limitMax, limitTotal, filters, sort } = list
 
   const DataGrid = findBuilder(["list-grid", name])
   const Toolbar = findBuilder(["list-toolbar", name])
 
-  return (
+  return limitTotal ? (
     <List
       sort={sort}
       perPage={limit}
@@ -40,6 +41,16 @@ export function MuffinList({ children }: PropsWithChildren) {
       {children}
       <DataGrid />
     </List>
+  ) : (
+    <InfiniteList
+      sort={sort}
+      perPage={limit}
+      actions={<Toolbar />}
+      filters={buildAdmin(["list-filters", name], filters)}
+    >
+      {children}
+      <DataGrid />
+    </InfiniteList>
   )
 }
 
@@ -96,7 +107,7 @@ function MuffinListToolbar() {
 }
 setupAdmin(["list-toolbar"], MuffinListToolbar)
 
-function MuffinListBulkActions() {
+function MuffinListActions() {
   const {
     actions: baseActions = [],
     list: { remove },
@@ -113,4 +124,8 @@ function MuffinListBulkActions() {
   )
 }
 
-setupAdmin(["list-actions"], MuffinListBulkActions)
+setupAdmin(["list-actions"], MuffinListActions)
+
+function MuffinPagination() {
+  return null
+}

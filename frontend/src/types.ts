@@ -93,6 +93,7 @@ export type AdminResourceProps = {
   list: {
     limit: number
     limitMax: number
+    limitTotal: boolean
     create: boolean
     filters: AdminInput[]
     fields: AdminField[]

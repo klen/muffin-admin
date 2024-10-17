@@ -24,7 +24,14 @@ export function MuffinDataprovider(apiUrl: string) {
         query.sort = order == "ASC" ? field : `-${field}`
       }
       const { headers, data } = await request(resource, { query })
-      return { data, total: parseInt(headers.get("x-total"), 10) }
+      return {
+        data,
+        total: parseInt(headers.get("x-total"), 10),
+        pageInfo: {
+          hasPreviousPage: pagination.page > 1,
+          hasNextPage: data.length === pagination.perPage,
+        },
+      }
     },
 
     getOne: async (resource: string, { id }: { id: TID }) => {

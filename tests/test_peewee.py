@@ -189,6 +189,7 @@ async def test_admin(app):
     assert ra["list"]["sort"] == {"field": "id", "order": "DESC"}
     assert ra["list"]["limit"] == 25
     assert ra["list"]["limitMax"] == 100
+    assert ra["list"]["limitTotal"] is False
     assert ra["list"]["show"] is True
     assert ra["list"]["edit"] is True
     assert ra["list"]["filters"] == [

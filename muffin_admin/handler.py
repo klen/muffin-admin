@@ -28,6 +28,7 @@ class AdminOptions(RESTOptions):
 
     limit: int = 25
     limit_max: int = 100
+    limit_total = False
 
     icon: str = ""
     label: str = ""
@@ -179,6 +180,7 @@ class AdminHandler(RESTBase):
                 "edit": bool(meta.edit),
                 "limit": meta.limit,
                 "limitMax": meta.limit_max,
+                "limitTotal": meta.limit_total,
                 "show": bool(meta.show),
                 "fields": [fields_hash[name] for name in meta.columns if name in fields_hash],
                 "filters": [
