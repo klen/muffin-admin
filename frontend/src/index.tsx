@@ -34,3 +34,5 @@ export async function initAdmin(prefix = "", containerId: string = "root") {
     </MuffinAdminContext.Provider>
   )
 }
+
+export const VERSION = process.env.VERSION

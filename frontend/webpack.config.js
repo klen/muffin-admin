@@ -1,5 +1,6 @@
 const path = require("path"),
   webpack = require("webpack"),
+  package = require("./package.json"),
   mode = process.env.NODE_ENV
 
 module.exports = {
@@ -21,7 +22,9 @@ module.exports = {
     ],
   },
 
-  plugins: [new webpack.EnvironmentPlugin({ NODE_ENV: "production" })],
+  plugins: [
+    new webpack.EnvironmentPlugin({ NODE_ENV: "production", VERSION: package.version }),
+  ],
 
   mode: mode || "production",
   devtool: mode == "development" && "inline-source-map",

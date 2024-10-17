@@ -26,6 +26,9 @@ export function MuffinDashboard() {
         {buildAdmin(["dashboard-content"])}
         <AdminCards src={dashboard} />
       </Grid>
+      <Typography variant="body2" color="textSecondary" align="center" my={1}>
+        Muffin Admin v.{process.env.VERSION}
+      </Typography>
     </Stack>
   )
 }
