@@ -12,24 +12,24 @@ export type TAdminType =
   | "auth-storage-get"
   | "auth-storage-set"
   | "create"
-  | "create-inputs"
   | "create-toolbar"
+  | "create-inputs"
   | "dashboard"
   | "dashboard-actions"
   | "dashboard-content"
   | "data-provider"
   | "edit"
   | "edit-actions"
-  | "edit-inputs"
   | "edit-toolbar"
+  | "edit-inputs"
   | "layout"
   | "list"
+  | "list-actions"
   | "list-toolbar"
   | "list-grid"
   | "list-grid-buttons"
   | "list-filters"
   | "list-fields"
-  | "list-bulk-actions"
   | "locale"
   | "loginpage"
   | "resource"
@@ -54,7 +54,7 @@ export type AdminAction = {
 }
 
 export type AdminField = [string, { source: string }]
-export type AdminInput = [string, { required: boolean; source: string; [key: string]: any }]
+export type AdminInput = [string, { required: boolean; source: string;[key: string]: any }]
 
 export type AdminShowLink = {
   label: string
@@ -85,11 +85,11 @@ export type AdminResourceProps = {
   actions: AdminAction[]
   create: AdminInput[] | false
   edit:
-    | {
-        inputs: AdminInput[]
-        remove?: boolean
-      }
-    | false
+  | {
+    inputs: AdminInput[]
+    remove?: boolean
+  }
+  | false
   list: {
     limit: number
     limitMax: number

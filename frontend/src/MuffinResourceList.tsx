@@ -50,7 +50,7 @@ setupAdmin(["list-filters"], buildRA)
 function MuffinListDatagrid() {
   const { name, list } = useMuffinResourceOpts()
   const { fields, edit, show } = list
-  const BulkActions = findBuilder(["list-bulk-actions", name])
+  const BulkActions = findBuilder(["list-actions", name])
   return (
     <DatagridConfigurable
       rowClick={show ? "show" : edit ? "edit" : false}
@@ -113,4 +113,4 @@ function MuffinListBulkActions() {
   )
 }
 
-setupAdmin(["list-bulk-actions"], MuffinListBulkActions)
+setupAdmin(["list-actions"], MuffinListBulkActions)
