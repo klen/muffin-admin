@@ -5,7 +5,7 @@ export type TProps = {
 }
 
 export type TAdminType =
-  | "action-payload"
+  | "action-form"
   | "admin"
   | "appbar"
   | "auth-provider"

@@ -100,31 +100,32 @@ function ActionButtonBase({
   const resource = useResourceContext()
   const [payloadActive, setPayloadActive] = useState(false)
 
-  const PayloadBuilder = findBuilder(["action-payload", id, resource]) || (schema && CommonPayload)
+  const PayloadForm = findBuilder(["action-form", id, resource]) || (schema && CommonPayload)
+  if (!PayloadForm)
+    return (
+      <Button label={label} title={title} onClick={onHandle} disabled={isPending}>
+        {buildIcon(icon)}
+      </Button>
+    )
 
   return (
     <>
       <Button
         label={label}
         title={title}
-        onClick={() => {
-          if (PayloadBuilder) setPayloadActive(true)
-          else onHandle()
-        }}
+        onClick={() => setPayloadActive(true)}
         disabled={isPending}
       >
         {buildIcon(icon)}
       </Button>
-      {PayloadBuilder && (
-        <PayloadBuilder
-          active={payloadActive}
-          onHandle={onHandle}
-          onClose={() => setPayloadActive(false)}
-          title={title || label}
-          schema={schema}
-          help={help}
-        />
-      )}
+      <PayloadForm
+        active={payloadActive}
+        onHandle={onHandle}
+        onClose={() => setPayloadActive(false)}
+        title={title || label}
+        schema={schema}
+        help={help}
+      />
     </>
   )
 }
@@ -159,11 +160,11 @@ export function CommonPayload({
           title={
             help
               ? ((
-                <Stack alignItems="flex-start">
-                  <span>{translate(title, { _: title })}</span>
-                  <HelpLink href={help} style={{ alignSelf: "flex-end" }} />
-                </Stack>
-              ) as any)
+                  <Stack alignItems="flex-start">
+                    <span>{translate(title, { _: title })}</span>
+                    <HelpLink href={help} style={{ alignSelf: "flex-end" }} />
+                  </Stack>
+                ) as any)
               : translate(title, { _: title })
           }
           actions={
