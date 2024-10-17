@@ -8,6 +8,7 @@ import TableCell from "@mui/material/TableCell"
 import TableRow from "@mui/material/TableRow"
 import Typography from "@mui/material/Typography"
 import { useTranslate } from "react-admin"
+import { VERSION } from "."
 import { HelpLink } from "./common/HelpLink"
 import { useMuffinAdminOpts } from "./hooks"
 import { AdminDashboardBlock } from "./types"
@@ -26,9 +27,11 @@ export function MuffinDashboard() {
         {buildAdmin(["dashboard-content"])}
         <AdminCards src={dashboard} />
       </Grid>
-      <Typography variant="body2" color="textSecondary" align="center" my={1}>
-        Muffin Admin v.{process.env.VERSION}
-      </Typography>
+      {VERSION && (
+        <Typography variant="body2" color="textSecondary" align="center" my={1}>
+          Muffin Admin v.{VERSION}
+        </Typography>
+      )}
     </Stack>
   )
 }

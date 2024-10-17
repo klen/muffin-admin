@@ -23,7 +23,7 @@ module.exports = {
   },
 
   plugins: [
-    new webpack.EnvironmentPlugin({ NODE_ENV: "production", VERSION: package.version }),
+    new webpack.EnvironmentPlugin({ NODE_ENV: "production", MUFFIN_ADMIN_VERSION: package.version }),
   ],
 
   mode: mode || "production",

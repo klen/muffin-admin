@@ -35,4 +35,4 @@ export async function initAdmin(prefix = "", containerId: string = "root") {
   )
 }
 
-export const VERSION = process.env.VERSION
+export const VERSION = process?.env.MUFFIN_ADMIN_VERSION
