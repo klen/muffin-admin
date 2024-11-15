@@ -103,7 +103,7 @@ function ActionButtonBase({
   const PayloadForm = findBuilder(["action-form", id, resource]) || (schema && CommonPayload)
   if (!PayloadForm)
     return (
-      <Button label={label} title={title} onClick={onHandle} disabled={isPending}>
+      <Button label={label} title={title} onClick={() => onHandle()} disabled={isPending}>
         {buildIcon(icon)}
       </Button>
     )
@@ -160,11 +160,11 @@ export function CommonPayload({
           title={
             help
               ? ((
-                  <Stack alignItems="flex-start">
-                    <span>{translate(title, { _: title })}</span>
-                    <HelpLink href={help} style={{ alignSelf: "flex-end" }} />
-                  </Stack>
-                ) as any)
+                <Stack alignItems="flex-start">
+                  <span>{translate(title, { _: title })}</span>
+                  <HelpLink href={help} style={{ alignSelf: "flex-end" }} />
+                </Stack>
+              ) as any)
               : translate(title, { _: title })
           }
           actions={
