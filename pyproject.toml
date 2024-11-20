@@ -16,6 +16,7 @@ classifiers = [
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Topic :: Internet :: WWW/HTTP",
   "Framework :: AsyncIO",
   "Framework :: Trio",
@@ -77,7 +78,7 @@ ignore_missing_imports = true
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = py39,py310,py311,py312,pypy39
+envlist = py39,py310,py311,py312,py313,pypy39
 
 [testenv]
 deps = -e .[dev]
@@ -122,7 +123,7 @@ ignore = [
 
 [tool.black]
 line-length = 100
-target-version = ["py310", "py311"]
+target-version = ["py310", "py311", "py312", "py313"]
 preview = true
 
 [tool.poetry_bumpversion.file."frontend/package.json"]

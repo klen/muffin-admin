@@ -8,17 +8,17 @@ import { buildAdmin, findBuilder, setupAdmin } from "./utils"
 
 export function MuffinShow({ children }: PropsWithChildren) {
   const { show, name } = useMuffinResourceOpts()
-  const ActionsToolbar = findBuilder(["show-toolbar", name])
+  const ShowToolbar = findBuilder(["show-toolbar", name])
 
   return (
-    <Show actions={<ActionsToolbar />}>
+    <Show actions={<ShowToolbar />}>
       {children}
       <SimpleShowLayout>{buildAdmin(["show-fields", name], show)}</SimpleShowLayout>
     </Show>
   )
 }
 
-setupAdmin(["show"], (props) => <MuffinShow {...props} />)
+setupAdmin(["show"], MuffinShow)
 setupAdmin(["show-fields"], ({ fields }) => buildRA(fields))
 
 export function MuffinShowToolbar({ children }: PropsWithChildren) {

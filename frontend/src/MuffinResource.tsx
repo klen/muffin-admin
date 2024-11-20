@@ -7,15 +7,20 @@ export function MuffinResource({ name, ...props }: ResourceProps) {
   const opts = adminOpts?.resources.find((r) => r.name == name)
   if (!opts) return null
 
+  const Create = findBuilder(["create", name])
+  const Edit = findBuilder(["edit", name])
+  const List = findBuilder(["list", name])
+  const Show = findBuilder(["show", name])
+
   return (
     <Resource
       key={name}
       name={name}
       icon={findIcon(opts.icon)}
-      create={findBuilder(["create", name])}
-      edit={findBuilder(["edit", name])}
-      list={findBuilder(["list", name])}
-      show={findBuilder(["show", name])}
+      create={Create}
+      edit={Edit}
+      list={List}
+      show={Show}
       {...props}
     />
   )

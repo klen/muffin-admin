@@ -21,6 +21,7 @@ export type TAdminType =
   | "edit"
   | "edit-actions"
   | "edit-toolbar"
+  | "edit-form-toolbar"
   | "edit-inputs"
   | "layout"
   | "list"

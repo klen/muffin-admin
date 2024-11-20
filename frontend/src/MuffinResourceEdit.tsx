@@ -13,43 +13,56 @@ import {
 import { buildRA } from "./buildRA"
 import { ActionButton } from "./buttons"
 import { useMuffinAdminOpts, useMuffinResourceOpts } from "./hooks"
-import { buildAdmin, findBuilder, setupAdmin } from "./utils"
+import { findBuilder, setupAdmin } from "./utils"
 
 export function MuffinEdit({ children }: PropsWithChildren) {
   const {
     adminProps: { mutationMode = "optimistic" },
   } = useMuffinAdminOpts()
+
   const { edit, name } = useMuffinResourceOpts()
   if (!edit) return null
 
-  const { inputs, remove } = edit
-  const ActionsToolbar = findBuilder(["edit-toolbar", name])
+  const Actions = findBuilder(["edit-toolbar", name])
+  const Inputs = findBuilder(["edit-inputs", name])
+  const FormToolbar = findBuilder(["edit-form-toolbar", name])
 
   return (
-    <Edit actions={<ActionsToolbar />} mutationMode={mutationMode}>
+    <Edit actions={<Actions />} mutationMode={mutationMode}>
       {children}
-      <SimpleForm
-        toolbar={
-          <Toolbar>
-            <SaveButton />
-            {remove && (
-              <DeleteButton
-                sx={{
-                  marginLeft: "auto",
-                }}
-              />
-            )}
-          </Toolbar>
-        }
-      >
-        {buildAdmin(["edit-inputs", name], inputs)}
+      <SimpleForm toolbar={<FormToolbar />}>
+        <Inputs />
       </SimpleForm>
     </Edit>
   )
 }
 
 setupAdmin(["edit"], MuffinEdit)
-setupAdmin(["edit-inputs"], buildRA)
+
+export function MuffinEditFormToolbar() {
+  const { edit } = useMuffinResourceOpts()
+  if (!edit) return null
+
+  const { remove } = edit
+  return (
+    <Toolbar>
+      <SaveButton />
+      {remove && <DeleteButton sx={{ marginLeft: "auto" }} />}
+    </Toolbar>
+  )
+}
+
+setupAdmin(["edit-form-toolbar"], MuffinEditFormToolbar)
+
+export function MuffinEditInputs() {
+  const { edit } = useMuffinResourceOpts()
+  if (!edit) return null
+
+  const { inputs } = edit
+
+  return <>{buildRA(inputs)}</>
+}
+setupAdmin(["edit-inputs"], MuffinEditInputs)
 
 export function MuffinEditToolbar({ children }: PropsWithChildren) {
   const resource = useResourceContext()
