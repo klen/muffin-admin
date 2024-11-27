@@ -13,7 +13,6 @@ TActionView = Literal["show", "edit", "list", "bulk"]
 TRAProps = dict[str, Any]
 TRAInfo = tuple[str, TRAProps]
 TRAConverter = Callable[[Field], TRAInfo]
-TRAFields: TypeAlias = tuple[tuple[str, TRAInfo], ...]
 TRAInputs: TypeAlias = tuple[tuple[str, TRAInfo], ...]
 
 
@@ -22,9 +21,6 @@ class TRAReference(TypedDict):
     source: NotRequired[str]
     reference: NotRequired[str]
     searchKey: NotRequired[str]
-
-
-TRARefs = tuple[tuple[str, TRAReference], ...]
 
 
 class TRAActionLink(TypedDict):

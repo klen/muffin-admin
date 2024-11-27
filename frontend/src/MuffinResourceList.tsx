@@ -15,25 +15,27 @@ import {
   SelectColumnsButton,
   TopToolbar,
 } from "react-admin"
-import { buildRA } from "./buildRA"
+import { buildRA, buildRAComponent } from "./buildRA"
 import { BulkActionButton, ListActionButton } from "./buttons"
 import { HelpLink } from "./common/HelpLink"
 import { useMuffinResourceOpts } from "./hooks"
+import { AdminInput } from "./types"
 import { buildAdmin, findBuilder, setupAdmin } from "./utils"
 
 export function MuffinList({ children }: PropsWithChildren) {
   const { name, list } = useMuffinResourceOpts()
-  const { limit, limitMax, limitTotal, filters, sort } = list
+  const { limit, limitMax, limitTotal, sort, filters } = list
 
   const DataGrid = findBuilder(["list-grid", name])
   const Toolbar = findBuilder(["list-toolbar", name])
+  const raFilters = buildAdmin(["list-filters", name], filters)
 
   return limitTotal ? (
     <List
       sort={sort}
       perPage={limit}
+      filters={raFilters}
       actions={<Toolbar />}
-      filters={buildAdmin(["list-filters", name], filters)}
       pagination={
         <Pagination rowsPerPageOptions={sortBy(uniq([10, 25, 50, 100, limit, limitMax]))} />
       }
@@ -42,12 +44,7 @@ export function MuffinList({ children }: PropsWithChildren) {
       <DataGrid />
     </List>
   ) : (
-    <InfiniteList
-      sort={sort}
-      perPage={limit}
-      actions={<Toolbar />}
-      filters={buildAdmin(["list-filters", name], filters)}
-    >
+    <InfiniteList sort={sort} perPage={limit} actions={<Toolbar />} filters={raFilters}>
       {children}
       <DataGrid />
     </InfiniteList>
@@ -56,7 +53,17 @@ export function MuffinList({ children }: PropsWithChildren) {
 
 setupAdmin(["list"], MuffinList)
 setupAdmin(["list-fields"], buildRA)
-setupAdmin(["list-filters"], buildRA)
+
+function muffinListFilters(filters: AdminInput[]) {
+  return filters.map((props) => {
+    const [rtype, opts] = props
+    return buildRAComponent(rtype, {
+      ...opts,
+      variant: "outlined",
+    })
+  })
+}
+setupAdmin(["list-filters"], muffinListFilters)
 
 function MuffinListDatagrid() {
   const { name, list } = useMuffinResourceOpts()
@@ -125,7 +132,3 @@ function MuffinListActions() {
 }
 
 setupAdmin(["list-actions"], MuffinListActions)
-
-function MuffinPagination() {
-  return null
-}

@@ -1,4 +1,5 @@
 import datetime as dt
+from typing import ClassVar
 
 import muffin_peewee
 import peewee as pw
@@ -55,29 +56,29 @@ def _setup_admin(app):
 
     @admin.route
     class UserAdmin(PWAdminHandler):
-        class Meta:
+        class Meta(PWAdminHandler.Meta):
             model = User
-            schema_meta = {
+            schema_meta: ClassVar = {
                 "dump_only": ("is_super",),
                 "load_only": ("password",),
                 "exclude": ("created",),
             }
-            schema_fields = {
+            schema_fields: ClassVar = {
                 "name": fields.String(metadata={"description": "User name"}),
             }
-            ra_refs = (("role", {"source": "name"}),)
+            ra_refs: ClassVar = {"role": {"source": "name"}}
             filters = ("status",)
 
     @admin.route
     class RoleAdmin(PWAdminHandler):
-        class Meta:
+        class Meta(PWAdminHandler.Meta):
             model = Role
 
     @admin.route
     class MessageAdmin(PWAdminHandler):
-        class Meta:
+        class Meta(PWAdminHandler.Meta):
             model = Message
-            ra_refs = (("user", {"source": "email"}),)
+            ra_refs: ClassVar = {"user": {"source": "email"}}
 
 
 async def test_admin(app):
@@ -86,6 +87,10 @@ async def test_admin(app):
 
     assert admin.api.router.routes()
     assert admin.handlers
+
+
+async def test_user_resource(app):
+    admin = app.plugins["admin"]
 
     user_resource_type = admin.handlers[0]
     assert user_resource_type.meta.limit
@@ -112,7 +117,7 @@ async def test_admin(app):
             },
         ),
         (
-            "SelectInput",
+            "SelectArrayInput",
             {
                 "choices": [{"id": 1, "name": "new"}, {"id": 2, "name": "old"}],
                 "defaultValue": 1,
@@ -144,7 +149,7 @@ async def test_admin(app):
                 },
             ),
             (
-                "SelectInput",
+                "SelectArrayInput",
                 {
                     "choices": [{"id": 1, "name": "new"}, {"id": 2, "name": "old"}],
                     "defaultValue": 1,
@@ -195,7 +200,7 @@ async def test_admin(app):
     assert ra["list"]["filters"] == [
         ("TextInput", {"source": "id"}),
         (
-            "SelectInput",
+            "SelectArrayInput",
             {
                 "choices": [{"id": 1, "name": "new"}, {"id": 2, "name": "old"}],
                 "defaultValue": 1,
@@ -223,8 +228,13 @@ async def test_admin(app):
         ),
     ]
 
+
+async def test_msg_resource(app):
+    admin = app.plugins["admin"]
+
     message_resource_type = admin.handlers[2]
-    assert message_resource_type.to_ra()["edit"] == {
+    ra = message_resource_type.to_ra()
+    assert ra["edit"] == {
         "remove": True,
         "inputs": [
             ("TextInput", {"source": "body", "required": True, "multiline": True}),

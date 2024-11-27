@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 import marshmallow as ma
 from muffin import ResponseJSON
 
@@ -63,18 +65,18 @@ async def login(request):
 class UserResource(SAAdminHandler):
     """Create Admin Resource for the User model."""
 
-    class Meta:
+    class Meta(SAAdminHandler.Meta):
         """Tune the resource."""
 
         database = db
         table = User
         filters = "created", "is_active", "role", SAFilter("email", operator="$contains")
         sorting = "id", "created", "email", "is_active", "role"
-        schema_meta = {
+        schema_meta: ClassVar = {
             "load_only": ("password",),
             "dump_only": ("created",),
         }
-        schema_fields = {
+        schema_fields: ClassVar = {
             "name": ma.fields.Function(
                 lambda user: "{first_name} {last_name}".format(**user),
             ),
@@ -82,16 +84,16 @@ class UserResource(SAAdminHandler):
 
         icon = "People"
         columns = "id", "picture", "email", "name", "is_active", "role"
-        ra_fields = (
-            ("picture", ("AvatarField", {"alt": "picture", "nameProp": "name", "sortable": False})),
-        )
+        ra_fields: ClassVar = {
+            "picture": ("AvatarField", {"alt": "picture", "nameProp": "name", "sortable": False})
+        }
 
 
 @admin.route
 class MessageResource(SAAdminHandler):
     """Create Admin Resource for the Message model."""
 
-    class Meta:
+    class Meta(SAAdminHandler.Meta):
         """Tune the resource."""
 
         database = db
@@ -99,4 +101,4 @@ class MessageResource(SAAdminHandler):
         filters = "status", "user_id"
 
         icon = "Message"
-        ra_refs = (("user_id", {"reference": "user", "source": "email"}),)
+        ra_refs: ClassVar = {"user_id": {"reference": "user", "source": "email"}}

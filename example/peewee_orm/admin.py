@@ -161,11 +161,15 @@ class UserResource(PWAdminHandler):
         icon = "Person"
         help = "https://fakeHelpLink.com"
         columns = "id", "picture", "email", "name", "is_active", "role"
-        ra_fields = (
-            ("picture", ("AvatarField", {"alt": "picture", "nameProp": "name", "sortable": False})),
-        )
+
+        ra_fields: ClassVar = {
+            "picture": ("AvatarField", {"alt": "picture", "nameProp": "name", "sortable": False}),
+        }
         ra_links = (("message", {"label": "Messages", "title": "Show user messages"}),)
-        ra_refs = (("group", {"source": "name"}),)
+        ra_refs: ClassVar = {"group": {"source": "name"}}
+        ra_filters: ClassVar = {
+            "created": ("FilterInput", {"type": "datetime-local"}),
+        }
         delete = False
 
     @PWAdminHandler.action("/user/error", label="Broken Action", icon="Error", view=["bulk"])
@@ -179,7 +183,7 @@ class UserResource(PWAdminHandler):
         import asyncio
 
         ids = request.query.getall("ids")
-        await User.update(is_active=False).where(User.id << ids)
+        await User.update(is_active=False).where(User.id << ids)  # type: ignore[]
         await asyncio.sleep(1)
         return {"status": True, "ids": ids, "message": "Users is disabled"}
 
@@ -206,7 +210,7 @@ class UserResource(PWAdminHandler):
 class GroupResource(PWAdminHandler):
     """Create Admin Resource for the Group model."""
 
-    class Meta:
+    class Meta(PWAdminHandler.Meta):
         model = Group
         schema_meta: ClassVar = {"dump_only": ("created",)}
         icon = "People"
@@ -216,7 +220,7 @@ class GroupResource(PWAdminHandler):
 class MessageResource(PWAdminHandler):
     """Create Admin Resource for the Message model."""
 
-    class Meta:
+    class Meta(PWAdminHandler.Meta):
         """Tune the resource."""
 
         model = Message
@@ -224,8 +228,8 @@ class MessageResource(PWAdminHandler):
         schema_meta: ClassVar = {"dump_only": ("created",)}
 
         icon = "Message"
-        ra_refs = (("user", {"source": "email"}),)
-        ra_fields = (("status", ("ChipField", {})),)
+        ra_refs: ClassVar = {"user": {"source": "email"}}
+        ra_fields: ClassVar = {"status": ("ChipField", {})}
 
     @PWAdminHandler.action(
         "/message/{id}/publish", label="Publish", icon="Publish", view="show", confirm=True

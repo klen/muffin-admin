@@ -25,17 +25,18 @@ import {
   ReferenceField,
   ReferenceInput,
   ReferenceManyField,
+  required,
   RichTextField,
+  SelectArrayInput,
   SelectField,
   SelectInput,
   TextField,
   TextInput,
   UrlField,
-  required,
 } from "react-admin"
 
 import { AvatarField, EditableBooleanField, FKField, JsonField } from "./fields"
-import { FKInput, JsonInput } from "./inputs"
+import { FilterInput, FKInput, JsonInput } from "./inputs"
 
 const UI: Record<string, JSX.ElementType> = {
   // Fields
@@ -60,25 +61,27 @@ const UI: Record<string, JSX.ElementType> = {
   JsonField,
 
   // Inputs
-  BooleanInput,
-  NullableBooleanInput,
-  DateInput,
-  DateTimeInput,
-  ImageInput,
-  FileInput,
-  NumberInput,
-  PasswordInput,
-  TextInput,
-  AutocompleteInput,
-  RadioButtonGroupInput,
-  SelectInput,
   ArrayInput,
   AutocompleteArrayInput,
+  AutocompleteInput,
+  BooleanInput,
   CheckboxGroupInput,
+  DateInput,
+  FilterInput,
+  DateTimeInput,
+  FKInput,
+  FileInput,
+  ImageInput,
+  JsonInput,
+  NullableBooleanInput,
+  NumberInput,
+  PasswordInput,
+  RadioButtonGroupInput,
   ReferenceArrayInput,
   ReferenceInput,
-  JsonInput,
-  FKInput,
+  SelectInput,
+  TextInput,
+  SelectArrayInput,
 }
 
 export function buildRAComponent(name: string, props: any) {

@@ -13,7 +13,14 @@ export function MuffinDataprovider(apiUrl: string) {
     getList: async (resource: string, params: any) => {
       const { filter, pagination, sort } = params
       const query: APIParams["query"] = {}
-      if (filter) query.where = JSON.stringify(filter)
+      if (filter) {
+        query.where = JSON.stringify(
+          Object.entries(filter).reduce((acc, [key, value]) => {
+            acc[key] = Array.isArray(value) ? { $in: value } : value
+            return acc
+          }, {})
+        )
+      }
       if (pagination) {
         const { page, perPage: limit } = pagination
         query.limit = limit
@@ -85,7 +92,7 @@ export function MuffinDataprovider(apiUrl: string) {
       return await methods.getList(resource, { filter, ...opts })
     },
 
-    runAction: async (resource: string, action: string, props: TActionProps) => {
+    runAction: async (_: string, action: string, props: TActionProps) => {
       const { payload, ids, record } = props
       action = action.replace(/^\/+/, "")
       if (record) {

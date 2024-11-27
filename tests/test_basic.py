@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 import marshmallow as ma
 from marshmallow import validate
 
@@ -122,7 +124,7 @@ def test_custom_fields_inputs():
     from muffin_admin import AdminHandler
 
     class BaseHandler(AdminHandler):
-        class Meta:
+        class Meta(AdminHandler.Meta):
             name = "name"
             filters = "id", "name"
             sorting = "id", "name"
@@ -133,7 +135,7 @@ def test_custom_fields_inputs():
                 active = ma.fields.Boolean()
 
             columns = "id", "active", "name", "unknown"
-            ra_inputs = (("id", "NumberInput"),)
+            ra_inputs: ClassVar = {"id": "NumberInput"}
 
     ra = BaseHandler.to_ra()
     assert ra["create"] == [
@@ -147,7 +149,7 @@ def test_schema_opts():
     from muffin_admin import AdminHandler
 
     class BaseHandler(AdminHandler):
-        class Meta:
+        class Meta(AdminHandler.Meta):
             name = "name"
             filters = "id", "name"
             sorting = "id", "name"
@@ -157,7 +159,7 @@ def test_schema_opts():
                 name = ma.fields.String(validate=validate.Length(3, 100))
                 active = ma.fields.Boolean()
 
-                class Meta:
+                class Meta(ma.Schema.Meta):
                     fields = "name", "id"
 
     ra = BaseHandler.to_ra()
@@ -175,7 +177,7 @@ def test_disable_edit():
     from muffin_admin import AdminHandler
 
     class BaseHandler(AdminHandler):
-        class Meta:
+        class Meta(AdminHandler.Meta):
             name = "name"
             filters = "id", "name"
             sorting = "id", "name"
@@ -188,7 +190,7 @@ def test_disable_edit():
                 name = ma.fields.String(validate=validate.Length(3, 100))
                 active = ma.fields.Boolean()
 
-                class Meta:
+                class Meta(ma.Schema.Meta):
                     fields = "name", "id"
 
     ra = BaseHandler.to_ra()
@@ -202,7 +204,7 @@ def test_disable_delete():
     from muffin_admin import AdminHandler
 
     class BaseHandler(AdminHandler):
-        class Meta:
+        class Meta(AdminHandler.Meta):
             name = "name"
             filters = "id", "name"
             sorting = "id", "name"
@@ -213,7 +215,7 @@ def test_disable_delete():
                 name = ma.fields.String(validate=validate.Length(3, 100))
                 active = ma.fields.Boolean()
 
-                class Meta:
+                class Meta(ma.Schema.Meta):
                     fields = "name", "id"
 
     ra = BaseHandler.to_ra()
