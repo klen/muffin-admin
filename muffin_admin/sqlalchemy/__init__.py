@@ -87,7 +87,7 @@ class SAAdminHandler(AdminHandler, SARESTHandler):
                 )
 
             if isinstance(column.type, Enum):
-                return "SelectInput", dict(
+                return "SelectArrayInput", dict(
                     props,
                     choices=[{"id": c.value, "name": c.name} for c in column.type.enum_class],
                 )

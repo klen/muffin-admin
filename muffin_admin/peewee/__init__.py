@@ -73,12 +73,15 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
     @classmethod
     def to_ra_input(cls, field: ma.fields.Field, source: str, *, resource: bool = True) -> TRAInfo:
         """Setup RA inputs."""
-        model_field = resource and getattr(cls.meta.model, field.attribute or source, None)
+        model_field = resource and getattr(
+            cls.meta.model, field.attribute or field.metadata.get("name") or source, None
+        )
         ra_type, props = super(PWAdminHandler, cls).to_ra_input(field, source)
-        refs = dict(cls.meta.ra_refs)
+        refs = cls.meta.ra_refs
+
         if model_field and isinstance(model_field, pw.Field):
             if model_field.choices:
-                return "SelectInput", dict(
+                return "SelectArrayInput", dict(
                     props,
                     choices=[{"id": c[0], "name": c[1]} for c in model_field.choices],
                 )

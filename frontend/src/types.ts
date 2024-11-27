@@ -55,7 +55,7 @@ export type AdminAction = {
 }
 
 export type AdminField = [string, { source: string }]
-export type AdminInput = [string, { required: boolean; source: string;[key: string]: any }]
+export type AdminInput = [string, { required: boolean; source: string; [key: string]: any }]
 
 export type AdminShowLink = {
   label: string
@@ -86,11 +86,11 @@ export type AdminResourceProps = {
   actions: AdminAction[]
   create: AdminInput[] | false
   edit:
-  | {
-    inputs: AdminInput[]
-    remove?: boolean
-  }
-  | false
+    | {
+        inputs: AdminInput[]
+        remove?: boolean
+      }
+    | false
   list: {
     limit: number
     limitMax: number

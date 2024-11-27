@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import inspect
 from functools import wraps
-from typing import TYPE_CHECKING, Any, Iterable, Optional, Sequence, Union, cast
+from typing import TYPE_CHECKING, Any, ClassVar, Iterable, Optional, Sequence, Union, cast
 
 import marshmallow as ma
 from muffin_rest import APIError
@@ -12,13 +12,12 @@ from muffin_rest.handler import RESTBase
 from muffin_rest.options import RESTOptions
 from muffin_rest.schemas import EnumField
 
-from muffin_admin.types import TActionView, TRAFields, TRAInputs
+from muffin_admin.types import TActionView, TRAInputs, TRALinks, TRAReference
 
 if TYPE_CHECKING:
     from http_router.types import TMethods
     from muffin import Request
-
-    from muffin_admin.types import TRALinks, TRARefs
+    from muffin_rest.filters import Filter
 
     from .types import TRAConverter, TRAInfo
 
@@ -44,9 +43,10 @@ class AdminOptions(RESTOptions):
     locales: Optional[dict[str, dict[str, Any]]] = None
 
     ra_order: int = 0
-    ra_fields: TRAFields = ()
-    ra_inputs: TRAInputs = ()
-    ra_refs: TRARefs = ()
+    ra_fields: ClassVar[dict[str, TRAInfo]] = {}
+    ra_inputs: ClassVar[dict[str, TRAInfo]] = {}
+    ra_filters: ClassVar[dict[str, TRAInfo]] = {}
+    ra_refs: ClassVar[dict[str, TRAReference]] = {}
     ra_links: TRALinks = ()
 
     def setup(self, cls: AdminHandler):
@@ -183,13 +183,7 @@ class AdminHandler(RESTBase):
                 "limitTotal": meta.limit_total,
                 "show": bool(meta.show),
                 "fields": [fields_hash[name] for name in meta.columns if name in fields_hash],
-                "filters": [
-                    (ra_type, dict(source=flt.name, **props))
-                    for flt, (ra_type, props) in [
-                        (flt, cls.to_ra_input(flt.schema_field, flt.name))
-                        for flt in meta.filters.mutations.values()
-                    ]
-                ],
+                "filters": [cls.to_ra_filter(flt) for flt in meta.filters.mutations.values()],
             },
             "show": {
                 "links": meta.ra_links,
@@ -197,7 +191,8 @@ class AdminHandler(RESTBase):
                 "fields": fields,
             },
             "create": meta.create and inputs,
-            "edit": meta.edit and {
+            "edit": meta.edit
+            and {
                 "inputs": inputs,
                 "remove": meta.delete,
             },
@@ -222,8 +217,8 @@ class AdminHandler(RESTBase):
         schema_load_only = schema_opts.load_only
         schema_dump_only = schema_opts.dump_only
 
-        fields_customize = dict(meta.ra_fields)
-        inputs_customize = dict(meta.ra_inputs)
+        fields_customize = meta.ra_fields
+        inputs_customize = meta.ra_inputs
         fields = []
         inputs = []
 
@@ -261,12 +256,12 @@ class AdminHandler(RESTBase):
                 input_info[1].setdefault("source", source)
                 inputs.append(input_info)
 
-        return cast(TRAFields, fields), cast(TRAInputs, inputs)
+        return cast(TRAInputs, fields), cast(TRAInputs, inputs)
 
     @classmethod
     def to_ra_field(cls, field: ma.fields.Field, source: str) -> TRAInfo:
         """Convert self schema field to ra field."""
-        refs = dict(cls.meta.ra_refs)
+        refs = cls.meta.ra_refs
         if source in refs:
             ref_data = refs[source]
             return "FKField", {
@@ -275,14 +270,23 @@ class AdminHandler(RESTBase):
                 "reference": ref_data.get("reference") or source,
             }
 
-        converter = find_ra(field, MA_TO_RAF)
-        return converter(field)
+        return ma_to_ra(field, MA_TO_RAF)
+
+    @classmethod
+    def to_ra_filter(cls, flt: Filter) -> TRAInfo:
+        custom = cls.meta.ra_filters
+        if flt.name in custom:
+            ra_type, props = custom[flt.name]
+        else:
+            ra_type, props = cls.to_ra_input(flt.schema_field, flt.name, resource=True)
+
+        props["source"] = flt.name
+        return ra_type, props
 
     @classmethod
     def to_ra_input(cls, field: ma.fields.Field, source: str, *, resource: bool = True) -> TRAInfo:
         """Convert a field to react-admin."""
-        converter = find_ra(field, MA_TO_RAI)
-        rtype, props = converter(field)
+        rtype, props = ma_to_ra(field, MA_TO_RAI)
 
         if isinstance(field.load_default, (bool, str, int)):
             props.setdefault("defaultValue", field.load_default)
@@ -321,7 +325,7 @@ MA_TO_RAI: dict[type, TRAConverter] = {
     ma.fields.Number: lambda _: ("NumberInput", {}),
     ma.fields.Field: lambda _: ("TextInput", {}),
     ma.fields.Enum: lambda field: (
-        "SelectInput",
+        "SelectArrayInput",
         {"choices": [{"id": choice.value, "name": choice.name} for choice in field.enum]},  # type: ignore[attr-defined]
     ),
     # Default
@@ -332,10 +336,12 @@ MA_TO_RAI: dict[type, TRAConverter] = {
 MA_TO_RAI[EnumField] = MA_TO_RAI[ma.fields.Enum]
 
 
-def find_ra(field: ma.fields.Field, types: dict[type, TRAConverter]) -> TRAConverter:
-    """Find a converter for first supported field class."""
+def ma_to_ra(field: ma.fields.Field, types: dict[type, TRAConverter]) -> TRAInfo:
+    """Convert a field to fa."""
+    converter = types[object]
     for fcls in type(field).mro():
         if fcls in types:
-            return types[fcls]
+            converter = types[fcls]
+            break
 
-    return types[object]
+    return converter(field)

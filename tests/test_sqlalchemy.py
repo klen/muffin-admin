@@ -1,5 +1,6 @@
 import datetime as dt
 import enum
+from typing import ClassVar
 
 import muffin_databases
 import pytest
@@ -58,29 +59,29 @@ def setup_admin(app):
 
     @admin.route
     class UserAdmin(SAAdminHandler):
-        class Meta:
+        class Meta(SAAdminHandler.Meta):
             table = User
             database = db
-            schema_meta = {
+            schema_meta: ClassVar = {
                 "dump_only": ("is_super",),
                 "load_only": ("password",),
                 "exclude": ("created",),
             }
-            ra_refs = (("role_id", {"source": "name"}),)
             filters = ("status",)
+            ra_refs: ClassVar = {"role_id": {"source": "name"}}
 
     @admin.route
     class RoleAdmin(SAAdminHandler):
-        class Meta:
+        class Meta(SAAdminHandler.Meta):
             table = Role
             database = db
 
     @admin.route
     class MessageAdmin(SAAdminHandler):
-        class Meta:
+        class Meta(SAAdminHandler.Meta):
             table = Message
             database = db
-            ra_refs = (("user_id", {"source": "email"}),)
+            ra_refs: ClassVar = {"user_id": {"source": "email"}}
 
 
 def test_admin(app):
@@ -109,7 +110,7 @@ def test_admin_schemas(app):
         ("TextInput", {"source": "password"}),
         ("BooleanInput", {"source": "is_active"}),
         (
-            "SelectInput",
+            "SelectArrayInput",
             {
                 "choices": [{"id": 1, "name": "new"}, {"id": 2, "name": "old"}],
                 "source": "status",
@@ -136,7 +137,7 @@ def test_admin_schemas(app):
             ("TextInput", {"source": "password"}),
             ("BooleanInput", {"source": "is_active"}),
             (
-                "SelectInput",
+                "SelectArrayInput",
                 {
                     "choices": [{"id": 1, "name": "new"}, {"id": 2, "name": "old"}],
                     "source": "status",
@@ -187,7 +188,7 @@ def test_admin_schemas(app):
     assert ra["list"]["filters"] == [
         ("TextInput", {"source": "id"}),
         (
-            "SelectInput",
+            "SelectArrayInput",
             {
                 "source": "status",
                 "choices": [{"id": 1, "name": "new"}, {"id": 2, "name": "old"}],

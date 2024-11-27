@@ -16,7 +16,7 @@ __all__ = (
     "AdminHandler",
     "PWAdminHandler",
     "PWFilter",
+    "Plugin",
     "SAAdminHandler",
     "SAFilter",
-    "Plugin",
 )
