@@ -15,6 +15,7 @@ from muffin_admin.handler import AdminHandler, AdminOptions
 if TYPE_CHECKING:
     import marshmallow as ma
     from muffin import Request
+    from muffin_rest.filters import Filter
 
     from muffin_admin.types import TRAInfo
 
@@ -81,7 +82,7 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
 
         if model_field and isinstance(model_field, pw.Field):
             if model_field.choices:
-                return "SelectArrayInput", dict(
+                return "SelectInput", dict(
                     props,
                     choices=[{"id": c[0], "name": c[1]} for c in model_field.choices],
                 )
@@ -103,6 +104,16 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
                 )
 
         return ra_type, props
+
+    @classmethod
+    def to_ra_filter(cls, flt: Filter) -> TRAInfo:
+        field = flt.field
+        if field and field.choices:
+            return "SelectArrayInput", {
+                "source": field.name,
+                "choices": [{"id": c[0], "name": c[1]} for c in field.choices],
+            }
+        return super(PWAdminHandler, cls).to_ra_filter(flt)
 
 
 class PWSearchFilter(PWFilter):

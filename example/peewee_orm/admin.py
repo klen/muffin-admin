@@ -230,6 +230,7 @@ class MessageResource(PWAdminHandler):
         icon = "Message"
         ra_refs: ClassVar = {"user": {"source": "email"}}
         ra_fields: ClassVar = {"status": ("ChipField", {})}
+        columns = "id", "created", "title", "status", "dtpublish", "user"
 
     @PWAdminHandler.action(
         "/message/{id}/publish", label="Publish", icon="Publish", view="show", confirm=True
