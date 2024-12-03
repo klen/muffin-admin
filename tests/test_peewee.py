@@ -117,7 +117,7 @@ async def test_user_resource(app):
             },
         ),
         (
-            "SelectArrayInput",
+            "SelectInput",
             {
                 "choices": [{"id": 1, "name": "new"}, {"id": 2, "name": "old"}],
                 "defaultValue": 1,
@@ -149,7 +149,7 @@ async def test_user_resource(app):
                 },
             ),
             (
-                "SelectArrayInput",
+                "SelectInput",
                 {
                     "choices": [{"id": 1, "name": "new"}, {"id": 2, "name": "old"}],
                     "defaultValue": 1,
@@ -203,7 +203,6 @@ async def test_user_resource(app):
             "SelectArrayInput",
             {
                 "choices": [{"id": 1, "name": "new"}, {"id": 2, "name": "old"}],
-                "defaultValue": 1,
                 "source": "status",
             },
         ),
