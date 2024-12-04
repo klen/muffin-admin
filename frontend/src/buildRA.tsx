@@ -36,7 +36,7 @@ import {
 } from "react-admin"
 
 import { AvatarField, EditableBooleanField, FKField, JsonField } from "./fields"
-import { FilterInput, FKInput, JsonInput } from "./inputs"
+import { FilterInput, FKInput, JsonInput, TimestampInput } from "./inputs"
 
 const UI: Record<string, JSX.ElementType> = {
   // Fields
@@ -79,9 +79,10 @@ const UI: Record<string, JSX.ElementType> = {
   RadioButtonGroupInput,
   ReferenceArrayInput,
   ReferenceInput,
+  SelectArrayInput,
   SelectInput,
   TextInput,
-  SelectArrayInput,
+  TimestampInput,
 }
 
 export function buildRAComponent(name: string, props: any) {

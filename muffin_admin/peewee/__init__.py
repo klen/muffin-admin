@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, cast
 
+import marshmallow as ma
 import peewee as pw
 from muffin_peewee import JSONLikeField
 from muffin_rest.peewee.filters import PWFilter
@@ -11,9 +12,9 @@ from muffin_rest.peewee.handler import PWRESTBase
 from muffin_rest.peewee.options import PWRESTOptions
 
 from muffin_admin.handler import AdminHandler, AdminOptions
+from muffin_admin.peewee.schemas import PeeweeModelSchema
 
 if TYPE_CHECKING:
-    import marshmallow as ma
     from muffin import Request
     from muffin_rest.filters import Filter
 
@@ -49,6 +50,9 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
     meta_class: type[PWAdminOptions] = PWAdminOptions
     meta: PWAdminOptions
 
+    class Meta(AdminHandler.Meta):
+        schema_base = PeeweeModelSchema
+
     def get_selected(self, request: Request):
         """Get selected objects."""
         ids = request.query.getall("ids")
@@ -72,7 +76,9 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
         return super(PWAdminHandler, cls).to_ra_field(field, source)
 
     @classmethod
-    def to_ra_input(cls, field: ma.fields.Field, source: str, *, resource: bool = True) -> TRAInfo:
+    def to_ra_input(  # noqa: PLR0911
+        cls, field: ma.fields.Field, source: str, *, resource: bool = True
+    ) -> TRAInfo:
         """Setup RA inputs."""
         model_field = resource and getattr(
             cls.meta.model, field.attribute or field.metadata.get("name") or source, None
@@ -89,6 +95,15 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
 
             if isinstance(model_field, pw.TextField):
                 return "TextInput", dict(props, multiline=True)
+
+            if isinstance(model_field, pw.DateTimeField) and isinstance(field, ma.fields.DateTime):
+                dtformat = field.format or cls.meta.Schema.opts.datetimeformat
+                if dtformat == "timestamp_ms":
+                    return "TimestampInput", dict(props, ms=True)
+                elif dtformat == "timestamp":
+                    return "TimestampInput", dict(props, ms=False)
+
+                return ra_type, props
 
             if isinstance(model_field, JSONLikeField) or model_field.field_type.lower() == "json":
                 return "JsonInput", props

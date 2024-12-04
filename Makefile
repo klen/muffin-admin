@@ -32,9 +32,12 @@ $(VIRTUAL_ENV): pyproject.toml .pre-commit-config.yaml
 test t: $(VIRTUAL_ENV)
 	@poetry run pytest tests
 
-db.sqlite: $(VIRTUAL_ENV)
+example/db.sqlite: $(VIRTUAL_ENV)
 	@poetry run muffin $(EXAMPLE) db
 	@poetry run muffin $(EXAMPLE) devdata
+
+sqlite: example/db.sqlite
+	sqlite3 example/db.sqlite
 
 .PHONY: locales
 LOCALE ?= ru

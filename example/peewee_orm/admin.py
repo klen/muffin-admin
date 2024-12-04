@@ -224,7 +224,7 @@ class MessageResource(PWAdminHandler):
         """Tune the resource."""
 
         model = Message
-        filters = "status", "user"
+        filters = "status", "user", "dtpublish"
         schema_meta: ClassVar = {"dump_only": ("created",)}
 
         icon = "Message"
