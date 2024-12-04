@@ -130,7 +130,7 @@ preview = true
 search = '"version": "{current_version}"'
 replace = '"version": "{new_version}"'
 
-[tool.poetry_bumpversion.file."frontend/src/index.ts"]
+[tool.poetry_bumpversion.file."frontend/src/index.tsx"]
 search = 'export const VERSION = "{current_version}"'
 replace = 'export const VERSION = "{new_version}"'
 
