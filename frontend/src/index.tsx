@@ -35,4 +35,4 @@ export async function initAdmin(prefix = "", containerId: string = "root") {
   )
 }
 
-export const VERSION = "7.0.4"
+export const VERSION = "7.0.5"
