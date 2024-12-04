@@ -23,7 +23,6 @@
   },
   "homepage": "https://github.com/klen/muffin-admin#readme",
   "dependencies": {
-    "@mui/x-date-pickers": "^7.22.3",
     "js-cookie": "^3.0.5",
     "ra-language-russian": "^4.14.2",
     "react": "^18.3.1",
