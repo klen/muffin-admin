@@ -88,6 +88,16 @@ class AdminHandler(RESTBase):
     meta_class: type[AdminOptions] = AdminOptions
     meta: AdminOptions
 
+    async def __call__(self, request: Request, *, method_name=None, **_):
+        """Handle the request."""
+        response = await super(AdminHandler, self).__call__(request, method_name=method_name)
+        if response.status_code == 200:
+            await self.log(request, response, method_name)
+        return response
+
+    async def log(self, request, response, method_name):
+        """Log the request."""
+
     def get_selected(self, request: Request) -> Optional[Iterable]:
         """Get selected objects."""
         ids = request.query.getall("ids", None)
