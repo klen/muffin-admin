@@ -128,6 +128,7 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
                 "source": field.name,
                 "choices": [{"id": c[0], "name": c[1]} for c in field.choices],
             }
+
         return super(PWAdminHandler, cls).to_ra_filter(flt)
 
 

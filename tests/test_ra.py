@@ -13,7 +13,7 @@ def test_ma_enum_to_ra():
 
     res = AdminHandler.to_ra_input(ma.fields.Enum(TestEnum), source="test")
     assert res == (
-        "SelectArrayInput",
+        "SelectInput",
         {
             "choices": [
                 {"id": "a", "name": "a"},

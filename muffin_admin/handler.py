@@ -284,8 +284,15 @@ class AdminHandler(RESTBase):
     @classmethod
     def to_ra_filter(cls, flt: Filter) -> TRAInfo:
         custom = cls.meta.ra_filters
+
         if flt.name in custom:
             ra_type, props = custom[flt.name]
+
+        elif isinstance(flt.schema_field, ma.fields.Enum):
+            return "SelectArrayInput", {
+                "source": flt.name,
+                "choices": [{"id": c.value, "name": c.name} for c in flt.schema_field.enum],
+            }
         else:
             ra_type, props = cls.to_ra_input(flt.schema_field, flt.name, resource=True)
 
@@ -334,7 +341,7 @@ MA_TO_RAI: dict[type, TRAConverter] = {
     ma.fields.Number: lambda _: ("NumberInput", {}),
     ma.fields.Field: lambda _: ("TextInput", {}),
     ma.fields.Enum: lambda field: (
-        "SelectArrayInput",
+        "SelectInput",
         {"choices": [{"id": choice.value, "name": choice.name} for choice in field.enum]},  # type: ignore[attr-defined]
     ),
     # Default
