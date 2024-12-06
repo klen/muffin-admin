@@ -16,7 +16,7 @@ from muffin_admin.types import TActionView, TRAInputs, TRALinks, TRAReference
 
 if TYPE_CHECKING:
     from http_router.types import TMethods
-    from muffin import Request
+    from muffin import Request, Response
     from muffin_rest.filters import Filter
 
     from .types import TRAConverter, TRAInfo
@@ -91,11 +91,10 @@ class AdminHandler(RESTBase):
     async def __call__(self, request: Request, *, method_name=None, **_):
         """Handle the request."""
         response = await super(AdminHandler, self).__call__(request, method_name=method_name)
-        if response.status_code == 200:
-            await self.log(request, response, method_name)
+        await self.log(request, response, method_name)
         return response
 
-    async def log(self, request, response, method_name):
+    async def log(self, request: Request, response: Optional[Response], action: Optional[str]):
         """Log the request."""
 
     def get_selected(self, request: Request) -> Optional[Iterable]:

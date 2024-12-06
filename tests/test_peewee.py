@@ -6,7 +6,9 @@ import peewee as pw
 import pytest
 from marshmallow import fields
 
-db = muffin_peewee.Plugin(connection="sqlite:///:memory:", manage_connections=False)
+db = muffin_peewee.Plugin(
+    connection="sqlite:///:memory:", manage_connections=False, auto_connection=False
+)
 
 
 @db.register
@@ -49,7 +51,7 @@ async def setup_db(app):
 
 
 @pytest.fixture(autouse=True)
-def _setup_admin(app):
+def admin(app):
     from muffin_admin import Plugin, PWAdminHandler
 
     admin = Plugin(app)
@@ -79,6 +81,8 @@ def _setup_admin(app):
         class Meta(PWAdminHandler.Meta):
             model = Message
             ra_refs: ClassVar = {"user": {"source": "email"}}
+
+    return admin
 
 
 async def test_admin(app):
@@ -249,3 +253,8 @@ async def test_msg_resource(app):
             ),
         ],
     }
+
+
+async def test_client(client, admin, setup_db):
+    response = await client.get(admin.api.prefix + "/user")
+    assert response.status_code == 200
