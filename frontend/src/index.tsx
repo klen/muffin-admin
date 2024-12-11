@@ -6,6 +6,7 @@ export * from "./utils"
 
 export * from "./MuffinAdmin"
 export * from "./MuffinDashboard"
+export * from "./MuffinRecordList"
 export * from "./MuffinResource"
 export * from "./MuffinResourceCreate"
 export * from "./MuffinResourceEdit"
