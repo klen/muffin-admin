@@ -12,8 +12,8 @@ export function MuffinShow({ children }: PropsWithChildren) {
 
   return (
     <Show actions={<ShowToolbar />}>
-      {children}
       <SimpleShowLayout>{buildAdmin(["show-fields", name], show)}</SimpleShowLayout>
+      {children}
     </Show>
   )
 }
