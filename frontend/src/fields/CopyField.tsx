@@ -9,7 +9,7 @@ export function CopyField({ source, ...props }) {
 
   if (!value) return null
   return (
-    <div style={{ display: "flex", alignItems: "center" }}>
+    <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
       <span>{value}</span>
       <CopyButton value={value} />
     </div>
