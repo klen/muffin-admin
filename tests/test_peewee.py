@@ -179,7 +179,13 @@ async def test_user_resource(app):
             ("TextField", {"source": "id"}),
             ("TextField", {"source": "name"}),
             ("BooleanField", {"source": "is_active"}),
-            ("NumberField", {"source": "status"}),
+            (
+                "SelectField",
+                {
+                    "source": "status",
+                    "choices": [{"id": 1, "name": "new"}, {"id": 2, "name": "old"}],
+                },
+            ),
             ("JsonField", {"source": "meta"}),
             ("BooleanField", {"source": "is_super"}),
             (
@@ -216,7 +222,14 @@ async def test_user_resource(app):
         ("TextField", {"source": "id", "sortable": True}),
         ("TextField", {"source": "name", "sortable": True}),
         ("BooleanField", {"source": "is_active", "sortable": True}),
-        ("NumberField", {"source": "status", "sortable": True}),
+        (
+            "SelectField",
+            {
+                "source": "status",
+                "sortable": True,
+                "choices": [{"id": 1, "name": "new"}, {"id": 2, "name": "old"}],
+            },
+        ),
         ("JsonField", {"source": "meta", "sortable": True}),
         ("BooleanField", {"source": "is_super", "sortable": True}),
         (

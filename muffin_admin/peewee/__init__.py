@@ -66,14 +66,19 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
     def to_ra_field(cls, field: ma.fields.Field, source: str) -> TRAInfo:
         """Setup RA fields."""
         model_field = getattr(cls.meta.model, field.attribute or source, None)
-        if (
-            model_field
-            and isinstance(model_field, pw.Field)
-            and (isinstance(model_field, JSONLikeField) or model_field.field_type.lower() == "json")
-        ):
-            return "JsonField", {}
+        ra_type, props = super(PWAdminHandler, cls).to_ra_field(field, source)
 
-        return super(PWAdminHandler, cls).to_ra_field(field, source)
+        if model_field and isinstance(model_field, pw.Field):
+            if model_field.choices:
+                ra_type, props = "SelectField", {
+                    "choices": [{"id": c[0], "name": c[1]} for c in model_field.choices],
+                    **props,
+                }
+
+            elif isinstance(model_field, JSONLikeField) or model_field.field_type.lower() == "json":
+                ra_type = "JsonField"
+
+        return ra_type, props
 
     @classmethod
     def to_ra_input(  # noqa: PLR0911
