@@ -164,7 +164,13 @@ def test_admin_schemas(app):
             ("NumberField", {"source": "id"}),
             ("TextField", {"source": "name"}),
             ("BooleanField", {"source": "is_active"}),
-            ("TextField", {"source": "status"}),
+            (
+                "SelectField",
+                {
+                    "source": "status",
+                    "choices": [{"id": 1, "name": "new"}, {"id": 2, "name": "old"}],
+                },
+            ),
             ("BooleanField", {"source": "is_super"}),
             ("JsonField", {"source": "meta"}),
             (
@@ -199,7 +205,14 @@ def test_admin_schemas(app):
         ("NumberField", {"source": "id", "sortable": True}),
         ("TextField", {"source": "name", "sortable": True}),
         ("BooleanField", {"source": "is_active", "sortable": True}),
-        ("TextField", {"source": "status", "sortable": True}),
+        (
+            "SelectField",
+            {
+                "source": "status",
+                "sortable": True,
+                "choices": [{"id": 1, "name": "new"}, {"id": 2, "name": "old"}],
+            },
+        ),
         ("BooleanField", {"source": "is_super", "sortable": True}),
         ("JsonField", {"source": "meta", "sortable": True}),
         (

@@ -330,6 +330,10 @@ MA_TO_RAF: dict[type, TRAConverter] = {
     ma.fields.Field: lambda _: ("TextField", {}),
     ma.fields.Email: lambda _: ("EmailField", {}),
     ma.fields.Url: lambda _: ("UrlField", {}),
+    ma.fields.Enum: lambda field: (
+        "SelectField",
+        {"choices": [{"id": choice.value, "name": choice.name} for choice in field.enum]},  # type: ignore[attr-defined]
+    ),
     # Default
     object: lambda _: ("TextField", {}),
 }
