@@ -1,4 +1,5 @@
 export * from "./AvatarField"
+export * from "./CopyField"
 export * from "./EditableBooleanField"
 export * from "./FKField"
 export * from "./JsonField"

@@ -35,7 +35,7 @@ import {
   UrlField,
 } from "react-admin"
 
-import { AvatarField, EditableBooleanField, FKField, JsonField } from "./fields"
+import { AvatarField, CopyField, EditableBooleanField, FKField, JsonField } from "./fields"
 import { FilterInput, FKInput, JsonInput, TimestampInput } from "./inputs"
 
 const UI: Record<string, JSX.ElementType> = {
@@ -59,6 +59,7 @@ const UI: Record<string, JSX.ElementType> = {
   EditableBooleanField,
   FKField,
   JsonField,
+  CopyField,
 
   // Inputs
   ArrayInput,
