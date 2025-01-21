@@ -77,9 +77,13 @@ class AdminOptions(RESTOptions):
             )
 
         if not self.sorting and self.columns:
-            sorting: list[Union[str, tuple]] = list(self.columns)
-            sorting[0] = (sorting[0], {"default": "desc"})
-            self.sorting = sorting  # type: ignore[assignment]
+            self.default_sort()
+
+    def default_sort(self):
+        """Get default sorting."""
+        sorting: list[Union[str, tuple]] = list(self.columns)
+        sorting[0] = (sorting[0], {"default": "desc"})
+        self.sorting = sorting  # type: ignore[assignment]
 
 
 class AdminHandler(RESTBase):

@@ -43,6 +43,14 @@ class PWAdminOptions(AdminOptions, PWRESTOptions):
         else:
             self.filters = [PWFilter("id", field=self.model_pk), *self.filters]  # type: ignore[]
 
+    def default_sort(self):
+        """Default sorting."""
+        fields = self.model._meta.fields  # type: ignore[]
+        sorting: list = [name for name in self.columns if name in fields]
+        if sorting:
+            sorting[0] = (sorting[0], {"default": "desc"})
+            self.sorting = sorting  # type: ignore[assignment]
+
 
 class PWAdminHandler(AdminHandler, PWRESTBase):
     """Work with Peewee Models."""
