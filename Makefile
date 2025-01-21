@@ -23,7 +23,6 @@ clean:
 
 $(VIRTUAL_ENV): pyproject.toml .pre-commit-config.yaml
 	@poetry install --with dev,example
-	@poetry self add poetry-bumpversion
 	@poetry run pre-commit install
 	@touch $(VIRTUAL_ENV)
 
