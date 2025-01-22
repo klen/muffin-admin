@@ -24,7 +24,16 @@ classifiers = [
 homepage = "https://github.com/klen/muffin-admin"
 repository = "https://github.com/klen/muffin-admin"
 packages = [{ include = "muffin_admin" }]
-include = ["muffin_admin/main.js", "muffin_admin/main.js.LICENSE.txt"]
+include = [
+  { path = "muffin_admin/main.js", format = [
+    "sdist",
+    "wheel",
+  ] },
+  { path = "muffin_admin/main.js.LICENSE.txt", format = [
+    "sdist",
+    "wheel",
+  ] },
+]
 
 [tool.poetry.dependencies]
 python = "^3.9"
