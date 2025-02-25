@@ -86,3 +86,12 @@ export function deepMerge(target: any, ...sources: any[]): any {
   }
   return deepMerge(target, ...sources)
 }
+
+export function prepareFilters(filter: any) {
+  return JSON.stringify(
+    Object.entries(filter).reduce((acc, [key, value]) => {
+      acc[key] = Array.isArray(value) ? { $in: value } : value
+      return acc
+    }, {})
+  )
+}

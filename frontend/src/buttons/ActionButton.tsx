@@ -17,7 +17,7 @@ import { HelpLink } from "../common/HelpLink"
 import { useMuffinAdminOpts } from "../hooks"
 import { useAction } from "../hooks/useAction"
 import { AdminAction, AdminPayloadProps } from "../types"
-import { buildIcon, findBuilder, requestHeaders } from "../utils"
+import { buildIcon, findBuilder, prepareFilters, requestHeaders } from "../utils"
 
 export type ActionPayloadProps = {
   active: boolean
@@ -38,9 +38,9 @@ export function ActionButton({ paths, confirm, file, ...props }: AdminAction) {
   const confirmMessage =
     typeof confirm === "string" ? translate(confirm) : "Do you confirm this action?"
 
-  const onHandle = async (payload?) => {
+  const onHandle = async (payload?: any) => {
     const process = confirm ? await confirmation.confirm({ message: confirmMessage }) : true
-    if (process) await mutate({ record, payload })
+    if (process) mutate({ record, payload })
   }
 
   return <ActionButtonBase {...props} isPending={isPending} onHandle={onHandle} />
@@ -200,7 +200,7 @@ function FileButton({
   if (record) url = url.replace("{id}", record.id as string)
   const authorization = requestHeaders["Authorization"]
   if (authorization) url += `&t=${authorization}`
-  if (Object.keys(filterValues).length) url += `&where=${JSON.stringify(filterValues)}`
+  if (Object.keys(filterValues).length) url += `&where=${prepareFilters(filterValues)}`
 
   return (
     <Button href={url} label={label} component={Link}>

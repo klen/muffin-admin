@@ -1,5 +1,5 @@
 import { TID } from "./types"
-import { APIParams, makeRequest, setupAdmin } from "./utils"
+import { APIParams, makeRequest, prepareFilters, setupAdmin } from "./utils"
 
 export function MuffinDataprovider(apiUrl: string) {
   async function request(url: string, options?: APIParams) {
@@ -13,14 +13,7 @@ export function MuffinDataprovider(apiUrl: string) {
     getList: async (resource: string, params: any) => {
       const { filter, pagination, sort } = params
       const query: APIParams["query"] = {}
-      if (filter) {
-        query.where = JSON.stringify(
-          Object.entries(filter).reduce((acc, [key, value]) => {
-            acc[key] = Array.isArray(value) ? { $in: value } : value
-            return acc
-          }, {})
-        )
-      }
+      if (filter) query.where = prepareFilters(filter)
       if (pagination) {
         const { page, perPage: limit } = pagination
         query.limit = limit

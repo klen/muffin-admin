@@ -9,4 +9,6 @@ const muffinRussianMessages = {
   },
 } as unknown as TranslationMessages
 
+muffinRussianMessages.ra.action.edit = "Изменить"
+
 export default muffinRussianMessages
