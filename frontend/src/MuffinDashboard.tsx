@@ -38,6 +38,7 @@ export function MuffinDashboard() {
 
 setupAdmin(["dashboard"], MuffinDashboard)
 setupAdmin(["dashboard-actions"], () => null)
+setupAdmin(["dashboard-content"], () => null)
 
 function AdminCards({ src }: { src: AdminDashboardBlock | AdminDashboardBlock[] }) {
   if (Array.isArray(src))
