@@ -4,7 +4,7 @@ import Menu from "@mui/material/Menu"
 import MenuItem from "@mui/material/MenuItem"
 import TextField from "@mui/material/TextField"
 import { useState } from "react"
-import { useInput } from "react-admin"
+import { FieldTitle, InputProps, useInput } from "react-admin"
 
 const OPERATORS = {
   $eq: "=",
@@ -15,7 +15,7 @@ const OPERATORS = {
   $le: "≤",
 }
 
-export function Filter({ type = "text", ...props }: any) {
+export function Filter({ type = "text", ...props }: InputProps) {
   const { field } = useInput({
     format: (value: any) => (value ? value[Object.keys(value)[0]] : ""),
     ...props,
@@ -28,6 +28,8 @@ export function Filter({ type = "text", ...props }: any) {
 
   const [menuEl, setMenuEl] = useState(null)
   const open = Boolean(menuEl)
+  const { label, source, resource, isRequired } = props
+
   return (
     <>
       <FormGroup row sx={{ flexWrap: "nowrap" }}>
@@ -45,6 +47,9 @@ export function Filter({ type = "text", ...props }: any) {
           value={field.value}
           variant="outlined"
           type={type}
+          label={
+            <FieldTitle label={label} source={source} resource={resource} isRequired={isRequired} />
+          }
         />
       </FormGroup>
       <Menu open={open} onClose={() => setMenuEl(null)} anchorEl={menuEl}>

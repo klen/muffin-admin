@@ -1,20 +1,22 @@
 import TextField from "@mui/material/TextField"
 import { enGB, ru } from "date-fns/locale"
-import { useLocale } from "react-admin"
+import { FieldTitle, InputProps, useLocale } from "react-admin"
 import DatePicker, { registerLocale } from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 
 registerLocale("ru", ru)
 registerLocale("en", enGB)
 
-type TProps = {
+type TProps = InputProps & {
   value: [Date, Date]
   onChange: (value: [Date, Date]) => void
 }
 
-export function DateRangeInput({ value, onChange }: TProps) {
+export function DateRangeInput({ value, onChange, ...props }: TProps) {
   const [startDate, endDate] = value
   const locale = useLocale()
+  const { label, source, resource, isRequired } = props
+
   return (
     <DatePicker
       withPortal
@@ -23,7 +25,14 @@ export function DateRangeInput({ value, onChange }: TProps) {
       endDate={endDate}
       onChange={onChange}
       startDate={startDate}
-      customInput={<TextField variant="outlined" />}
+      customInput={
+        <TextField
+          variant="outlined"
+          label={
+            <FieldTitle label={label} source={source} resource={resource} isRequired={isRequired} />
+          }
+        />
+      }
     />
   )
 }

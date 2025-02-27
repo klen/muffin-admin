@@ -1,7 +1,7 @@
-import { InputProps, useInput } from "react-admin"
+import { useInput } from "react-admin"
 import { DateRangeInput } from "../inputs/DateRangeInput"
 
-export function DateRangeFilter(props: InputProps) {
+export function DateRangeFilter(props) {
   const { field } = useInput(props)
 
   const onChange = (dates: [Date, Date]) => {
@@ -13,5 +13,5 @@ export function DateRangeFilter(props: InputProps) {
   if (!Array.isArray(filterValue)) filterValue = [null, null]
   const value = filterValue.map((d: string) => (d ? new Date(d) : d))
 
-  return <DateRangeInput value={value} onChange={onChange} />
+  return <DateRangeInput value={value} onChange={onChange} {...props} />
 }
