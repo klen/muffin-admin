@@ -1,6 +1,7 @@
 import IconButton from "@mui/material/IconButton"
 import SvgIcon from "@mui/material/SvgIcon"
 import Tooltip from "@mui/material/Tooltip"
+
 import Typography from "@mui/material/Typography"
 import {
   AdminContext,
@@ -27,11 +28,11 @@ export function MuffinAdmin(props: AdminProps) {
   const muffinI18nProvider = buildProvider(
     backendLocales
       ? Object.fromEntries(
-          Object.entries(muffinTranslations).map(([locale, messages]) => [
-            locale,
-            deepMerge({}, messages, backendLocales[locale], buildAdmin(["locale", locale]) || {}),
-          ])
-        )
+        Object.entries(muffinTranslations).map(([locale, messages]) => [
+          locale,
+          deepMerge({}, messages, backendLocales[locale], buildAdmin(["locale", locale]) || {}),
+        ])
+      )
       : muffinTranslations
   )
 

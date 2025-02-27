@@ -168,7 +168,7 @@ class UserResource(PWAdminHandler):
         ra_links = (("message", {"label": "Messages", "title": "Show user messages"}),)
         ra_refs: ClassVar = {"group": {"source": "name"}}
         ra_filters: ClassVar = {
-            "created": ("FilterInput", {"type": "datetime-local"}),
+            "created": ("DateRangeFilter", {"type": "datetime-local"}),
         }
         delete = False
 

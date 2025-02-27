@@ -15,7 +15,7 @@ const OPERATORS = {
   $le: "≤",
 }
 
-export function FilterInput({ type = "text", ...props }: any) {
+export function Filter({ type = "text", ...props }: any) {
   const { field } = useInput({
     format: (value: any) => (value ? value[Object.keys(value)[0]] : ""),
     ...props,

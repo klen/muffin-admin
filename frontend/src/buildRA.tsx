@@ -36,7 +36,8 @@ import {
 } from "react-admin"
 
 import { AvatarField, CopyField, EditableBooleanField, FKField, JsonField } from "./fields"
-import { FilterInput, FKInput, JsonInput, TimestampInput } from "./inputs"
+import { DateRangeFilter, Filter } from "./filters"
+import { FKInput, JsonInput, TimestampInput } from "./inputs"
 
 const UI: Record<string, JSX.ElementType> = {
   // Fields
@@ -68,7 +69,6 @@ const UI: Record<string, JSX.ElementType> = {
   BooleanInput,
   CheckboxGroupInput,
   DateInput,
-  FilterInput,
   DateTimeInput,
   FKInput,
   FileInput,
@@ -84,6 +84,10 @@ const UI: Record<string, JSX.ElementType> = {
   SelectInput,
   TextInput,
   TimestampInput,
+
+  // Filters
+  Filter,
+  DateRangeFilter,
 }
 
 export function buildRAComponent(name: string, props: any) {
