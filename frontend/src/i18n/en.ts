@@ -6,6 +6,9 @@ const muffinEnglishMessages: TranslationMessages = {
   muffin: {
     instructions: "Instructions",
     how_to_use_admin: "How to use Admin?",
+    action: {
+      search: "Enter to search",
+    },
   },
 }
 

@@ -6,6 +6,9 @@ const muffinRussianMessages = {
   muffin: {
     instructions: "Инструкции",
     how_to_use_admin: "Как использовать админку?",
+    action: {
+      search: "Enter для поиска",
+    },
   },
 } as unknown as TranslationMessages
 

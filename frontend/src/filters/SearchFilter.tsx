@@ -19,13 +19,14 @@ export function SearchFilter({ source, className, ...props }: SearchInputProps) 
     <ResettableTextField
       resettable
       ref={field.ref}
+      label={label}
       value={searchValue}
       onBlur={debounce(onBlur, 500)}
+      placeholder={translate("muffin.action.search")}
       onChange={(e) => setSearchValue(e.target?.value ?? e)}
       onKeyUp={(e) => {
         if (e.key === "Enter") field.onChange(searchValue)
       }}
-      placeholder={label}
       {...props}
       className={clsx("ra-input", `ra-input-${source}`, className)}
       InputProps={{
