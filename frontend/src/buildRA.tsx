@@ -27,6 +27,7 @@ import {
   ReferenceManyField,
   required,
   RichTextField,
+  SearchInput,
   SelectArrayInput,
   SelectField,
   SelectInput,
@@ -36,7 +37,7 @@ import {
 } from "react-admin"
 
 import { AvatarField, CopyField, EditableBooleanField, FKField, JsonField } from "./fields"
-import { DateRangeFilter, Filter } from "./filters"
+import { DateRangeFilter, Filter, SearchFilter } from "./filters"
 import { FKInput, JsonInput, TimestampInput } from "./inputs"
 
 const UI: Record<string, JSX.ElementType> = {
@@ -84,10 +85,12 @@ const UI: Record<string, JSX.ElementType> = {
   SelectInput,
   TextInput,
   TimestampInput,
+  SearchInput,
 
   // Filters
   Filter,
   DateRangeFilter,
+  SearchFilter,
 }
 
 export function buildRAComponent(name: string, props: any) {

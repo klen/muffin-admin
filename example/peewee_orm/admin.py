@@ -55,6 +55,7 @@ admin = Plugin(
                     "fields": {
                         "name": "Полное имя",
                         "picture": "Аватар",
+                        "email": "Электронная почта",
                         "is_active": "Активный",
                         "role": "Роль",
                     },
@@ -168,6 +169,7 @@ class UserResource(PWAdminHandler):
         ra_links = (("message", {"label": "Messages", "title": "Show user messages"}),)
         ra_refs: ClassVar = {"group": {"source": "name"}}
         ra_filters: ClassVar = {
+            "email": ("SearchFilter", {}),
             "created": ("DateRangeFilter", {"type": "datetime-local"}),
         }
         delete = False
