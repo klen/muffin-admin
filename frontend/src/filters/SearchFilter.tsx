@@ -21,7 +21,7 @@ export function SearchFilter({ source, className, ...props }: SearchInputProps) 
       ref={field.ref}
       value={searchValue}
       onBlur={debounce(onBlur, 500)}
-      onChange={(e) => setSearchValue(e.target?.value || e)}
+      onChange={(e) => setSearchValue(e.target?.value ?? e)}
       onKeyUp={(e) => {
         if (e.key === "Enter") field.onChange(searchValue)
       }}
