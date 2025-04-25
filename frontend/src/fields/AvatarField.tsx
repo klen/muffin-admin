@@ -9,11 +9,11 @@ export function AvatarField({ source, alt, style, nameProp, ...props }) {
 
   const letters = name
     ? name
-        .trim(" ")
-        .split(/\s+/)
-        .slice(0, 2)
-        .map((n: string) => n[0].toUpperCase())
-        .join("")
+      .trim(" ")
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((n: string) => n[0]?.toUpperCase())
+      .join("")
     : ""
 
   return (
