@@ -49,6 +49,9 @@ class AdminOptions(RESTOptions):
     ra_refs: ClassVar[dict[str, TRAReference]] = {}
     ra_links: TRALinks = ()
 
+    ra_list_params: ClassVar[dict[str, Any]] = {}
+    ra_show_params: ClassVar[dict[str, Any]] = {}
+
     def setup(self, cls: AdminHandler):
         """Check and build required options."""
         if not self.limit:
@@ -197,11 +200,13 @@ class AdminHandler(RESTBase):
                 "show": bool(meta.show),
                 "fields": [fields_hash[name] for name in meta.columns if name in fields_hash],
                 "filters": [cls.to_ra_filter(flt) for flt in meta.filters.mutations.values()],
+                **meta.ra_list_params,
             },
             "show": {
                 "links": meta.ra_links,
                 "edit": bool(meta.edit),
                 "fields": fields,
+                **meta.ra_show_params,
             },
             "create": meta.create and inputs,
             "edit": meta.edit
