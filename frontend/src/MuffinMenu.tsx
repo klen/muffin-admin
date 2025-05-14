@@ -7,6 +7,7 @@ import ListItemText from "@mui/material/ListItemText"
 
 import { Menu, MenuProps, useTranslate } from "react-admin"
 
+import find from "lodash/find"
 import groupBy from "lodash/groupBy"
 import { useContext, useState } from "react"
 import { MuffinAdminContext } from "./context"
@@ -25,12 +26,12 @@ export function MuffinMenu(props: MenuProps) {
   return (
     <Menu {...props}>
       <Menu.DashboardItem />
-      {resources.map(({ name, group, icon }) => {
+      {resources.map(({ name, group }) => {
         if (!group) return <Menu.ResourceItem name={name} key={name} />
         if (groupRendered.includes(group)) return null
         groupRendered.push(group)
         const groupResources = groups[group]
-        return <MenuGroup name={group} icon={icon} resources={groupResources} key={group} />
+        return <MenuGroup name={group} resources={groupResources} key={group} />
       })}
     </Menu>
   )
@@ -38,25 +39,20 @@ export function MuffinMenu(props: MenuProps) {
 
 setupAdmin(["menu"], MuffinMenu)
 
-function MenuGroup({
-  name,
-  icon,
-  resources,
-}: {
-  name: string
-  icon: string
-  resources: AdminResourceProps[]
-}) {
-  const Icon = findIcon(icon)
+function MenuGroup({ name, resources }: { name: string; resources: AdminResourceProps[] }) {
+  const iconRes = find(resources, "icon")
+  const Icon = iconRes ? findIcon(iconRes.icon) : null
   const translate = useTranslate()
   const [groupOpen, setGroupOpen] = useState(false)
 
   return (
     <div>
       <ListItemButton onClick={() => setGroupOpen(!groupOpen)}>
-        <ListItemIcon sx={{ minWidth: 40 }}>
-          <Icon />
-        </ListItemIcon>
+        {Icon && (
+          <ListItemIcon sx={{ minWidth: 40 }}>
+            <Icon />
+          </ListItemIcon>
+        )}
         <ListItemText primary={translate(`groups.${name}`)} />
         {groupOpen ? <ExpandLess /> : <ExpandMore />}
       </ListItemButton>
