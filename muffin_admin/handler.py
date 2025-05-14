@@ -31,6 +31,7 @@ class AdminOptions(RESTOptions):
 
     icon: str = ""
     label: str = ""
+    group: Optional[str] = None
 
     create: bool = True
     delete: bool = True
@@ -186,6 +187,7 @@ class AdminHandler(RESTBase):
 
         data = {
             "name": meta.name,
+            "group": meta.group,
             "label": meta.label,
             "icon": meta.icon,
             "help": meta.help,

@@ -33,6 +33,7 @@ export type TAdminType =
   | "list-fields"
   | "locale"
   | "loginpage"
+  | "menu"
   | "resource"
   | "show"
   | "show-actions"
@@ -55,7 +56,7 @@ export type AdminAction = {
 }
 
 export type AdminField = [string, { source: string }]
-export type AdminInput = [string, { required: boolean; source: string; [key: string]: any }]
+export type AdminInput = [string, { required: boolean; source: string;[key: string]: any }]
 
 export type AdminShowLink = {
   label: string
@@ -80,17 +81,18 @@ export type AdminPayloadProps = {
 
 export type AdminResourceProps = {
   name: string
+  group?: string
   icon?: string
   label: string
   help?: string
   actions: AdminAction[]
   create: AdminInput[] | false
   edit:
-    | {
-        inputs: AdminInput[]
-        remove?: boolean
-      }
-    | false
+  | {
+    inputs: AdminInput[]
+    remove?: boolean
+  }
+  | false
   list: {
     limit: number
     limitMax: number

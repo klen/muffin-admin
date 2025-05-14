@@ -99,7 +99,7 @@ export function MuffinAdmin(props: AdminProps) {
 setupAdmin(["admin"], MuffinAdmin)
 
 export function MuffinAdminLayout(props: LayoutProps) {
-  return <Layout {...props} appBar={findBuilder(["appbar"])} />
+  return <Layout {...props} appBar={findBuilder(["appbar"])} menu={findBuilder(["menu"])} />
 }
 
 setupAdmin(["layout"], MuffinAdminLayout)

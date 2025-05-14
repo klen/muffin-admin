@@ -173,6 +173,19 @@ class UserResource(PWAdminHandler):
             "created": ("DateRangeFilter", {"type": "datetime-local"}),
         }
         delete = False
+        group = "People"
+        locales: ClassVar = {
+            "en": {
+                "groups": {
+                    "People": "Users",
+                },
+            },
+            "ru": {
+                "groups": {
+                    "People": "Пользователи",
+                },
+            },
+        }
 
     @PWAdminHandler.action("/user/error", label="Broken Action", icon="Error", view=["bulk"])
     async def just_raise_an_error(self, request, resource=None):
@@ -216,6 +229,7 @@ class GroupResource(PWAdminHandler):
         model = Group
         schema_meta: ClassVar = {"dump_only": ("created",)}
         icon = "People"
+        group = "People"
 
 
 @admin.route
