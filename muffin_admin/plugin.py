@@ -69,20 +69,21 @@ class Plugin(BasePlugin):
         self.auth["loginURL"] = self.cfg.login_url
         self.auth["logoutURL"] = self.cfg.logout_url
 
-        admin_authorize = self.cfg.authorize
         custom_css = self.cfg.custom_css_url
         custom_js = self.cfg.custom_js_url
         login_url = self.cfg.login_url
         prefix = self.cfg.prefix
         title = self.cfg.title
+        api = self.api
 
         def authorize(view):
             """Authorization."""
 
             async def decorator(request):
                 """Authorize an user."""
-                if admin_authorize:
-                    auth = await admin_authorize(request)
+                authorize = api.authorize
+                if authorize:
+                    auth = await authorize(request)
                     if not auth and login_url:
                         return ResponseRedirect(login_url)
 
