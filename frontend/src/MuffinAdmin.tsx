@@ -13,8 +13,10 @@ import {
   LayoutProps,
   localStorageStore,
   Login,
+  LoginProps,
 } from "react-admin"
 
+import { useEffect } from "react"
 import { ConfirmationProvider } from "./common"
 import { useMuffinAdminOpts } from "./hooks"
 import { buildProvider, muffinTranslations } from "./i18n"
@@ -28,11 +30,11 @@ export function MuffinAdmin(props: AdminProps) {
   const muffinI18nProvider = buildProvider(
     backendLocales
       ? Object.fromEntries(
-        Object.entries(muffinTranslations).map(([locale, messages]) => [
-          locale,
-          deepMerge({}, messages, backendLocales[locale], buildAdmin(["locale", locale]) || {}),
-        ])
-      )
+          Object.entries(muffinTranslations).map(([locale, messages]) => [
+            locale,
+            deepMerge({}, messages, backendLocales[locale], buildAdmin(["locale", locale]) || {}),
+          ])
+        )
       : muffinTranslations
   )
 
@@ -132,5 +134,20 @@ export function MuffinAppBar(props: AppBarProps) {
 
 setupAdmin(["appbar"], MuffinAppBar)
 
+export function MuffinLogin(props: LoginProps) {
+  const {
+    auth: { loginURL },
+  } = useMuffinAdminOpts()
+  useEffect(() => {
+    if (loginURL) {
+      const { pathname, search } = window.location
+      const url = new URL(loginURL)
+      url.searchParams.set("redirect", pathname + search)
+      window.location.replace(url.toString())
+    }
+  }, [loginURL])
+  return <Login {...props} />
+}
+
 // Initialize login page
-setupAdmin(["loginpage"], Login)
+setupAdmin(["loginpage"], MuffinLogin)
