@@ -139,12 +139,7 @@ export function MuffinLogin(props: LoginProps) {
     auth: { loginURL },
   } = useMuffinAdminOpts()
   useEffect(() => {
-    if (loginURL) {
-      const { pathname, search } = window.location
-      const url = new URL(loginURL)
-      url.searchParams.set("redirect", pathname + search)
-      window.location.replace(url.toString())
-    }
+    if (loginURL) window.location.replace(loginURL)
   }, [loginURL])
   return <Login {...props} />
 }
