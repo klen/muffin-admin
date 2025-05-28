@@ -8,8 +8,8 @@ export const muffinLightTheme: typeof defaultLightTheme = {
       styleOverrides: {
         root: {
           "&.RaMenuItemLink-active": {
-            backgroundColor: "#f0f0f0",
             borderRadius: "4px",
+            backgroundColor: "#f0f0f0",
           },
         },
       },
@@ -25,8 +25,8 @@ export const muffinDarkTheme: typeof defaultDarkTheme = {
       styleOverrides: {
         root: {
           "&.RaMenuItemLink-active": {
-            backgroundColor: "#424242",
             borderRadius: "4px",
+            backgroundColor: "#424242",
           },
         },
       },

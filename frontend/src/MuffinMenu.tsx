@@ -47,19 +47,16 @@ function MenuGroup({ name, resources }: { name: string; resources: AdminResource
   const basename = useBasename()
   const { pathname } = useLocation()
   const match = resources.some(
-    (resource) =>
-      !!matchPath(
-        {
-          path: `${basename}/${resource.name}/*`,
-        },
-        pathname
-      )
+    (resource) => !!matchPath({ path: `${basename}/${resource.name}/*` }, pathname)
   )
   const [groupOpen, setGroupOpen] = useState(match)
 
   return (
     <div>
-      <ListItemButton onClick={() => setGroupOpen(!groupOpen)}>
+      <ListItemButton
+        onClick={() => setGroupOpen(!groupOpen)}
+        sx={{ color: match ? "rgba(0, 0, 0, 0.87)" : "rgba(0, 0, 0, 0.6)" }}
+      >
         {Icon && (
           <ListItemIcon sx={{ minWidth: 40 }}>
             <Icon />
