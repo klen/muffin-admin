@@ -20,9 +20,14 @@ import { useEffect } from "react"
 import { ConfirmationProvider } from "./common"
 import { useMuffinAdminOpts } from "./hooks"
 import { buildProvider, muffinTranslations } from "./i18n"
+import { muffinDarkTheme, muffinLightTheme } from "./themes"
 import { buildAdmin, deepMerge, findBuilder, findIcon, setupAdmin } from "./utils"
 
-export function MuffinAdmin(props: AdminProps) {
+export function MuffinAdmin({
+  lightTheme = muffinLightTheme,
+  darkTheme = muffinDarkTheme,
+  ...props
+}: AdminProps) {
   const opts = useMuffinAdminOpts()
   const { resources = [], auth, adminProps, apiUrl, locales: backendLocales } = opts
 
@@ -57,8 +62,6 @@ export function MuffinAdmin(props: AdminProps) {
     store = localStorageStore(),
     ready,
     theme,
-    lightTheme,
-    darkTheme,
     defaultTheme,
     title = "React Admin",
   } = props

@@ -4,8 +4,9 @@ import Collapse from "@mui/material/Collapse"
 import ListItemButton from "@mui/material/ListItemButton"
 import ListItemIcon from "@mui/material/ListItemIcon"
 import ListItemText from "@mui/material/ListItemText"
+import { matchPath, useLocation } from "react-router-dom"
 
-import { Menu, MenuProps, useTranslate } from "react-admin"
+import { Menu, MenuProps, useBasename, useTranslate } from "react-admin"
 
 import find from "lodash/find"
 import groupBy from "lodash/groupBy"
@@ -43,7 +44,18 @@ function MenuGroup({ name, resources }: { name: string; resources: AdminResource
   const iconRes = find(resources, "icon")
   const Icon = iconRes ? findIcon(iconRes.icon) : null
   const translate = useTranslate()
-  const [groupOpen, setGroupOpen] = useState(false)
+  const basename = useBasename()
+  const { pathname } = useLocation()
+  const match = resources.some(
+    (resource) =>
+      !!matchPath(
+        {
+          path: `${basename}/${resource.name}/*`,
+        },
+        pathname
+      )
+  )
+  const [groupOpen, setGroupOpen] = useState(match)
 
   return (
     <div>
