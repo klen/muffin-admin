@@ -6,7 +6,7 @@ import ListItemIcon from "@mui/material/ListItemIcon"
 import ListItemText from "@mui/material/ListItemText"
 import { matchPath, useLocation } from "react-router-dom"
 
-import { Menu, MenuProps, useBasename, useTranslate } from "react-admin"
+import { Menu, MenuProps, useBasename, useTheme, useTranslate } from "react-admin"
 
 import find from "lodash/find"
 import groupBy from "lodash/groupBy"
@@ -50,12 +50,25 @@ function MenuGroup({ name, resources }: { name: string; resources: AdminResource
     (resource) => !!matchPath({ path: `${basename}/${resource.name}/*` }, pathname)
   )
   const [groupOpen, setGroupOpen] = useState(match)
+  const theme = useTheme()[0]
+  const colors =
+    theme == "dark"
+      ? {
+          text: "rgba(255, 255, 255, 0.87)",
+          textSecondary: "rgba(255, 255, 255, 0.6)",
+        }
+      : {
+          text: "rgba(0, 0, 0, 0.87)",
+          textSecondary: "rgba(0, 0, 0, 0.6)",
+        }
 
   return (
     <div>
       <ListItemButton
         onClick={() => setGroupOpen(!groupOpen)}
-        sx={{ color: match ? "rgba(0, 0, 0, 0.87)" : "rgba(0, 0, 0, 0.6)" }}
+        sx={{
+          color: match ? colors.text : colors.textSecondary,
+        }}
       >
         {Icon && (
           <ListItemIcon sx={{ minWidth: 40 }}>
