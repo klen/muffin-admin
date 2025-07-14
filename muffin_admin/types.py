@@ -28,6 +28,7 @@ class TRAActionLink(TypedDict):
     icon: NotRequired[str]
     title: NotRequired[str]
     field: NotRequired[str]
+    filter: NotRequired[str]
 
 
 TRALinks = tuple[tuple[str, TRAActionLink], ...]
