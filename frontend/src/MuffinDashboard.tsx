@@ -55,23 +55,21 @@ function AdminCards({ src }: { src: AdminDashboardBlock | AdminDashboardBlock[] 
 
 function DashboardCard({ title, value }: AdminDashboardBlock) {
   return (
-    <Grid>
-      <Card>
-        <CardContent>
-          <Typography variant="h5" component="h2" m={2} style={{ textAlign: "center" }}>
-            {title}
-          </Typography>
-          {(Array.isArray(value) && <AdminTableView src={value} />) || (
-            <pre>{JSON.stringify(value, null, 2)}</pre>
-          )}
-        </CardContent>
-      </Card>
-    </Grid>
+    <Card>
+      <CardContent>
+        <Typography variant="h5" component="h2" m={2} style={{ textAlign: "center" }}>
+          {title}
+        </Typography>
+        {(Array.isArray(value) && <AdminTableView src={value} />) || (
+          <pre>{JSON.stringify(value, null, 2)}</pre>
+        )}
+      </CardContent>
+    </Card>
   )
 }
 
 const AdminTableView = ({ src }) => (
-  <Table>
+  <Table width="100%" sx={{ tableLayout: "fixed" }}>
     <TableBody>
       {src.map((row: any, idx: number) => (
         <TableRow key={idx} hover>
