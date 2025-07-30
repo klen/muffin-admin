@@ -43,7 +43,7 @@ setupAdmin(["dashboard-content"], () => null)
 function AdminCards({ src }: { src: AdminDashboardBlock | AdminDashboardBlock[] }) {
   if (Array.isArray(src))
     return (
-      <Grid container item spacing={2}>
+      <Grid container spacing={2}>
         {src.map((card, idx) => (
           <AdminCards key={idx} src={card} />
         ))}
@@ -55,7 +55,7 @@ function AdminCards({ src }: { src: AdminDashboardBlock | AdminDashboardBlock[] 
 
 function DashboardCard({ title, value }: AdminDashboardBlock) {
   return (
-    <Grid item xs>
+    <Grid>
       <Card>
         <CardContent>
           <Typography variant="h5" component="h2" m={2} style={{ textAlign: "center" }}>

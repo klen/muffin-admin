@@ -13,7 +13,6 @@ db = Plugin(app, connection=f"sqlite:///{ Path(__file__).parent.parent / 'db.sql
 
 
 class BaseModel(AIOModel):
-
     """Automatically keep the model's creation time."""
 
     created = pw.DateTimeField(default=dt.datetime.utcnow)
@@ -21,7 +20,6 @@ class BaseModel(AIOModel):
 
 @db.register
 class Group(BaseModel):
-
     """A group."""
 
     name = pw.CharField(max_length=255, unique=True)
@@ -29,10 +27,9 @@ class Group(BaseModel):
 
 @db.register
 class User(BaseModel):
-
     """A simple user model."""
 
-    email = pw.CharField()
+    email = pw.CharField(primary_key=True)
     first_name = pw.CharField(null=True, help_text="First name")
     last_name = pw.CharField(null=True)
     password = pw.CharField(null=True)  # not secure only for the example
@@ -53,7 +50,6 @@ class User(BaseModel):
 
 @db.register
 class Message(BaseModel):
-
     """Just a users' messages."""
 
     status = pw.CharField(choices=(("new", "new"), ("published", "published")))

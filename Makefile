@@ -70,9 +70,9 @@ BACKEND_PORT ?= 8080
 .PHONY: example-peewee
 # target: example-peewee - Run example
 example-peewee: $(VIRTUAL_ENV) front
-	@poetry run muffin example.peewee_orm db
-	@poetry run muffin example.peewee_orm devdata
-	@poetry run uvicorn example.peewee_orm:app --reload --port=$(BACKEND_PORT)
+	@MUFFIN_AIOLIB=asyncio poetry run muffin example.peewee_orm db
+	@MUFFIN_AIOLIB=asyncio poetry run muffin example.peewee_orm devdata
+	@MUFFIN_AIOLIB=asyncio poetry run uvicorn example.peewee_orm:app --reload --port=$(BACKEND_PORT)
 
 
 shell: $(VIRTUAL_ENV)

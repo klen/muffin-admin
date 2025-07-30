@@ -94,8 +94,8 @@ admin = Plugin(
 @admin.check_auth
 async def auth(request, redirect=True):
     """Fake authorization method. Do not use in production."""
-    pk = request.headers.get("authorization") or request.query.get("t")
-    return await User.select().where(User.id == pk).first()
+    email = request.headers.get("authorization") or request.query.get("t")
+    return await User.select().where(User.email == email).first()
 
 
 @admin.get_identity
@@ -103,7 +103,7 @@ async def ident(request):
     """Get current user information."""
     user = await auth(request, redirect=False)
     if user:
-        return {"id": user.id, "fullName": user.email}
+        return {"email": user.email, "fullName": user.email}
 
 
 @admin.dashboard
@@ -132,7 +132,7 @@ async def login(request):
         .where(User.email == data["username"], User.password == data["password"])
         .first()
     )
-    return ResponseJSON(user and user.id)
+    return ResponseJSON(user and user.email)
 
 
 # Setup handlers
@@ -148,7 +148,7 @@ class UserResource(PWAdminHandler):
 
         model = User
         filters = "created", "is_active", "role", ("email", {"operator": "$contains"})
-        sorting = ("id", {"default": "desc"}), "created", "email", "is_active", "role"
+        sorting = ("email", {"default": "desc"}), "created", "is_active", "role"
         schema_meta: ClassVar = {
             "load_only": ("password",),
             "dump_only": ("created",),
@@ -161,7 +161,7 @@ class UserResource(PWAdminHandler):
 
         icon = "Person"
         help = "https://fakeHelpLink.com"
-        columns = "id", "picture", "email", "name", "is_active", "role"
+        columns = "email", "picture", "name", "is_active", "role"
 
         ra_fields: ClassVar = {
             "picture": ("AvatarField", {"alt": "picture", "nameProp": "name", "sortable": False}),
@@ -197,14 +197,14 @@ class UserResource(PWAdminHandler):
         """Mark selected users as inactive."""
         import asyncio
 
-        ids = request.query.getall("ids")
-        await User.update(is_active=False).where(User.id << ids)  # type: ignore[]
+        pks = request.query.getall("pks")
+        await User.update(is_active=False).where(User.email << pks)  # type: ignore[]
         await asyncio.sleep(1)
-        return {"status": True, "ids": ids, "message": "Users is disabled"}
+        return {"status": True, "pks": pks, "message": "Users is disabled"}
 
     @PWAdminHandler.action(
         "/user/greet",
-        "/user/{id}/greet",
+        "/user/{pk}/greet",
         label="Greeter",
         view=["list", "show"],
         schema=GreetActionSchema,
@@ -249,7 +249,7 @@ class MessageResource(PWAdminHandler):
         columns = "id", "created", "title", "status", "dtpublish", "user"
 
     @PWAdminHandler.action(
-        "/message/{id}/publish", label="Publish", icon="Publish", view="show", confirm=True
+        "/message/{pk}/publish", label="Publish", icon="Publish", view="show", confirm=True
     )
     async def publish_message(self, _, resource=None):
         if resource is None:

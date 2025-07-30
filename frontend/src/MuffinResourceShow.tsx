@@ -7,11 +7,11 @@ import { useMuffinResourceOpts } from "./hooks"
 import { buildAdmin, findBuilder, setupAdmin } from "./utils"
 
 export function MuffinShow({ children }: PropsWithChildren) {
-  const { show, name } = useMuffinResourceOpts()
+  const { show, name, pk } = useMuffinResourceOpts()
   const ShowToolbar = findBuilder(["show-toolbar", name])
 
   return (
-    <Show actions={<ShowToolbar />}>
+    <Show actions={<ShowToolbar />} queryOptions={{ meta: { key: pk } }}>
       <SimpleShowLayout>{buildAdmin(["show-fields", name], show)}</SimpleShowLayout>
       {children}
     </Show>

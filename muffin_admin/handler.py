@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import inspect
 from functools import wraps
-from typing import TYPE_CHECKING, Any, ClassVar, Iterable, Optional, Sequence, Union, cast
+from typing import TYPE_CHECKING, Any, ClassVar, Iterable, Sequence, cast
 
 import marshmallow as ma
 from muffin_rest import APIError
@@ -12,12 +12,12 @@ from muffin_rest.handler import RESTBase
 from muffin_rest.options import RESTOptions
 from muffin_rest.schemas import EnumField
 
-from muffin_admin.types import TActionView, TRAInputs, TRALinks, TRAReference
-
 if TYPE_CHECKING:
     from http_router.types import TMethods
     from muffin import Request, Response
     from muffin_rest.filters import Filter
+
+    from muffin_admin.types import TActionView, TRAInputs, TRALinks, TRAReference
 
     from .types import TRAConverter, TRAInfo
 
@@ -31,7 +31,8 @@ class AdminOptions(RESTOptions):
 
     icon: str = ""
     label: str = ""
-    group: Optional[str] = None
+    group: str | None = None
+    pk: str = "id"
 
     create: bool = True
     delete: bool = True
@@ -40,8 +41,8 @@ class AdminOptions(RESTOptions):
 
     actions: Sequence = ()
     columns: tuple[str, ...] = ()
-    help: Optional[str] = None
-    locales: Optional[dict[str, dict[str, Any]]] = None
+    help: str | None = None
+    locales: dict[str, dict[str, Any]] | None = None
 
     ra_order: int = 0
     ra_fields: ClassVar[dict[str, TRAInfo]] = {}
@@ -66,7 +67,7 @@ class AdminOptions(RESTOptions):
         ]
 
         if not self.label:
-            self.label = cast(str, self.name)
+            self.label = cast("str", self.name)
 
         if not self.columns:
             self.columns = tuple(
@@ -85,7 +86,7 @@ class AdminOptions(RESTOptions):
 
     def default_sort(self):
         """Get default sorting."""
-        sorting: list[Union[str, tuple]] = list(self.columns)
+        sorting: list[str | tuple] = list(self.columns)
         sorting[0] = (sorting[0], {"default": "desc"})
         self.sorting = sorting  # type: ignore[assignment]
 
@@ -102,23 +103,23 @@ class AdminHandler(RESTBase):
         await self.log(request, response, method_name)
         return response
 
-    async def log(self, request: Request, response: Optional[Response], action: Optional[str]):
+    async def log(self, request: Request, response: Response | None, action: str | None):
         """Log the request."""
 
-    def get_selected(self, request: Request) -> Optional[Iterable]:
+    def get_selected(self, request: Request) -> Iterable | None:
         """Get selected objects."""
-        ids = request.query.getall("ids", None)
-        return ids
+        pks = request.query.getall("pks", None)
+        return pks
 
     @classmethod
     def action(
         cls,
         *paths: str,
-        methods: Optional[TMethods] = None,
-        icon: Optional[str] = None,
-        label: Optional[str] = None,
-        view: Optional[list[TActionView] | TActionView] = None,
-        schema: Optional[type[ma.Schema]] = None,
+        methods: TMethods | None = None,
+        icon: str | None = None,
+        label: str | None = None,
+        view: list[TActionView] | TActionView | None = None,
+        schema: type[ma.Schema] | None = None,
         **opts,
     ):
         """Register an action for the handler.
@@ -139,7 +140,7 @@ class AdminHandler(RESTBase):
                 @wraps(method)
                 async def wrapper(self, request: Request, **kwargs):
                     try:
-                        raw_data = cast(dict, await request.json())
+                        raw_data = cast("dict", await request.json())
                         data = schema().load(raw_data)  # type: ignore[]
                     except ValueError:
                         raise APIError.BAD_REQUEST("Invalid data") from None
@@ -189,9 +190,12 @@ class AdminHandler(RESTBase):
             "name": meta.name,
             "group": meta.group,
             "label": meta.label,
-            "icon": meta.icon,
-            "help": meta.help,
             "actions": actions,
+            "help": meta.help,
+            "icon": meta.icon,
+            "delete": meta.delete,
+            "create": meta.create and inputs,
+            "pk": meta.pk,
             "list": {
                 "create": meta.create,
                 "remove": bool(meta.delete),
@@ -210,13 +214,13 @@ class AdminHandler(RESTBase):
                 "fields": fields,
                 **meta.ra_show_params,
             },
-            "create": meta.create and inputs,
-            "edit": meta.edit
-            and {
-                "inputs": inputs,
-                "remove": meta.delete,
-            },
-            "delete": meta.delete,
+            "edit": (
+                meta.edit
+                and {
+                    "inputs": inputs,
+                    "remove": meta.delete,
+                }
+            ),
         }
 
         default_sort = meta.sorting.default and meta.sorting.default[0]
@@ -276,7 +280,7 @@ class AdminHandler(RESTBase):
                 input_info[1].setdefault("source", source)
                 inputs.append(input_info)
 
-        return cast(TRAInputs, fields), cast(TRAInputs, inputs)
+        return cast("TRAInputs", fields), cast("TRAInputs", inputs)
 
     @classmethod
     def to_ra_field(cls, field: ma.fields.Field, source: str) -> TRAInfo:

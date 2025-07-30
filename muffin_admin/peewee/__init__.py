@@ -25,9 +25,10 @@ class PWAdminOptions(AdminOptions, PWRESTOptions):
     """Keep PWAdmin options."""
 
     def setup(self, cls):
-        """Auto insert filter by id."""
+        """Auto insert filter by pk."""
         super(PWAdminOptions, self).setup(cls)
 
+        self.pk = self.model_pk.name
         for flt in self.filters:
             name = flt
 
@@ -37,11 +38,11 @@ class PWAdminOptions(AdminOptions, PWRESTOptions):
             elif isinstance(flt, tuple):
                 name = flt[0]
 
-            if name == "id":
+            if name == self.pk:
                 break
 
         else:
-            self.filters = [PWFilter("id", field=self.model_pk), *self.filters]  # type: ignore[]
+            self.filters = [PWFilter(self.pk, field=self.model_pk), *self.filters]  # type: ignore[]
 
     def default_sort(self):
         """Default sorting."""
@@ -63,10 +64,10 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
 
     def get_selected(self, request: Request):
         """Get selected objects."""
-        ids = request.query.getall("ids")
+        pks = request.query.getall("pks")
         qs = self.collection
-        if ids:
-            qs = qs.where(self.meta.model_pk.in_(ids))  # type: ignore[]
+        if pks:
+            qs = qs.where(self.meta.model_pk.in_(pks))  # type: ignore[]
 
         return qs
 
@@ -75,6 +76,7 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
         """Setup RA fields."""
         model_field = getattr(cls.meta.model, field.attribute or source, None)
         ra_type, props = super(PWAdminHandler, cls).to_ra_field(field, source)
+        refs = cls.meta.ra_refs
 
         if model_field and isinstance(model_field, pw.Field):
             if model_field.choices:
@@ -85,6 +87,16 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
 
             elif isinstance(model_field, JSONLikeField) or model_field.field_type.lower() == "json":
                 ra_type = "JsonField"
+
+            elif isinstance(model_field, pw.ForeignKeyField) and source in refs:
+                ref_data = refs[source]
+                rel_model = model_field.rel_model
+                return "FKField", dict(
+                    props,
+                    refSource=ref_data.get("source") or model_field.rel_field.name,
+                    refKey=ref_data.get("key") or rel_model._meta.primary_key.name,
+                    reference=ref_data.get("reference") or rel_model._meta.table_name,
+                )
 
         return ra_type, props
 
@@ -152,4 +164,4 @@ class PWSearchFilter(PWFilter):
         """Apply the filters to Peewee QuerySet.."""
         _, value = ops[0]
         column = self.field
-        return cast(pw.ModelSelect, collection.where(column.contains(value)))
+        return cast("pw.ModelSelect", collection.where(column.contains(value)))

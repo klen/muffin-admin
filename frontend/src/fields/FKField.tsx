@@ -1,6 +1,7 @@
 import { ReferenceField, TextField } from "react-admin"
 
 export function FKField({ reference, refSource, refKey, link, source, ...props }) {
+  refKey = refKey || "id"
   return (
     <ReferenceField
       source={source}
@@ -11,9 +12,13 @@ export function FKField({ reference, refSource, refKey, link, source, ...props }
     >
       <>
         <TextField source={refSource} />
-        {" (#"}
-        <TextField source={refKey || "id"} />
-        {")"}
+        {refSource !== refKey && (
+          <>
+            {" (#"}
+            <TextField source={refKey} />
+            {")"}
+          </>
+        )}
       </>
     </ReferenceField>
   )

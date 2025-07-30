@@ -20,7 +20,7 @@ export function MuffinEdit({ children }: PropsWithChildren) {
     adminProps: { mutationMode = "optimistic" },
   } = useMuffinAdminOpts()
 
-  const { edit, name } = useMuffinResourceOpts()
+  const { edit, name, pk } = useMuffinResourceOpts()
   if (!edit) return null
 
   const Actions = findBuilder(["edit-toolbar", name])
@@ -28,7 +28,7 @@ export function MuffinEdit({ children }: PropsWithChildren) {
   const FormToolbar = findBuilder(["edit-form-toolbar", name])
 
   return (
-    <Edit actions={<Actions />} mutationMode={mutationMode}>
+    <Edit actions={<Actions />} mutationMode={mutationMode} queryOptions={{ meta: { key: pk } }}>
       {children}
       <SimpleForm toolbar={<FormToolbar />}>
         <Inputs />

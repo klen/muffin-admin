@@ -16,7 +16,13 @@ export function FKInput({ refKey, refSource, fullWidth, reference, source, ...pr
   }
 
   return (
-    <ReferenceInput reference={reference} source={source}>
+    <ReferenceInput
+      reference={reference}
+      source={source}
+      queryOptions={{
+        meta: { key: refKey },
+      }}
+    >
       <AutocompleteInput
         source={refKey}
         optionText={renderText}

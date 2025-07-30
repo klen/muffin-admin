@@ -5,16 +5,18 @@ from __future__ import annotations
 from importlib import metadata
 from inspect import isclass
 from pathlib import Path
-from typing import Any, Callable, ClassVar, Optional, cast
+from typing import TYPE_CHECKING, Any, Callable, ClassVar, cast
 
 from muffin import Application, Request, ResponseError, ResponseFile, ResponseRedirect
 from muffin.plugins import BasePlugin
 from muffin_rest.api import API
-from muffin_rest.types import TAuth
 
 from muffin_admin.utils import deepmerge
 
 from .handler import AdminHandler
+
+if TYPE_CHECKING:
+    from muffin_rest.types import TAuth
 
 PACKAGE_DIR: Path = Path(__file__).parent
 TEMPLATE: str = (PACKAGE_DIR / "admin.html").read_text()
@@ -50,12 +52,12 @@ class Plugin(BasePlugin):
         "secret": None,
     }
 
-    def __init__(self, app: Optional[Application] = None, **kwargs):
+    def __init__(self, app: Application | None = None, **kwargs):
         self.api: API = API()
         self.auth: dict = {}
         self.handlers: list[type[AdminHandler]] = []
-        self.__login__ = self.__ident__ = cast(TAuth, page404)
-        self.__dashboard__: Optional[TAuth] = None
+        self.__login__ = self.__ident__ = cast("TAuth", page404)
+        self.__dashboard__: TAuth | None = None
         super(Plugin, self).__init__(app, **kwargs)
 
     def setup(self, app: Application, **options):  # noqa: C901

@@ -1,6 +1,10 @@
 import { TID } from "./types"
 import { APIParams, makeRequest, prepareFilters, setupAdmin } from "./utils"
 
+type TQueryMeta = {
+  key?: string
+}
+
 export function MuffinDataprovider(apiUrl: string) {
   async function request(url: string, options?: APIParams) {
     if (!url.startsWith("/")) url = `${apiUrl}/${url}`
@@ -10,7 +14,7 @@ export function MuffinDataprovider(apiUrl: string) {
 
   const methods = {
     request,
-    getList: async (resource: string, params: any) => {
+    getList: async (resource: string, { meta, ...params }: any) => {
       const { filter, pagination, sort } = params
       const query: APIParams["query"] = {}
       if (filter) query.where = prepareFilters(filter)
@@ -24,6 +28,14 @@ export function MuffinDataprovider(apiUrl: string) {
         query.sort = order == "ASC" ? field : `-${field}`
       }
       const { headers, data } = await request(resource, { query })
+
+      // React-admin requires item to have an `id` field
+      if (meta?.key) {
+        for (const item of data) {
+          item.id = item.id ?? item[meta.key]
+        }
+      }
+
       if (pagination)
         return {
           data,
@@ -37,8 +49,13 @@ export function MuffinDataprovider(apiUrl: string) {
       return { data }
     },
 
-    getOne: async (resource: string, { id }: { id: TID }) => {
-      return await request(`${resource}/${id}`)
+    getOne: async (resource: string, { id, meta }: { id: TID; meta?: TQueryMeta }) => {
+      const response = await request(`${resource}/${id}`)
+      const { data } = response
+      if (meta?.key) {
+        data.id = data.id ?? data[meta.key]
+      }
+      return response
     },
 
     create: async (resource: string, { data }) => {
@@ -76,7 +93,7 @@ export function MuffinDataprovider(apiUrl: string) {
     getMany: (resource: string, props: { ids: TID[]; meta: any }) => {
       const { ids, meta } = props
       const key = meta?.key || "id"
-      return methods.getList(resource, { filter: { [key]: { $in: ids } } })
+      return methods.getList(resource, { filter: { [key]: { $in: ids } }, meta })
     },
 
     getManyReference: async (resource: string, { target, id, filter, ...opts }) => {
@@ -92,7 +109,7 @@ export function MuffinDataprovider(apiUrl: string) {
         action = action.replace(/\{([^}]+)\}/, (_, field) => record[field])
       }
       const { json } = await makeRequest(`${apiUrl}/${action}`, {
-        query: { ids },
+        query: { pks: ids },
         method: "POST",
         data: payload,
       })
