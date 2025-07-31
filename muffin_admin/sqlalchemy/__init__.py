@@ -90,7 +90,7 @@ class SAAdminHandler(AdminHandler, SARESTHandler):
             if isinstance(column.type, Enum):
                 return "SelectArrayInput", dict(
                     props,
-                    choices=[{"id": c.value, "name": c.name} for c in column.type.enum_class],
+                    choices=[{"id": c.value, "name": c.name} for c in column.type.enum_class],  # type: ignore[union-attr]
                 )
 
             if isinstance(column.type, Text):

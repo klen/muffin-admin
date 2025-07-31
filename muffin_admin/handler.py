@@ -84,7 +84,7 @@ class AdminOptions(RESTOptions):
         if not self.sorting and self.columns:
             self.default_sort()
 
-    def default_sort(self):
+    def default_sort(self: AdminOptions):
         """Get default sorting."""
         sorting: list[str | tuple] = list(self.columns)
         sorting[0] = (sorting[0], {"default": "desc"})

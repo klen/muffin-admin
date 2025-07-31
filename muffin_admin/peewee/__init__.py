@@ -44,7 +44,7 @@ class PWAdminOptions(AdminOptions, PWRESTOptions):
         else:
             self.filters = [PWFilter(self.pk, field=self.model_pk), *self.filters]  # type: ignore[]
 
-    def default_sort(self):
+    def default_sort(self: PWAdminOptions):
         """Default sorting."""
         fields = self.model._meta.fields  # type: ignore[]
         sorting: list = [name for name in self.columns if name in fields]
