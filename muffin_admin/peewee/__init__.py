@@ -25,10 +25,10 @@ class PWAdminOptions(AdminOptions, PWRESTOptions):
     """Keep PWAdmin options."""
 
     def setup(self, cls):
-        """Auto insert filter by pk."""
+        """Auto insert filter by id."""
         super(PWAdminOptions, self).setup(cls)
 
-        self.pk = self.model_pk.name
+        self.id = self.model_pk.name
         for flt in self.filters:
             name = flt
 
@@ -38,11 +38,11 @@ class PWAdminOptions(AdminOptions, PWRESTOptions):
             elif isinstance(flt, tuple):
                 name = flt[0]
 
-            if name == self.pk:
+            if name == self.id:
                 break
 
         else:
-            self.filters = [PWFilter(self.pk, field=self.model_pk), *self.filters]  # type: ignore[]
+            self.filters = [PWFilter(self.id, field=self.model_pk), *self.filters]  # type: ignore[]
 
     def default_sort(self: PWAdminOptions):
         """Default sorting."""
@@ -64,10 +64,10 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
 
     def get_selected(self, request: Request):
         """Get selected objects."""
-        pks = request.query.getall("pks")
+        keys = request.query.getall("ids")
         qs = self.collection
-        if pks:
-            qs = qs.where(self.meta.model_pk.in_(pks))  # type: ignore[]
+        if keys:
+            qs = qs.where(self.meta.model_pk.in_(keys))  # type: ignore[]
 
         return qs
 

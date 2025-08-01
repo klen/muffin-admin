@@ -197,14 +197,14 @@ class UserResource(PWAdminHandler):
         """Mark selected users as inactive."""
         import asyncio
 
-        pks = request.query.getall("pks")
-        await User.update(is_active=False).where(User.email << pks)  # type: ignore[]
+        keys = request.query.getall("ids")
+        await User.update(is_active=False).where(User.email << keys)  # type: ignore[]
         await asyncio.sleep(1)
-        return {"status": True, "pks": pks, "message": "Users is disabled"}
+        return {"status": True, "ids": keys, "message": "Users is disabled"}
 
     @PWAdminHandler.action(
         "/user/greet",
-        "/user/{pk}/greet",
+        "/user/{id}/greet",
         label="Greeter",
         view=["list", "show"],
         schema=GreetActionSchema,
@@ -249,7 +249,7 @@ class MessageResource(PWAdminHandler):
         columns = "id", "created", "title", "status", "dtpublish", "user"
 
     @PWAdminHandler.action(
-        "/message/{pk}/publish", label="Publish", icon="Publish", view="show", confirm=True
+        "/message/{id}/publish", label="Publish", icon="Publish", view="show", confirm=True
     )
     async def publish_message(self, _, resource=None):
         if resource is None:

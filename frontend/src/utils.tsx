@@ -36,7 +36,7 @@ export type APIParams = {
     limit?: number
     offset?: number
     sort?: string
-    pks?: string[]
+    ids?: string[]
   }
   data?: any
   headers?: any

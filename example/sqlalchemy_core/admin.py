@@ -32,8 +32,8 @@ async def dashboard(request):
 @admin.check_auth
 async def auth(request):
     """Fake authorization method. Do not use in production."""
-    pk = request.headers.get("authorization")
-    qs = User.select().where(User.columns.id == pk)
+    user_id = request.headers.get("authorization")
+    qs = User.select().where(User.columns.id == user_id)
     user = await db.fetch_one(qs)
     return user
 

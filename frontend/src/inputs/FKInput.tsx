@@ -10,9 +10,9 @@ export function FKInput({ refKey, refSource, fullWidth, reference, source, ...pr
 
   refKey = refKey || "id"
   const renderText = (record) => {
-    const pk = record[refKey]
-    if (refKey == refSource) return `#${pk}`
-    return (pk && `${record[refSource]} (#${pk})`) || ""
+    const key = record[refKey]
+    if (refKey == refSource) return `#${key}`
+    return (key && `${record[refSource]} (#${key})`) || ""
   }
 
   return (

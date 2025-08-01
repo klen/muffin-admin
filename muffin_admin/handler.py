@@ -32,7 +32,7 @@ class AdminOptions(RESTOptions):
     icon: str = ""
     label: str = ""
     group: str | None = None
-    pk: str = "id"
+    id: str = "id"
 
     create: bool = True
     delete: bool = True
@@ -108,8 +108,7 @@ class AdminHandler(RESTBase):
 
     def get_selected(self, request: Request) -> Iterable | None:
         """Get selected objects."""
-        pks = request.query.getall("pks", None)
-        return pks
+        return request.query.getall("ids", None)
 
     @classmethod
     def action(
@@ -195,7 +194,7 @@ class AdminHandler(RESTBase):
             "icon": meta.icon,
             "delete": meta.delete,
             "create": meta.create and inputs,
-            "pk": meta.pk,
+            "key": meta.id,
             "list": {
                 "create": meta.create,
                 "remove": bool(meta.delete),

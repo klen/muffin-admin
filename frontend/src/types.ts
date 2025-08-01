@@ -81,7 +81,7 @@ export type AdminPayloadProps = {
 }
 
 export type AdminResourceProps = {
-  pk: string
+  key: string
   name: string
   group?: string
   icon?: string

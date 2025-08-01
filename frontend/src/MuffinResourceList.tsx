@@ -23,7 +23,7 @@ import { AdminInput } from "./types"
 import { buildAdmin, findBuilder, setupAdmin } from "./utils"
 
 export function MuffinList({ children }: PropsWithChildren) {
-  const { name, list, pk } = useMuffinResourceOpts()
+  const { name, list, key } = useMuffinResourceOpts()
   const { limit, limitMax, limitTotal, sort, filters } = list
 
   const DataGrid = findBuilder(["list-grid", name])
@@ -36,7 +36,7 @@ export function MuffinList({ children }: PropsWithChildren) {
       perPage={limit}
       filters={raFilters}
       actions={<Toolbar />}
-      queryOptions={{ meta: { key: pk } }}
+      queryOptions={{ meta: { key } }}
       pagination={
         <Pagination rowsPerPageOptions={sortBy(uniq([10, 25, 50, 100, limit, limitMax]))} />
       }
@@ -50,7 +50,7 @@ export function MuffinList({ children }: PropsWithChildren) {
       perPage={limit}
       filters={raFilters}
       actions={<Toolbar />}
-      queryOptions={{ meta: { key: pk } }}
+      queryOptions={{ meta: { key } }}
     >
       {children}
       <DataGrid />

@@ -132,9 +132,9 @@ Register a function to return user's information:
 
     @admin.get_identity
     async def ident(request):
-        """Get current user information."""
-        pk = request.headers.get('authorization')
-        user = User.select().where(User.id == pk).first()
+        """Get current user information. Just an example."""
+        user_id = request.headers.get('authorization')
+        user = User.select().where(User.id == user_id).first()
         if user:
             return {"id": user.id, "fullName": user.email}
 

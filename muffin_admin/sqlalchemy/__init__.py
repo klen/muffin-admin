@@ -22,16 +22,16 @@ class SAAdminOptions(AdminOptions, SARESTOptions):
     """Keep SAAdmin options."""
 
     def setup(self, cls):
-        """Auto insert filter by pk."""
+        """Auto insert filter by id."""
         super(SAAdminOptions, self).setup(cls)
-        self.pk = self.table_pk.name
+        self.id = self.table_pk.name
 
         for f in self.filters:
-            if f == self.pk or (isinstance(f, Filter) and f.name == self.pk):
+            if f == self.id or (isinstance(f, Filter) and f.name == self.id):
                 break
 
         else:
-            self.filters = [SAFilter(self.pk, field=self.table_pk), *self.filters]
+            self.filters = [SAFilter(self.id, field=self.table_pk), *self.filters]
 
 
 class SAAdminHandler(AdminHandler, SARESTHandler):
@@ -41,10 +41,10 @@ class SAAdminHandler(AdminHandler, SARESTHandler):
     meta: SAAdminOptions
 
     def get_selected(self, request: Request):
-        pks = request.query.getall("pks")
+        keys = request.query.getall("ids")
         qs = self.collection
-        if pks:
-            qs = qs.where(self.meta.table_pk.in_(pks))
+        if keys:
+            qs = qs.where(self.meta.table_pk.in_(keys))
 
         return qs
 

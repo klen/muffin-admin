@@ -109,7 +109,7 @@ export function MuffinDataprovider(apiUrl: string) {
         action = action.replace(/\{([^}]+)\}/, (_, field) => record[field])
       }
       const { json } = await makeRequest(`${apiUrl}/${action}`, {
-        query: { pks: ids },
+        query: { ids },
         method: "POST",
         data: payload,
       })
