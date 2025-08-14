@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from muffin import Request, Response
     from muffin_rest.filters import Filter
 
-    from muffin_admin.types import TActionView, TRAInputs, TRALinks, TRAReference
+    from muffin_admin.types import TActionView, TRAInputs, TRALinks, TRAProps, TRAReference
 
     from .types import TRAConverter, TRAInfo
 
@@ -297,20 +297,20 @@ class AdminHandler(RESTBase):
 
     @classmethod
     def to_ra_filter(cls, flt: Filter) -> TRAInfo:
-        custom = cls.meta.ra_filters
-
-        if flt.name in custom:
-            ra_type, props = custom[flt.name]
-
-        elif isinstance(flt.schema_field, ma.fields.Enum):
-            return "SelectArrayInput", {
-                "source": flt.name,
+        props: TRAProps
+        if isinstance(flt.schema_field, ma.fields.Enum):
+            ra_type, props = "SelectArrayInput", {
                 "choices": [{"id": c.value, "name": c.name} for c in flt.schema_field.enum],
             }
         else:
             ra_type, props = cls.to_ra_input(flt.schema_field, flt.name, resource=True)
 
         props["source"] = flt.name
+
+        custom = cls.meta.ra_filters
+        if flt.name in custom:
+            ra_type, props = custom[flt.name]
+
         return ra_type, props
 
     @classmethod
