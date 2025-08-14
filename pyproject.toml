@@ -1,6 +1,6 @@
 [project]
 name = "muffin-admin"
-version = "11.2.0"
+version = "11.2.1"
 description = "Admin interface for Muffin Framework"
 authors = [{ name = "Kirill Klenov", email = "horneds@gmail.com" }]
 requires-python = ">3.10"
@@ -122,7 +122,7 @@ target-version = ["py310", "py311", "py312", "py313"]
 preview = true
 
 [tool.bumpversion]
-current_version = "11.2.0"
+current_version = "11.2.1"
 commit = false
 tag = false
 
