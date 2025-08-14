@@ -20,12 +20,6 @@ jobs:
           cache: yarn
           cache-dependency-path: frontend/yarn.lock
 
-      - name: Install poetry
-        run: pipx install poetry
-
-      - name: Setup poetry
-        run: poetry config pypi-token.pypi ${{ secrets.pypy }}
-
       - name: Build Frontend
         run: |
           yarn install --imutable
@@ -45,4 +39,4 @@ jobs:
       - name: Build Package
         run: |
           uv build
-          uv publish
+          uv publish --token ${{ secrets.pypy }}
