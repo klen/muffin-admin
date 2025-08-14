@@ -52,6 +52,7 @@ class AdminOptions(RESTOptions):
     ra_links: TRALinks = ()
 
     ra_list_params: ClassVar[dict[str, Any]] = {}
+    ra_filters_always_on: ClassVar[list[str]] = []
     ra_show_params: ClassVar[dict[str, Any]] = {}
 
     def setup(self, cls: AdminHandler):
@@ -310,6 +311,10 @@ class AdminHandler(RESTBase):
         custom = cls.meta.ra_filters
         if flt.name in custom:
             ra_type, props = custom[flt.name]
+
+        always_on = cls.meta.ra_filters_always_on
+        if flt.name in always_on:
+            props["alwaysOn"] = True
 
         return ra_type, props
 
