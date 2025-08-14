@@ -1,10 +1,11 @@
-[tool.poetry]
+[project]
 name = "muffin-admin"
 version = "11.0.0"
 description = "Admin interface for Muffin Framework"
+authors = [{ name = "Kirill Klenov", email = "horneds@gmail.com" }]
+requires-python = ">3.10"
 readme = "README.rst"
 license = "MIT"
-authors = ["Kirill Klenov <horneds@gmail.com>"]
 keywords = ["admin", "api", "muffin", "asgi", "asyncio", "trio"]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
@@ -20,61 +21,47 @@ classifiers = [
   "Framework :: AsyncIO",
   "Framework :: Trio",
 ]
-homepage = "https://github.com/klen/muffin-admin"
-repository = "https://github.com/klen/muffin-admin"
-packages = [{ include = "muffin_admin" }]
-include = [
-  { path = "muffin_admin/main.js", format = [
-    "sdist",
-    "wheel",
-  ] },
-  { path = "muffin_admin/main.js.LICENSE.txt", format = [
-    "sdist",
-    "wheel",
-  ] },
-]
+dependencies = ["muffin", "muffin-rest", "typing-extensions ; python_version <= '3.10'"]
 
-[tool.poetry.dependencies]
-python = "^3.10"
-muffin = "*"
-muffin-rest = "*"
-typing-extensions = { version = "*", python = "<=3.10" }
-
-# Optional dependencies
-pyyaml = { version = "*", optional = true }
-muffin-peewee-aio = { version = "*", optional = true }
-marshmallow-peewee = { version = "*", optional = true }
-muffin-databases = { version = "*", optional = true }
-marshmallow-sqlalchemy = { version = "*", optional = true }
-sqlalchemy = { version = "*", optional = true }
-
-[tool.poetry.extras]
+[project.optional-dependencies]
 yaml = ["pyyaml"]
 peewee = ["muffin-peewee-aio", "marshmallow-peewee"]
 sqlalchemy = ["muffin-databases", "marshmallow-sqlalchemy", "sqlalchemy"]
 
-[tool.poetry.group.dev.dependencies]
-aiofile = "*"
-aiosqlite = "*"
-marshmallow-peewee = "*"
-marshmallow-sqlalchemy = "*"
-muffin-databases = "*"
-muffin-peewee-aio = "*"
-pytest = "*"
-pytest-aio = { version = "*", extras = ["curio", "trio"] }
-pytest-mypy = "*"
-pyyaml = "*"
-ruff = "*"
-pre-commit = "*"
-black = "*"
+[project.urls]
+Homepage = "https://github.com/klen/muffin-admin"
+Repository = "https://github.com/klen/muffin-admin"
 
-[tool.poetry.group.example.dependencies]
-uvicorn = "*"
-mixer = "*"
-peewee = "*"
-muffin-peewee-aio = "*"
-muffin-databases = "*"
-httptools = "*"
+[dependency-groups]
+dev = [
+  "aiofile",
+  "aiosqlite",
+  "marshmallow-peewee",
+  "marshmallow-sqlalchemy",
+  "muffin-databases",
+  "muffin-peewee-aio",
+  "pytest",
+  "pytest-aio[curio, trio]",
+  "pytest-mypy",
+  "pyyaml",
+  "ruff",
+  "pre-commit",
+  "black",
+]
+example = ["uvicorn", "mixer", "peewee", "muffin-peewee-aio", "muffin-databases", "httptools"]
+
+[tool.uv]
+default-groups = ["dev", "example"]
+
+[tool.hatch.build.targets.sdist]
+include = ["muffin_admin", "muffin_admin/main.js", "muffin_admin/main.js.LICENSE.txt"]
+
+[tool.hatch.build.targets.wheel]
+include = ["muffin_admin", "muffin_admin/main.js", "muffin_admin/main.js.LICENSE.txt"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tool.pytest.ini_options]
 addopts = "-xsv"
@@ -91,10 +78,10 @@ envlist = py310,py311,py312,py313,pypy310
 [testenv]
 deps = -e .[dev]
 allowlist_externals =
-  poetry
+  uv
 commands =
-  poetry install --with dev
-	poetry run pytest --mypy tests
+  uv sync
+	uv run pytest --mypy tests
 
 [testenv:pypy310]
 deps = -e .[dev]
@@ -134,14 +121,22 @@ line-length = 100
 target-version = ["py310", "py311", "py312", "py313"]
 preview = true
 
-[tool.poetry_bumpversion.file."frontend/package.json"]
+[tool.bumpversion]
+current_version = "11.0.0"
+commit = false
+tag = false
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+search = 'version = "{current_version}"'
+replace = 'version = "{new_version}"'
+
+[[tool.bumpversion.files]]
+filename = "frontend/package.json"
 search = '"version": "{current_version}"'
 replace = '"version": "{new_version}"'
 
-[tool.poetry_bumpversion.file."frontend/src/index.tsx"]
+[[tool.bumpversion.files]]
+filename = "frontend/src/index.tsx"
 search = 'export const VERSION = "{current_version}"'
 replace = 'export const VERSION = "{new_version}"'
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"

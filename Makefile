@@ -22,18 +22,18 @@ clean:
 # =============
 
 $(VIRTUAL_ENV): pyproject.toml .pre-commit-config.yaml
-	@poetry install --with dev,example
-	@poetry run pre-commit install
+	@uv sync
+	@uv run pre-commit install
 	@touch $(VIRTUAL_ENV)
 
 .PHONY: test t
 # target: test - Runs tests
 test t: $(VIRTUAL_ENV)
-	@poetry run pytest tests
+	@uv run pytest tests
 
 example/db.sqlite: $(VIRTUAL_ENV)
-	@poetry run muffin $(EXAMPLE) db
-	@poetry run muffin $(EXAMPLE) devdata
+	@uv run muffin $(EXAMPLE) db
+	@uv run muffin $(EXAMPLE) devdata
 
 sqlite: example/db.sqlite
 	sqlite3 example/db.sqlite
@@ -41,8 +41,8 @@ sqlite: example/db.sqlite
 .PHONY: locales
 LOCALE ?= ru
 locales: $(VIRTUAL_ENV)/bin/py.test db.sqlite
-	@poetry run muffin $(EXAMPLE) extract_messages $(PACKAGE) --locale $(LOCALE)
-	@poetry run muffin $(EXAMPLE) compile_messages
+	@uv run muffin $(EXAMPLE) extract_messages $(PACKAGE) --locale $(LOCALE)
+	@uv run muffin $(EXAMPLE) compile_messages
 
 .PHONY: front
 front:
@@ -62,26 +62,26 @@ dev:
 
 .PHONY: lint
 lint: $(VIRTUAL_ENV)
-	@poetry run mypy $(PACKAGE)
-	@poetry run ruff check $(PACKAGE)
+	@uv run mypy $(PACKAGE)
+	@uv run ruff check $(PACKAGE)
 
 
 BACKEND_PORT ?= 8080
 .PHONY: example-peewee
 # target: example-peewee - Run example
 example-peewee: $(VIRTUAL_ENV) front
-	@MUFFIN_AIOLIB=asyncio poetry run muffin example.peewee_orm db
-	@MUFFIN_AIOLIB=asyncio poetry run muffin example.peewee_orm devdata
-	@MUFFIN_AIOLIB=asyncio poetry run uvicorn example.peewee_orm:app --reload --port=$(BACKEND_PORT)
+	@MUFFIN_AIOLIB=asyncio uv run muffin example.peewee_orm db
+	@MUFFIN_AIOLIB=asyncio uv run muffin example.peewee_orm devdata
+	@MUFFIN_AIOLIB=asyncio uv run uvicorn example.peewee_orm:app --reload --port=$(BACKEND_PORT)
 
 
 shell: $(VIRTUAL_ENV)
-	@poetry run muffin example.peewee_orm shell
+	@uv run muffin example.peewee_orm shell
 
 .PHONY: example-sqlalchemy
 # target: example-sqlalchemy - Run example
 example-sqlalchemy: $(VIRTUAL_ENV) front
-	@poetry run uvicorn example.sqlalchemy_core:app --reload --port=8080
+	@uv run uvicorn example.sqlalchemy_core:app --reload --port=8080
 
 # ==============
 #  Bump version
@@ -91,17 +91,18 @@ example-sqlalchemy: $(VIRTUAL_ENV) front
 VERSION?=minor
 # target: release - Bump version
 release: $(VIRTUAL_ENV)
-	git checkout develop
-	git pull
-	git checkout master
-	git merge develop
-	git pull
-	@poetry version $(VERSION)
-	git commit -am "build(release): `poetry version -s`"
-	git tag `poetry version -s`
-	git checkout develop
-	git merge master
-	git push --tags origin develop master
+	@git checkout develop
+	@git pull
+	@git checkout master
+	@git merge develop
+	@git pull
+	@uvx bump-my-version bump $(VERSION)
+	@uv lock
+	@git commit -am "build(release): `uv version --short`"
+	@git tag `uv version --short`
+	@git checkout develop
+	@git merge master
+	@git push --tags origin develop master
 
 .PHONY: minor
 minor: release
@@ -115,4 +116,4 @@ major:
 	make release VERSION=major
 
 v:
-	@echo `poetry version -s`
+	@echo `uv version --short`
