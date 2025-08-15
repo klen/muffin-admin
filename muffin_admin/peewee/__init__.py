@@ -150,7 +150,7 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
         field = flt.field
         if isinstance(field, pw.Field) and field.choices:
             return "SelectArrayInput", {
-                "source": field.name,
+                "source": flt.name,
                 "choices": [{"id": c[0], "name": c[1]} for c in field.choices],
             }
 
