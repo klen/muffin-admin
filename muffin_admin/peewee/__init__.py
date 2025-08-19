@@ -152,7 +152,7 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
 
         if isinstance(field, pw.Field) and field.choices:
             source = flt.name
-            ra_type, props = "SelectInput", {
+            ra_type, props = "SelectArrayInput", {
                 "source": source,
                 "choices": [{"id": c[0], "name": c[1]} for c in field.choices],
             }

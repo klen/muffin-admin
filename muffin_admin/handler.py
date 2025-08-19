@@ -304,7 +304,7 @@ class AdminHandler(RESTBase):
         source = flt.name
 
         if isinstance(flt.schema_field, ma.fields.Enum):
-            ra_type, props = "SelectInput", {
+            ra_type, props = "SelectArrayInput", {
                 "choices": [{"id": c.value, "name": c.name} for c in flt.schema_field.enum],
             }
         else:

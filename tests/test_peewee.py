@@ -210,7 +210,7 @@ async def test_user_resource(app):
     assert ra["list"]["filters"] == [
         ("TextInput", {"source": "id"}),
         (
-            "SelectInput",
+            "SelectArrayInput",
             {
                 "choices": [{"id": 1, "name": "new"}, {"id": 2, "name": "old"}],
                 "source": "status",
