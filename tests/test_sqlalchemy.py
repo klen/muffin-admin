@@ -110,7 +110,7 @@ def test_admin_schemas(app):
         ("TextInput", {"source": "password"}),
         ("BooleanInput", {"source": "is_active"}),
         (
-            "SelectArrayInput",
+            "SelectInput",
             {
                 "choices": [{"id": 1, "name": "new"}, {"id": 2, "name": "old"}],
                 "source": "status",
@@ -137,7 +137,7 @@ def test_admin_schemas(app):
             ("TextInput", {"source": "password"}),
             ("BooleanInput", {"source": "is_active"}),
             (
-                "SelectArrayInput",
+                "SelectInput",
                 {
                     "choices": [{"id": 1, "name": "new"}, {"id": 2, "name": "old"}],
                     "source": "status",
@@ -194,7 +194,7 @@ def test_admin_schemas(app):
     assert ra["list"]["filters"] == [
         ("TextInput", {"source": "id"}),
         (
-            "SelectArrayInput",
+            "SelectInput",
             {
                 "source": "status",
                 "choices": [{"id": 1, "name": "new"}, {"id": 2, "name": "old"}],

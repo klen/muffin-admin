@@ -88,7 +88,7 @@ class SAAdminHandler(AdminHandler, SARESTHandler):
                 )
 
             if isinstance(column.type, Enum):
-                return "SelectArrayInput", dict(
+                return "SelectInput", dict(
                     props,
                     choices=[{"id": c.value, "name": c.name} for c in column.type.enum_class],  # type: ignore[union-attr]
                 )

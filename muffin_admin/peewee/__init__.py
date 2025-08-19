@@ -147,14 +147,24 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
 
     @classmethod
     def to_ra_filter(cls, flt: Filter) -> TRAInfo:
+        meta = cls.meta
         field = flt.field
+
         if isinstance(field, pw.Field) and field.choices:
             source = flt.name
-            return "SelectArrayInput", {
+            ra_type, props = "SelectInput", {
                 "source": source,
-                "alwaysOn": source in cls.meta.ra_filters_always_on,
                 "choices": [{"id": c[0], "name": c[1]} for c in field.choices],
             }
+            custom = meta.ra_filters.get(source)
+            if custom:
+                ra_type, props = custom[0], {**props, **custom[1]}
+
+            if source in meta.ra_filters_always_on:
+                props["alwaysOn"] = True
+                props["resettable"] = True
+
+            return ra_type, props
 
         return super(PWAdminHandler, cls).to_ra_filter(flt)
 

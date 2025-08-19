@@ -299,10 +299,12 @@ class AdminHandler(RESTBase):
     @classmethod
     def to_ra_filter(cls, flt: Filter) -> TRAInfo:
         props: TRAProps = {}
+
+        meta = cls.meta
         source = flt.name
 
         if isinstance(flt.schema_field, ma.fields.Enum):
-            ra_type, props = "SelectArrayInput", {
+            ra_type, props = "SelectInput", {
                 "choices": [{"id": c.value, "name": c.name} for c in flt.schema_field.enum],
             }
         else:
@@ -311,13 +313,14 @@ class AdminHandler(RESTBase):
 
         props["source"] = source
 
-        custom = cls.meta.ra_filters
+        custom = meta.ra_filters
         if source in custom:
             ra_type, _props = custom[source]
             props = {**props, **_props}
 
-        if source in cls.meta.ra_filters_always_on:
+        if source in meta.ra_filters_always_on:
             props["alwaysOn"] = True
+            props["resettable"] = True
 
         return ra_type, props
 
