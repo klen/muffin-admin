@@ -306,6 +306,7 @@ class AdminHandler(RESTBase):
             }
         else:
             ra_type, props = cls.to_ra_input(flt.schema_field, source, resource=True)
+            props.pop("required", None)
 
         props["source"] = source
 
