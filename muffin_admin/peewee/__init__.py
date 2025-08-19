@@ -161,8 +161,8 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
                 ra_type, props = custom[0], {**props, **custom[1]}
 
             if source in meta.ra_filters_always_on:
-                props["alwaysOn"] = True
-                props["resettable"] = True
+                props["alwaysOn"] = True  # type: ignore[assignment]
+                props["resettable"] = True  # type: ignore[assignment]
 
             return ra_type, props
 
