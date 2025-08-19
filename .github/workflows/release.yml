@@ -22,8 +22,6 @@ jobs:
 
       - name: Build Frontend
         run: |
-          yarn install --imutable
-          yarn build
           make pypi
         working-directory: frontend
 

@@ -54,9 +54,11 @@ example = ["uvicorn", "mixer", "peewee", "muffin-peewee-aio", "muffin-databases"
 default-groups = ["dev", "example"]
 
 [tool.hatch.build.targets.sdist]
+ignore-vcs = true
 include = ["muffin_admin", "muffin_admin/main.js", "muffin_admin/main.js.LICENSE.txt"]
 
 [tool.hatch.build.targets.wheel]
+ignore-vcs = true
 include = ["muffin_admin", "muffin_admin/main.js", "muffin_admin/main.js.LICENSE.txt"]
 
 [build-system]

@@ -6,6 +6,8 @@ node_modules: package.json
 	touch node_modules
 
 pypi:
+	yarn install --imutable
+	yarn build
 	$(CURDIR)/node_modules/.bin/webpack
 
 watch: node_modules
