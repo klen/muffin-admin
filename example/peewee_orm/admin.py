@@ -92,7 +92,7 @@ admin = Plugin(
 
 
 @admin.check_auth
-async def auth(request, redirect=True):
+async def auth(request):
     """Fake authorization method. Do not use in production."""
     email = request.headers.get("authorization") or request.query.get("t")
     return await User.select().where(User.email == email).first()
@@ -101,7 +101,7 @@ async def auth(request, redirect=True):
 @admin.get_identity
 async def ident(request):
     """Get current user information."""
-    user = await auth(request, redirect=False)
+    user = await auth(request)
     if user:
         return {"email": user.email, "fullName": user.email}
 
