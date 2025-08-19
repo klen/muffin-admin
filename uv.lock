@@ -505,7 +505,7 @@ wheels = [
 
 [[package]]
 name = "muffin-admin"
-version = "11.2.6"
+version = "11.2.7"
 source = { editable = "." }
 dependencies = [
     { name = "muffin" },
