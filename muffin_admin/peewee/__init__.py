@@ -149,8 +149,10 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
     def to_ra_filter(cls, flt: Filter) -> TRAInfo:
         field = flt.field
         if isinstance(field, pw.Field) and field.choices:
+            source = flt.name
             return "SelectArrayInput", {
-                "source": flt.name,
+                "source": source,
+                "alwaysOn": source in cls.meta.ra_filters_always_on,
                 "choices": [{"id": c[0], "name": c[1]} for c in field.choices],
             }
 

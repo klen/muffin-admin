@@ -197,7 +197,6 @@ def test_admin_schemas(app):
             "SelectArrayInput",
             {
                 "source": "status",
-                "alwaysOn": False,
                 "choices": [{"id": 1, "name": "new"}, {"id": 2, "name": "old"}],
             },
         ),
