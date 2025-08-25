@@ -226,8 +226,8 @@ class AdminHandler(RESTBase):
         default_sort = meta.sorting.default and meta.sorting.default[0]
         if default_sort:
             data["list"]["sort"] = {  # type: ignore[call-overload, index]
-                "field": default_sort.name,
-                "order": default_sort.meta["default"].upper(),
+                "field": default_sort.name,  # type: ignore[]
+                "order": default_sort.meta["default"].upper(),  # type: ignore[]
             }
 
         return data

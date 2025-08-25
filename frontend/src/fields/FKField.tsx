@@ -1,4 +1,4 @@
-import { ReferenceField, TextField } from "react-admin"
+import { ReferenceField, TextField, useFieldValue, UseFieldValueOptions } from "react-admin"
 
 export function FKField({ reference, refSource, refKey, link, source, ...props }) {
   refKey = refKey || "id"
@@ -10,17 +10,21 @@ export function FKField({ reference, refSource, refKey, link, source, ...props }
       queryOptions={{ meta: { key: refKey } }}
       {...props}
     >
-      <>
-        <TextField source={refSource} />
-        {refSource !== refKey && (
-          <>
-            {" (#"}
-            <TextField source={refKey} />
-            {")"}
-          </>
-        )}
-      </>
+      <TextField source={refSource} />
+      {refSource !== refKey && <FKFieldValue source={refKey} />}
     </ReferenceField>
+  )
+}
+
+function FKFieldValue(props: UseFieldValueOptions) {
+  const value = useFieldValue(props)
+  if (value === undefined) return null
+  return (
+    <>
+      {" (#"}
+      <TextField {...props} />
+      {")"}
+    </>
   )
 }
 
