@@ -60,15 +60,15 @@ export function MuffinDataprovider(apiUrl: string) {
 
     create: async (resource: string, { data }) => {
       return await request(resource, {
-        data,
         method: "POST",
+        ...prepareDataParams(data),
       })
     },
 
     update: async (resource: string, { id, data }: { id: TID; data: any }) => {
       return await makeRequest(`${apiUrl}/${resource}/${id}`, {
-        data,
         method: "PUT",
+        ...prepareDataParams(data),
       }).then(({ json }) => ({ data: json }))
     },
 
@@ -125,3 +125,26 @@ export type TActionProps<T = any> = {
   record?: T
 }
 setupAdmin(["data-provider"], MuffinDataprovider)
+
+function isFileValue(value: any): boolean {
+  return value && typeof value === "object" && value.rawFile instanceof File
+}
+
+function prepareDataParams(data: Record<string, any>) {
+  const hasFiles = Object.values(data).some(isFileValue)
+
+  if (!hasFiles) return { data }
+
+  const formData = new FormData()
+  for (const key in data) {
+    const value = data[key]
+    if (isFileValue(value)) {
+      formData.append(key, value.rawFile)
+    } else if (typeof value === "object" && value !== null) {
+      formData.append(key, JSON.stringify(value))
+    } else if (value !== undefined && value !== null) {
+      formData.append(key, value)
+    }
+  }
+  return { body: formData }
+}

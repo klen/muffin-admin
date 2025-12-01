@@ -1,5 +1,7 @@
 """Setup admin UI."""
 
+import asyncio
+from pathlib import Path
 from typing import ClassVar
 
 import marshmallow as ma
@@ -132,7 +134,7 @@ async def login(request):
         .where(User.email == data["username"], User.password == data["password"])
         .first()
     )
-    return ResponseJSON(user and user.email)
+    return ResponseJSON(user and user.email)  # type: ignore[]
 
 
 # Setup handlers
@@ -143,11 +145,11 @@ async def login(request):
 class UserResource(PWAdminHandler):
     """Create Admin Resource for the User model."""
 
-    class Meta:
+    class Meta(PWAdminHandler.Meta):
         """Tune the resource."""
 
         model = User
-        filters = "created", "is_active", "role", ("email", {"operator": "$contains"})
+        filters = "created", "is_active", "role", ("email", {"operator": "$contains"})  # type: ignore[]
         sorting = ("email", {"default": "desc"}), "created", "is_active", "role"
         schema_meta: ClassVar = {
             "load_only": ("password",),
@@ -157,6 +159,7 @@ class UserResource(PWAdminHandler):
             "name": ma.fields.Function(
                 lambda user: f"{user.first_name} {user.last_name}",
             ),
+            "picture": ma.fields.Raw(),
         }
 
         icon = "Person"
@@ -186,6 +189,20 @@ class UserResource(PWAdminHandler):
                 },
             },
         }
+        ra_inputs: ClassVar = {
+            "picture": ("ImgInput", {}),
+        }
+
+    async def save(self, request, resource, *, update=False):
+        picture = resource.picture
+        if picture and not isinstance(picture, str):
+            filename = f"avatar-{resource.email}"
+            with Path.open(app.cfg.STATIC_FOLDERS[0] / filename, "wb") as f:
+                f.write(picture.read())
+
+            resource.picture = f"/static/{filename}"
+
+        return await super().save(request, resource, update=update)
 
     @PWAdminHandler.action("/user/error", label="Broken Action", icon="Error", view=["bulk"])
     async def just_raise_an_error(self, request, resource=None):
@@ -195,8 +212,6 @@ class UserResource(PWAdminHandler):
     @PWAdminHandler.action("/user/disable", label="Disable Users", icon="Clear", view=["bulk"])
     async def disable_users(self, request, resource=None):
         """Mark selected users as inactive."""
-        import asyncio
-
         keys = request.query.getall("ids")
         await User.update(is_active=False).where(User.email << keys)  # type: ignore[]
         await asyncio.sleep(1)
@@ -212,7 +227,10 @@ class UserResource(PWAdminHandler):
     )
     async def greet(self, request, resource=None, data=None):
         """Mark selected users as inactive."""
-        return {"status": True, "message": "Hello {name}".format(**data)}
+        if not data:
+            return {"status": False, "message": "No data provided"}
+
+        return {"status": True, "message": f"Hello {data.name}"}
 
     @PWAdminHandler.action(
         "/user/export", label="ra.action.export", icon="Download", view=["list"], file=True

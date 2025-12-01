@@ -38,7 +38,7 @@ import {
 
 import { AvatarField, CopyField, EditableBooleanField, FKField, JsonField } from "./fields"
 import { DateRangeFilter, Filter, SearchFilter } from "./filters"
-import { FKInput, JsonInput, TimestampInput } from "./inputs"
+import { FKInput, ImgInput, JsonInput, TimestampInput } from "./inputs"
 
 const UI: Record<string, JSX.ElementType> = {
   // Fields
@@ -74,6 +74,7 @@ const UI: Record<string, JSX.ElementType> = {
   FKInput,
   FileInput,
   ImageInput,
+  ImgInput,
   JsonInput,
   NullableBooleanInput,
   NumberInput,
@@ -81,11 +82,11 @@ const UI: Record<string, JSX.ElementType> = {
   RadioButtonGroupInput,
   ReferenceArrayInput,
   ReferenceInput,
+  SearchInput,
   SelectArrayInput,
   SelectInput,
   TextInput,
   TimestampInput,
-  SearchInput,
 
   // Filters
   Filter,

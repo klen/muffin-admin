@@ -50,3 +50,4 @@ docs/_build
 /frontend/node_modules
 /frontend/*lock.json
 /muffin_admin/main.js*
+/example/static

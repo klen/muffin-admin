@@ -40,7 +40,7 @@ export type APIParams = {
   }
   data?: any
   headers?: any
-  body?: string
+  body?: any
 }
 
 export const requestHeaders: Record<string, string> = {}
