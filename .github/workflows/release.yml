@@ -31,8 +31,10 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         working-directory: frontend
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v6
+      - uses: astral-sh/setup-uv@main
+        with:
+          enable-cache: true
+          python-version: "3.13"
 
       - name: Build Package
         run: |

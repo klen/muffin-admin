@@ -1,6 +1,7 @@
 """Setup admin UI."""
 
 import asyncio
+from time import time
 from pathlib import Path
 from typing import ClassVar
 
@@ -200,7 +201,7 @@ class UserResource(PWAdminHandler):
             with Path.open(app.cfg.STATIC_FOLDERS[0] / filename, "wb") as f:
                 f.write(picture.read())
 
-            resource.picture = f"/static/{filename}"
+            resource.picture = f"/static/{filename}?t={int(time())}"
 
         return await super().save(request, resource, update=update)
 
