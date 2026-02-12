@@ -87,33 +87,43 @@ example-sqlalchemy: $(VIRTUAL_ENV) front
 #  Bump version
 # ==============
 
+VERSION	?= minor
+MAIN_BRANCH = master
+
 .PHONY: release
-VERSION?=minor
+VPART?=minor
 # target: release - Bump version
-release: $(VIRTUAL_ENV)
-	@git checkout develop
-	@git pull
-	@git checkout master
-	@git merge develop
-	@git pull
-	@uvx bump-my-version bump $(VERSION)
-	@uv lock
-	@git commit -am "build(release): `uv version --short`"
-	@git tag `uv version --short`
-	@git checkout develop
-	@git merge master
-	@git push --tags origin develop master
+release:
+	git checkout master
+	git pull
+	git checkout develop
+	git pull
+	uvx bump-my-version bump $(VPART)
+	uv lock
+	@VERSION="$$(uv version --short)"; \
+		{ \
+			printf 'build(release): %s\n\n' "$$VERSION"; \
+			printf 'Changes:\n\n'; \
+			git log --oneline --pretty=format:'%s [%an]' $(MAIN_BRANCH)..develop | grep -Evi 'github|^Merge' || true; \
+		} | git commit -a -F -; \
+		git tag "$$VERSION";
+	git checkout $(MAIN_BRANCH)
+	git merge develop
+	git checkout develop
+	git merge $(MAIN_BRANCH)
+	git push origin develop $(MAIN_BRANCH) --tags
+	@echo "Release process complete for `uv version --short`"
 
 .PHONY: minor
 minor: release
 
 .PHONY: patch
 patch:
-	make release VERSION=patch
+	make release VPART=patch
 
 .PHONY: major
 major:
-	make release VERSION=major
+	make release VPART=major
 
-v:
-	@echo `uv version --short`
+version v:
+	uv version --short
