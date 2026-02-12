@@ -31,14 +31,14 @@ class SAAdminOptions(AdminOptions, SARESTOptions):
                 break
 
         else:
-            self.filters = [SAFilter(self.id, field=self.table_pk), *self.filters]
+            self.filters = [SAFilter(self.id, field=self.table_pk), *self.filters]  # type: ignore[]
 
 
 class SAAdminHandler(AdminHandler, SARESTHandler):
     """Work with SQLAlchemy Core."""
 
-    meta_class: type[SAAdminOptions] = SAAdminOptions
-    meta: SAAdminOptions
+    meta_class = SAAdminOptions
+    meta: SAAdminOptions  # type: ignore[override]
 
     def get_selected(self, request: Request):
         keys = request.query.getall("ids")

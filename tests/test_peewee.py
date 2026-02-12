@@ -6,6 +6,8 @@ import peewee as pw
 import pytest
 from marshmallow import fields
 
+from muffin_admin import Plugin, PWAdminHandler
+
 db = muffin_peewee.Plugin(
     connection="sqlite:///:memory:", manage_connections=False, auto_connection=False
 )
@@ -22,9 +24,9 @@ class User(pw.Model):
     password = pw.CharField()
     is_active = pw.BooleanField(default=True, help_text="Disable to block the user")
     status = pw.IntegerField(default=1, choices=[(1, "new"), (2, "old")])
-    meta: muffin_peewee.JSONLikeField = muffin_peewee.JSONLikeField(default={})
+    meta = muffin_peewee.JSONLikeField(default={})
 
-    created = pw.DateTimeField(default=dt.datetime.utcnow)
+    created = pw.DateTimeField(default=dt.datetime.now)
     is_super = pw.BooleanField(default=True)
 
     role = pw.ForeignKeyField(Role, null=True)
@@ -36,7 +38,7 @@ class Message(pw.Model):
     user = pw.ForeignKeyField(Role)
 
 
-@pytest.fixture(params=[pytest.param(("asyncio", {"use_uvloop": False}), id="asyncio")])
+@pytest.fixture(params=[pytest.param(("asyncio", {"loop_factory": None}), id="asyncio")])
 def aiolib(request):
     return request.param
 
@@ -52,7 +54,6 @@ async def setup_db(app):
 
 @pytest.fixture(autouse=True)
 def admin(app):
-    from muffin_admin import Plugin, PWAdminHandler
 
     admin = Plugin(app)
 

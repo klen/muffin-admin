@@ -21,7 +21,11 @@ classifiers = [
   "Framework :: AsyncIO",
   "Framework :: Trio",
 ]
-dependencies = ["muffin", "muffin-rest", "typing-extensions ; python_version <= '3.10'"]
+dependencies = [
+  "muffin",
+  "muffin-rest",
+  "typing-extensions ; python_version <= '3.10'",
+]
 
 [project.optional-dependencies]
 yaml = ["pyyaml"]
@@ -46,20 +50,34 @@ dev = [
   "pyyaml",
   "ruff",
   "pre-commit",
-  "black",
 ]
-example = ["uvicorn", "mixer", "peewee", "muffin-peewee-aio", "muffin-databases", "httptools"]
+example = [
+  "uvicorn",
+  "mixer",
+  "peewee",
+  "muffin-peewee-aio",
+  "muffin-databases",
+  "httptools",
+]
 
 [tool.uv]
 default-groups = ["dev", "example"]
 
 [tool.hatch.build.targets.sdist]
 ignore-vcs = true
-include = ["muffin_admin", "muffin_admin/main.js", "muffin_admin/main.js.LICENSE.txt"]
+include = [
+  "muffin_admin",
+  "muffin_admin/main.js",
+  "muffin_admin/main.js.LICENSE.txt",
+]
 
 [tool.hatch.build.targets.wheel]
 ignore-vcs = true
-include = ["muffin_admin", "muffin_admin/main.js", "muffin_admin/main.js.LICENSE.txt"]
+include = [
+  "muffin_admin",
+  "muffin_admin/main.js",
+  "muffin_admin/main.js.LICENSE.txt",
+]
 
 [build-system]
 requires = ["hatchling"]
@@ -92,6 +110,7 @@ commands =
 """
 
 [tool.ruff]
+include = ["muffin_admin", "tests"]
 fix = false
 line-length = 100
 target-version = "py310"
@@ -119,10 +138,11 @@ ignore = [
   "UP",
 ]
 
-[tool.black]
-line-length = 100
-target-version = ["py310", "py311", "py312", "py313"]
-preview = true
+[tool.ruff.lint.per-file-ignores]
+"tests/*.py" = ["ARG", "N"]
+
+[tool.pyrefly]
+project-includes = ["muffin_admin", "tests"]
 
 [tool.bumpversion]
 current_version = "11.3.1"

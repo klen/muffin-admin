@@ -6,6 +6,8 @@ import muffin_databases
 import pytest
 import sqlalchemy as sa
 
+from muffin_admin import Plugin, SAAdminHandler
+
 db = muffin_databases.Plugin(url="sqlite:///:memory:")
 
 
@@ -32,7 +34,7 @@ User = sa.Table(
     sa.Column("password", sa.String(255), nullable=True),
     sa.Column("is_active", sa.Boolean, default=True),
     sa.Column("status", sa.Enum(UserStatus), default=UserStatus.new, nullable=False),
-    sa.Column("created", sa.DateTime, default=dt.datetime.utcnow, nullable=False),
+    sa.Column("created", sa.DateTime, default=dt.datetime.now, nullable=False),
     sa.Column("is_super", sa.Boolean, default=False),
     sa.Column("meta", sa.JSON, default={}),
     sa.Column("role_id", sa.ForeignKey("role.id"), nullable=False),
@@ -53,7 +55,6 @@ Message = sa.Table(
 
 @pytest.fixture(autouse=True)
 def setup_admin(app):
-    from muffin_admin import Plugin, SAAdminHandler
 
     admin = Plugin(app)
 

@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 import marshmallow as ma
 import peewee as pw
 from muffin_peewee import JSONLikeField
+from muffin_rest import PWRESTHandler
 from muffin_rest.peewee.filters import PWFilter
-from muffin_rest.peewee.handler import PWRESTBase
 from muffin_rest.peewee.options import PWRESTOptions
 
 from muffin_admin.handler import AdminHandler, AdminOptions
@@ -53,11 +53,11 @@ class PWAdminOptions(AdminOptions, PWRESTOptions):
             self.sorting = sorting  # type: ignore[assignment]
 
 
-class PWAdminHandler(AdminHandler, PWRESTBase):
+class PWAdminHandler(AdminHandler, PWRESTHandler):
     """Work with Peewee Models."""
 
-    meta_class: type[PWAdminOptions] = PWAdminOptions
-    meta: PWAdminOptions
+    meta_class = PWAdminOptions
+    meta: PWAdminOptions  # type: ignore[override]
 
     class Meta(AdminHandler.Meta):
         schema_base = PeeweeModelSchema
@@ -80,10 +80,13 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
 
         if model_field and isinstance(model_field, pw.Field):
             if model_field.choices:
-                ra_type, props = "SelectField", {
-                    "choices": [{"id": c[0], "name": c[1]} for c in model_field.choices],
-                    **props,
-                }
+                ra_type, props = (
+                    "SelectField",
+                    {
+                        "choices": [{"id": c[0], "name": c[1]} for c in model_field.choices],
+                        **props,
+                    },
+                )
 
             elif isinstance(model_field, JSONLikeField) or model_field.field_type.lower() == "json":
                 ra_type = "JsonField"
@@ -122,7 +125,7 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
                 return "TextInput", dict(props, multiline=True)
 
             if isinstance(model_field, pw.DateTimeField) and isinstance(field, ma.fields.DateTime):
-                dtformat = field.format or cls.meta.Schema.opts.datetimeformat
+                dtformat = field.format or cls.meta.Schema.opts.datetimeformat  # type: ignore[]
                 if dtformat == "timestamp_ms":
                     return "TimestampInput", dict(props, ms=True)
                 elif dtformat == "timestamp":
@@ -152,10 +155,13 @@ class PWAdminHandler(AdminHandler, PWRESTBase):
 
         if isinstance(field, pw.Field) and field.choices:
             source = flt.name
-            ra_type, props = "SelectArrayInput", {
-                "source": source,
-                "choices": [{"id": c[0], "name": c[1]} for c in field.choices],
-            }
+            ra_type, props = (
+                "SelectArrayInput",
+                {
+                    "source": source,
+                    "choices": [{"id": c[0], "name": c[1]} for c in field.choices],
+                },
+            )
             custom = meta.ra_filters.get(source)
             if custom:
                 ra_type, props = custom[0], {**props, **custom[1]}
@@ -176,4 +182,4 @@ class PWSearchFilter(PWFilter):
         """Apply the filters to Peewee QuerySet.."""
         _, value = ops[0]
         column = self.field
-        return cast("pw.ModelSelect", collection.where(column.contains(value)))
+        return collection.where(column.contains(value))

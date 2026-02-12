@@ -68,7 +68,7 @@ class AdminOptions(RESTOptions):
         ]
 
         if not self.label:
-            self.label = cast("str", self.name)
+            self.label = self.name
 
         if not self.columns:
             self.columns = tuple(
@@ -95,8 +95,8 @@ class AdminOptions(RESTOptions):
 class AdminHandler(RESTBase):
     """Basic handler class for admin UI."""
 
-    meta_class: type[AdminOptions] = AdminOptions
-    meta: AdminOptions
+    meta_class = AdminOptions
+    meta: AdminOptions  # type: ignore[override]
 
     async def __call__(self, request: Request, *, method_name=None, **_):
         """Handle the request."""
@@ -182,7 +182,7 @@ class AdminHandler(RESTBase):
 
         fields, inputs = cls.to_ra_schema(meta.Schema)  # type: ignore[]
         fields_hash = {
-            props["source"]: (ra_type, dict(props, sortable=props["source"] in meta.sorting))
+            props["source"]: (ra_type, dict(props, sortable=props["source"] in meta.sorting))  # type: ignore[]
             for (ra_type, props) in fields
         }
 
@@ -298,15 +298,22 @@ class AdminHandler(RESTBase):
 
     @classmethod
     def to_ra_filter(cls, flt: Filter) -> TRAInfo:
+
         props: TRAProps = {}
 
         meta = cls.meta
         source = flt.name
 
         if isinstance(flt.schema_field, ma.fields.Enum):
-            ra_type, props = "SelectArrayInput", {
-                "choices": [{"id": c.value, "name": c.name} for c in flt.schema_field.enum],
-            }
+            ra_type, props = (
+                "SelectArrayInput",
+                cast(
+                    "TRAProps",
+                    {
+                        "choices": [{"id": c.value, "name": c.name} for c in flt.schema_field.enum],
+                    },
+                ),
+            )
         else:
             ra_type, props = cls.to_ra_input(flt.schema_field, source, resource=True)
             props.pop("required", None)

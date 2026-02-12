@@ -3,9 +3,10 @@ from typing import ClassVar
 import marshmallow as ma
 from marshmallow import validate
 
+from muffin_admin import AdminHandler, Plugin
+
 
 def test_endpoint(app):
-    from muffin_admin import AdminHandler, Plugin
 
     admin = Plugin(app)
     assert admin
@@ -16,7 +17,7 @@ def test_endpoint(app):
             name = "base"
             filters = "id", "name"
             sorting = "id", "name"
-            locales = {
+            locales: ClassVar = {
                 "en": {"test": "Test"},
             }
 
@@ -86,7 +87,6 @@ def test_endpoint(app):
 
 
 async def test_endpoint_action(app):
-    from muffin_admin import AdminHandler, Plugin
 
     admin = Plugin(app)
     assert admin
@@ -96,7 +96,7 @@ async def test_endpoint_action(app):
 
     @admin.route
     class Handler(AdminHandler):
-        class Meta:
+        class Meta(AdminHandler.Meta):
             name = "handler"
             filters = "id", "name"
             sorting = "id", "name"
@@ -121,7 +121,6 @@ async def test_endpoint_action(app):
 
 
 def test_custom_fields_inputs():
-    from muffin_admin import AdminHandler
 
     class BaseHandler(AdminHandler):
         class Meta(AdminHandler.Meta):
@@ -129,7 +128,7 @@ def test_custom_fields_inputs():
             filters = "id", "name"
             sorting = "id", "name"
 
-            class Schema(ma.Schema):
+            class Schema(ma.Schema):  # type: ignore[]
                 id = ma.fields.String()
                 name = ma.fields.String(validate=validate.Length(3, 100))
                 active = ma.fields.Boolean()
@@ -146,7 +145,6 @@ def test_custom_fields_inputs():
 
 
 def test_schema_opts():
-    from muffin_admin import AdminHandler
 
     class BaseHandler(AdminHandler):
         class Meta(AdminHandler.Meta):
@@ -154,7 +152,7 @@ def test_schema_opts():
             filters = "id", "name"
             sorting = "id", "name"
 
-            class Schema(ma.Schema):
+            class Schema(ma.Schema):  # type: ignore[]
                 id = ma.fields.String()
                 name = ma.fields.String(validate=validate.Length(3, 100))
                 active = ma.fields.Boolean()
@@ -174,7 +172,6 @@ def test_schema_opts():
 
 
 def test_disable_edit():
-    from muffin_admin import AdminHandler
 
     class BaseHandler(AdminHandler):
         class Meta(AdminHandler.Meta):
@@ -185,7 +182,7 @@ def test_disable_edit():
             create = False
             delete = False
 
-            class Schema(ma.Schema):
+            class Schema(ma.Schema):  # type: ignore[]
                 id = ma.fields.String()
                 name = ma.fields.String(validate=validate.Length(3, 100))
                 active = ma.fields.Boolean()
@@ -201,7 +198,6 @@ def test_disable_edit():
 
 
 def test_disable_delete():
-    from muffin_admin import AdminHandler
 
     class BaseHandler(AdminHandler):
         class Meta(AdminHandler.Meta):
@@ -210,7 +206,7 @@ def test_disable_delete():
             sorting = "id", "name"
             delete = False
 
-            class Schema(ma.Schema):
+            class Schema(ma.Schema):  # type: ignore[]
                 id = ma.fields.String()
                 name = ma.fields.String(validate=validate.Length(3, 100))
                 active = ma.fields.Boolean()
