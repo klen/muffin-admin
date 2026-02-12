@@ -10,6 +10,7 @@ from muffin_peewee import JSONLikeField
 from muffin_rest import PWRESTHandler
 from muffin_rest.peewee.filters import PWFilter
 from muffin_rest.peewee.options import PWRESTOptions
+from muffin_rest.peewee.types import TVCollection, TVResource
 
 from muffin_admin.handler import AdminHandler, AdminOptions
 from muffin_admin.peewee.schemas import PeeweeModelSchema
@@ -53,7 +54,9 @@ class PWAdminOptions(AdminOptions, PWRESTOptions):
             self.sorting = sorting  # type: ignore[assignment]
 
 
-class PWAdminHandler(AdminHandler, PWRESTHandler):
+class PWAdminHandler(
+    AdminHandler[TVResource, TVCollection], PWRESTHandler[TVResource, TVCollection]
+):
     """Work with Peewee Models."""
 
     meta_class = PWAdminOptions

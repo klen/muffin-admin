@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from muffin_rest.filters import Filter
-from muffin_rest.sqlalchemy import SARESTHandler, SARESTOptions
+from muffin_rest.sqlalchemy import SARESTHandler, SARESTOptions, TVCollection, TVResource
 from muffin_rest.sqlalchemy.filters import SAFilter
 from sqlalchemy import JSON, Enum, Text
 
@@ -34,13 +34,16 @@ class SAAdminOptions(AdminOptions, SARESTOptions):
             self.filters = [SAFilter(self.id, field=self.table_pk), *self.filters]  # type: ignore[]
 
 
-class SAAdminHandler(AdminHandler, SARESTHandler):
+class SAAdminHandler(
+    AdminHandler[TVResource, TVCollection], SARESTHandler[TVResource, TVCollection]
+):
     """Work with SQLAlchemy Core."""
 
     meta_class = SAAdminOptions
     meta: SAAdminOptions  # type: ignore[override]
 
     def get_selected(self, request: Request):
+        super(SAAdminHandler, self).get_selected(request)
         keys = request.query.getall("ids")
         qs = self.collection
         if keys:

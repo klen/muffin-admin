@@ -4,13 +4,14 @@ from __future__ import annotations
 
 import inspect
 from functools import wraps
-from typing import TYPE_CHECKING, Any, ClassVar, Iterable, Sequence, cast
+from typing import TYPE_CHECKING, Any, ClassVar, Sequence, cast
 
 import marshmallow as ma
 from muffin_rest import APIError
 from muffin_rest.handler import RESTBase
 from muffin_rest.options import RESTOptions
 from muffin_rest.schemas import EnumField
+from muffin_rest.types import TVCollection, TVResource
 
 if TYPE_CHECKING:
     from http_router.types import TMethods
@@ -92,7 +93,7 @@ class AdminOptions(RESTOptions):
         self.sorting = sorting  # type: ignore[assignment]
 
 
-class AdminHandler(RESTBase):
+class AdminHandler(RESTBase[TVResource, TVCollection]):
     """Basic handler class for admin UI."""
 
     meta_class = AdminOptions
@@ -107,9 +108,9 @@ class AdminHandler(RESTBase):
     async def log(self, request: Request, response: Response | None, action: str | None):
         """Log the request."""
 
-    def get_selected(self, request: Request) -> Iterable | None:
+    def get_selected(self, request: Request) -> TVCollection:
         """Get selected objects."""
-        return request.query.getall("ids", None)
+        return cast("TVCollection", request.query.getall("ids", []))
 
     @classmethod
     def action(
