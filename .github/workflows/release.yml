@@ -27,8 +27,6 @@ jobs:
 
       - name: Publish Frontend
         run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         working-directory: frontend
 
       - uses: astral-sh/setup-uv@main
