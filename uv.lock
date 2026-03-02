@@ -533,15 +533,15 @@ wheels = [
 
 [[package]]
 name = "marshmallow-peewee"
-version = "5.0.0"
+version = "3.4.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "marshmallow" },
     { name = "peewee" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f1/f1/9746e1a8d5e823d04ca4325f54113df21d65f33af3227093568c648d020d/marshmallow_peewee-5.0.0.tar.gz", hash = "sha256:c963f3b2914490354055979e25b9a92c87c5a1f72c5fee785667b3e1c336a817", size = 7395, upload-time = "2024-11-21T10:39:35.198Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/96/5c/fe177d0444deece6b5db590f90b2094ed773926ad99737ccf8cb66b1249a/Marshmallow-Peewee-3.4.3.tar.gz", hash = "sha256:161cfb9c9115926494eeefc0b2ad9a8f8493b40a45d056a72d9fc78d87fe6e33", size = 7361, upload-time = "2022-11-09T15:30:42.116Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b6/c8/d7100a3fec923c2d8da96f7fc1fe5030628e19c37b3289dddc9540fac315/marshmallow_peewee-5.0.0-py3-none-any.whl", hash = "sha256:f64f6032b6647fd90786757cdff9c9c17ce8e49c8af7e6d0c5749e3741086e8b", size = 8251, upload-time = "2024-11-21T10:39:33.79Z" },
+    { url = "https://files.pythonhosted.org/packages/e6/51/38c0432dbac08909447ba83ceed1d7fec4d088b9bfd12de9a74833f023e8/Marshmallow_Peewee-3.4.3-py2.py3-none-any.whl", hash = "sha256:b0be4b804940d06595113bf69a4be42a6987c44f42a01f0482e8b5db09348e14", size = 7963, upload-time = "2022-11-09T15:30:40.243Z" },
 ]
 
 [[package]]
@@ -693,17 +693,18 @@ wheels = [
 
 [[package]]
 name = "muffin-peewee-aio"
-version = "2.1.0"
+version = "0.10.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "muffin" },
     { name = "peewee" },
     { name = "peewee-aio" },
     { name = "peewee-migrate" },
+    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/64/22/ca5a06cbe2534563a8f36edb3bca4943a32f70ee901ecd0d85ccb147954d/muffin_peewee_aio-2.1.0.tar.gz", hash = "sha256:66d4541bb86bb26590aa665138a05bcbd3613afaf75c08913926a1888cc8d241", size = 6841, upload-time = "2026-02-12T21:20:56.786Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/8d/6f/f32a405694ef287222882b97c44f1b78c2168fae7f2241aacee1ce9ac099/muffin-peewee-aio-0.10.0.tar.gz", hash = "sha256:4efc5aba3c52a6a5347cd8beca4c273589aae9ffd5cb98c39bbc5dd014415ad0", size = 8466, upload-time = "2023-03-14T12:52:35.394Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/73/6b/0ab53de760a18b7988213b252fbd916887c7ce9085111aabbbbe8979c263/muffin_peewee_aio-2.1.0-py3-none-any.whl", hash = "sha256:e4c14fb62ff381a0f4bdee9c92fa205996e2b174b6e2f1772a15f4662491b291", size = 7745, upload-time = "2026-02-12T21:20:55.798Z" },
+    { url = "https://files.pythonhosted.org/packages/61/fb/c05ab5dede4db4029bdd4d61d7b6cf4bffb9eedc33f8625de5bf5a8f52b7/muffin_peewee_aio-0.10.0-py3-none-any.whl", hash = "sha256:511589f8af0af103fa66a7f37bbc50c830da770db6566f227316af189cb8742c", size = 6703, upload-time = "2023-03-14T12:52:33.507Z" },
 ]
 
 [[package]]
@@ -955,38 +956,38 @@ wheels = [
 
 [[package]]
 name = "peewee"
-version = "3.19.0"
+version = "4.0.1"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/88/b0/79462b42e89764998756e0557f2b58a15610a5b4512fbbcccae58fba7237/peewee-3.19.0.tar.gz", hash = "sha256:f88292a6f0d7b906cb26bca9c8599b8f4d8920ebd36124400d0cbaaaf915511f", size = 974035, upload-time = "2026-01-07T17:24:59.597Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/bd/a0/307e09edfae54f103d66b54d82fdfd22cfc25e733731c97173f4ec661fc3/peewee-4.0.1.tar.gz", hash = "sha256:beb1a173a52952a4d69197ca36408166740b2ced339c0e8159617c3fa1e1c4da", size = 700753, upload-time = "2026-03-01T17:26:56.125Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/1a/41/19c65578ef9a54b3083253c68a607f099642747168fe00f3a2bceb7c3a34/peewee-3.19.0-py3-none-any.whl", hash = "sha256:de220b94766e6008c466e00ce4ba5299b9a832117d9eb36d45d0062f3cfd7417", size = 411885, upload-time = "2026-01-07T17:24:58.33Z" },
+    { url = "https://files.pythonhosted.org/packages/bf/99/0f8d9e46df9812ab31dadb07ba304c3ff6d6076bf19a67f4d046790be2e1/peewee-4.0.1-py3-none-any.whl", hash = "sha256:10afaa02c9f6d0f2dfe0f5b9007075c985eb141ab740a8831e37be2a61b3595c", size = 139369, upload-time = "2026-03-01T17:26:54.597Z" },
 ]
 
 [[package]]
 name = "peewee-aio"
-version = "2.2.2"
+version = "0.16.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aio-databases" },
     { name = "peewee" },
     { name = "typing-extensions", marker = "python_full_version < '3.11'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/3d/51/219dd5372d052bc303e024c260a60dce4a9e562dbc954da916620532836a/peewee_aio-2.2.2.tar.gz", hash = "sha256:8adea31e85d8b4353c10f8075f4dc43a1a6ddde6810f9a7a768cddfbcad2116d", size = 13469, upload-time = "2026-02-12T18:40:18.663Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ee/70/b2ab34cc0eb6f0611b1c591979959d533cb585cec94c544bdbf54a083be1/peewee-aio-0.16.3.tar.gz", hash = "sha256:dc277d09d67943028fd250a9f81da4ba1fba5f5afd43e0bfdece3e5f097a9921", size = 12948, upload-time = "2023-02-15T12:52:32.96Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/81/6f/946b817bedffb5b336f0b35788442708f724f2b570e829f741ef9edfcad6/peewee_aio-2.2.2-py3-none-any.whl", hash = "sha256:70526c0219440ac289ae8b897328a35963a7c7bc82bf143a0282e68a04f51382", size = 15495, upload-time = "2026-02-12T18:40:17.747Z" },
+    { url = "https://files.pythonhosted.org/packages/19/37/061a668a6e94e3362c254b3e11fe3ad0be2fccf17a49835dde729151028f/peewee_aio-0.16.3-py3-none-any.whl", hash = "sha256:c432973eaf036601dce36f38c5898c12e2e9b176c4939fef2c2809c6fa99f7e5", size = 11944, upload-time = "2023-02-15T12:52:31.242Z" },
 ]
 
 [[package]]
 name = "peewee-migrate"
-version = "1.14.3"
+version = "1.6.6"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
     { name = "peewee" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/19/e6/0be63e524945d8f5632734ad62a1f8a4de2b8570fcddb9dea859bc605c20/peewee_migrate-1.14.3.tar.gz", hash = "sha256:e31d88225c7e9ba3f28d49c0fc11c3a6f1e11ba8266da7ffe268bede0c51360a", size = 16669, upload-time = "2025-11-25T11:27:10.05Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a6/c2/14a380ffc5a8c8291f00f415747f51b23044f7c0844eff1d7e28a17ea977/peewee-migrate-1.6.6.tar.gz", hash = "sha256:b8c3ab71511a9b7ba1ef91e26dff86e3757996a0789ab3fda421f0c004c9d869", size = 16935, upload-time = "2023-02-03T05:01:49.304Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/5d/ca/510ae9e7d3644caf6db587ba0d52e5bc5405f77f150c9e0a624c9d5988f3/peewee_migrate-1.14.3-py3-none-any.whl", hash = "sha256:9df152738add75d3f7b073fccab02648b844404e50910ab29db4f3656a377a5b", size = 19528, upload-time = "2025-11-25T11:27:08.771Z" },
+    { url = "https://files.pythonhosted.org/packages/75/57/768c07dfd7e7d4d465e9fae0be9314873340ce2c76cfcd2dcd53a6f50d18/peewee_migrate-1.6.6-py3-none-any.whl", hash = "sha256:26cbfd1b1ad11e3bbd114d3f0fe1e91bfd15fec346221d184e22c87d00e6e355", size = 16993, upload-time = "2023-02-03T05:01:47.713Z" },
 ]
 
 [[package]]
