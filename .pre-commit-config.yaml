@@ -53,13 +53,13 @@ repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: "v0.15.0"
     hooks:
-      # Run the linter.
-      - id: ruff-check
-        name: ruff check
-        stages: ["pre-commit"]
       # Run the formatter.
       - id: ruff-format
         name: ruff format
+        stages: ["pre-commit"]
+      # Run the linter.
+      - id: ruff-check
+        name: ruff check
         stages: ["pre-commit"]
 
   - repo: https://github.com/facebook/pyrefly-pre-commit
