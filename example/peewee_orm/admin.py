@@ -1,8 +1,8 @@
 """Setup admin UI."""
 
 import asyncio
-from time import time
 from pathlib import Path
+from time import time
 from typing import ClassVar
 
 import marshmallow as ma
@@ -13,7 +13,7 @@ from example.peewee_orm.schemas import GreetActionSchema
 from muffin_admin import Plugin, PWAdminHandler
 
 from . import app
-from .database import Group, Message, User
+from .database import Group, Message, Order, User
 
 admin = Plugin(
     app,
@@ -249,6 +249,16 @@ class GroupResource(PWAdminHandler):
         schema_meta: ClassVar = {"dump_only": ("created",)}
         icon = "People"
         group = "People"
+
+
+@admin.route
+class OrderResource(PWAdminHandler):
+    """Create Admin Resource for the Group model."""
+
+    class Meta(PWAdminHandler.Meta):
+        model = Order
+        filters = "source", "source_id"
+        schema_meta: ClassVar = {"dump_only": ("created",)}
 
 
 @admin.route

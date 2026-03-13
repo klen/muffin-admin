@@ -35,7 +35,19 @@ class User(pw.Model):
 @db.register
 class Message(pw.Model):
     body = pw.TextField()
-    user = pw.ForeignKeyField(Role)
+    user = pw.ForeignKeyField(User)
+
+
+@db.register
+class Order(pw.Model):
+    source = pw.CharField()
+    source_id = pw.CharField()
+
+    amount = pw.IntegerField()
+    currency = pw.CharField()
+
+    class Meta:
+        primary_key = pw.CompositeKey("source", "source_id")
 
 
 @pytest.fixture(params=[pytest.param(("asyncio", {"loop_factory": None}), id="asyncio")])
@@ -83,12 +95,32 @@ def admin(app):
             model = Message
             ra_refs: ClassVar = {"user": {"source": "email"}}
 
+    @admin.route
+    class OrderAdmin(PWAdminHandler):
+        class Meta(PWAdminHandler.Meta):
+            model = Order
+
     return admin
 
 
 async def test_admin(app):
     admin = app.plugins["admin"]
-    assert admin.to_ra()
+    schema = admin.to_ra()
+    assert schema
+    assert schema["apiUrl"]
+    assert schema["auth"]
+    assert schema["adminProps"]
+    assert schema["appBarLinks"]
+    assert schema["version"]
+    assert "help" in schema
+    assert "locales" in schema
+
+    assert schema["resources"]
+    resources = {res["name"]: res for res in schema["resources"]}
+    assert "user" in resources
+    assert "role" in resources
+    assert "message" in resources
+    assert "order" in resources
 
     assert admin.api.router.routes()
     assert admin.handlers
@@ -262,11 +294,58 @@ async def test_msg_resource(app):
                     "required": True,
                     "refSource": "email",
                     "refKey": "id",
-                    "reference": "role",
+                    "reference": "user",
                 },
             ),
         ],
     }
+
+
+async def test_order_resource_composite_key(app):
+    admin = app.plugins["admin"]
+
+    order_resource_type = admin.handlers[3]
+    id_field = order_resource_type.meta.Schema._declared_fields["id"]
+    assert isinstance(id_field, fields.Function)
+    assert id_field.dump_only is True
+
+    ra = order_resource_type.to_ra()
+    assert all(input_props[1]["source"] != "id" for input_props in ra["create"])
+    assert ("TextField", {"source": "id"}) in ra["show"]["fields"]
+
+
+async def test_order_resource_by_composite_key(client, admin, setup_db):
+    await db.manager.create(Order, source="web", source_id="42", amount=100, currency="USD")
+
+    response = await client.get(admin.api.prefix + "/order/web::42")
+    assert response.status_code == 200
+
+    payload = await response.json()
+    resource = payload.get("data", payload)
+    assert resource["id"] == "web::42"
+    assert resource["source"] == "web"
+    assert resource["source_id"] == "42"
+
+    with pytest.raises(ValueError, match="Invalid id"):
+        await client.get(admin.api.prefix + "/order/web")
+
+
+async def test_message_request(client, admin, setup_db):
+    user_password = str(id(client))
+    user = await db.manager.create(User, name="John", password=user_password)
+    message = await db.manager.create(Message, body="hello", user=user)
+    message_id = message.id  # type: ignore[attr-defined]
+
+    response = await client.get(admin.api.prefix + "/message")
+    assert response.status_code == 200
+
+    resource_response = await client.get(admin.api.prefix + f"/message/{message_id}")
+    assert resource_response.status_code == 200
+
+    payload = await resource_response.json()
+    resource = payload.get("data", payload)
+    assert resource["id"] == str(message_id)
+    assert resource["body"] == "hello"
 
 
 async def test_client(client, admin, setup_db):

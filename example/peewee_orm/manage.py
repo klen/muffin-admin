@@ -5,7 +5,7 @@ from random import choice
 from mixer.backend.peewee import Mixer
 
 from . import app
-from .database import Message, User
+from .database import Message, Order, User
 from .database import db as database
 
 
@@ -14,8 +14,8 @@ def shell():
     """Open an interactive shell with the application context."""
     ctx = {"app": app}
     ctx.update(app.plugins)
-    for Model in database.manager.models:
-        ctx[Model.__name__] = Model
+    for model_cls in database.manager.models:
+        ctx[model_cls.__name__] = model_cls
 
     return ctx
 
@@ -69,10 +69,19 @@ async def devdata():
         # Generate 100 messages
         statuses = [choice[0] for choice in Message.status.choices]
         users = await User.select()
-        for n in range(100):
+        for _ in range(100):
             await Message.create(
                 body=mixer.faker.text(),
                 title=mixer.faker.title(),
                 user=choice(users),  # noqa: S311
                 status=mixer.faker.random.choice(statuses),
+            )
+
+        # Generate 100 orders
+        for _ in range(100):
+            await Order.create(
+                source=choice(["web", "mobile"]),  # noqa: S311
+                source_id=mixer.faker.uuid4(),
+                amount=mixer.faker.random_int(min=10, max=1000),
+                currency=choice(["USD", "EUR", "GBP"]),  # noqa: S311
             )

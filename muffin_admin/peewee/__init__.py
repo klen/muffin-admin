@@ -2,18 +2,21 @@
 
 from __future__ import annotations
 
+from functools import partial
 from typing import TYPE_CHECKING
 
 import marshmallow as ma
 import peewee as pw
 from muffin_peewee import JSONLikeField
-from muffin_rest import PWRESTHandler
+from muffin_rest import APIError, PWRESTHandler
 from muffin_rest.peewee.filters import PWFilter
 from muffin_rest.peewee.options import PWRESTOptions
 from muffin_rest.peewee.types import TVCollection, TVResource
+from peewee import CompositeKey
 
 from muffin_admin.handler import AdminHandler, AdminOptions
 from muffin_admin.peewee.schemas import PeeweeModelSchema
+from muffin_admin.peewee.utils import composite_key_to_id, id_to_composite_key
 
 if TYPE_CHECKING:
     from muffin import Request
@@ -27,7 +30,15 @@ class PWAdminOptions(AdminOptions, PWRESTOptions):
 
     def setup(self, cls):
         """Auto insert filter by id."""
+
+        # Make a copy of schema_fields to avoid modifying the class variable in subclasses
+        self.__dict__["schema_fields"] = dict(self.schema_fields)
+
         super(PWAdminOptions, self).setup(cls)
+
+        pk = self.model_pk
+        if isinstance(pk, CompositeKey):
+            return
 
         self.id = self.model_pk.name
         for flt in self.filters:
@@ -44,6 +55,25 @@ class PWAdminOptions(AdminOptions, PWRESTOptions):
 
         else:
             self.filters = [PWFilter(self.id, field=self.model_pk), *self.filters]  # type: ignore[]
+
+    def setup_schema_meta(self, _):
+        """Prepare a schema."""
+        pk = self.model_pk
+
+        if isinstance(pk, CompositeKey):
+            self.schema_fields.setdefault(
+                "id",
+                ma.fields.Function(partial(composite_key_to_id, pk), dump_only=True),
+            )
+
+        return type(
+            "Meta",
+            (object,),
+            dict(
+                {"unknown": self.schema_unknown, "model": self.model},
+                **self.schema_meta,
+            ),
+        )
 
     def default_sort(self: PWAdminOptions):
         """Default sorting."""
@@ -64,6 +94,30 @@ class PWAdminHandler(
 
     class Meta(AdminHandler.Meta):
         schema_base = PeeweeModelSchema
+
+    async def prepare_resource(self, request: Request) -> TVResource | None:
+        """Load a resource."""
+        key = request["path_params"].get("id")
+        if not key:
+            return None
+
+        meta = self.meta
+        model_pk = meta.model_pk
+        if isinstance(model_pk, CompositeKey):
+            keys = id_to_composite_key(model_pk, key)
+            query = self.collection.filter(**keys)
+        else:
+            query = self.collection.where(model_pk == key)
+
+        try:
+            resource = await meta.manager.fetchone(query)
+        except Exception:  # noqa: BLE001
+            resource = None
+
+        if resource is None:
+            raise APIError.NOT_FOUND("Resource not found")
+
+        return resource
 
     def get_selected(self, request: Request):
         """Get selected objects."""
