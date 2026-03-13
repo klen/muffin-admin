@@ -111,7 +111,7 @@ commands =
 """
 
 [tool.ruff]
-include = ["muffin_admin", "tests"]
+include = ["muffin_admin/**/*.py", "tests/**/*"]
 fix = false
 line-length = 100
 target-version = "py310"
