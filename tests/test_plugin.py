@@ -1,9 +1,12 @@
-async def test_plugin(app):
-    import muffin_admin
+from muffin_rest import APIError
 
+from muffin_admin import Plugin
+
+
+async def test_plugin(app):
     assert app
 
-    admin = muffin_admin.Plugin(app)
+    admin = Plugin(app)
     assert admin
 
     data = admin.to_ra()
@@ -17,9 +20,7 @@ async def test_plugin(app):
 
 
 async def test_basic_files(app, client):
-    import muffin_admin
-
-    muffin_admin.Plugin(app)
+    Plugin(app)
 
     res = await client.get("/admin")
     assert res.status_code == 200
@@ -33,9 +34,7 @@ async def test_basic_files(app, client):
 
 
 async def test_root_prefix(app, client):
-    import muffin_admin
-
-    admin = muffin_admin.Plugin(app, prefix="/")
+    admin = Plugin(app, prefix="/")
     assert admin
 
     res = await client.get("/")
@@ -50,10 +49,6 @@ async def test_root_prefix(app, client):
 
 
 async def test_auth(app, client):
-    from muffin_rest import APIError
-
-    from muffin_admin import Plugin
-
     admin = Plugin(app)
 
     res = await client.get("/admin/login")
@@ -104,13 +99,37 @@ async def test_auth(app, client):
     assert await res.json() == {"id": "user", "fullName": "User-user"}
 
     res = await client.get("/admin")
+    assert res.status_code == 200
+    assert "Muffin-Admin Admin UI" in await res.text()
+
+
+async def test_auth_cookies_applies(app, client):
+    admin = Plugin(app, auth_storage="cookies")
+
+    @admin.check_auth
+    async def authorize(request):
+        auth = request.headers.get("authorization")
+        if not auth:
+            raise APIError.FORBIDDEN()
+
+        return auth
+
+    res = await client.get("/admin")
     assert res.status_code == 403
+
+    res = await client.get("/admin/ra.json")
+    assert res.status_code == 403
+
+    res = await client.get("/admin", headers={"authorization": "user"})
+    assert res.status_code == 200
+    assert "Muffin-Admin Admin UI" in await res.text()
+
+    res = await client.get("/admin/ra.json", headers={"authorization": "user"})
+    assert res.status_code == 200
 
 
 async def test_dashboard(app, client):
-    import muffin_admin
-
-    admin = muffin_admin.Plugin(app)
+    admin = Plugin(app)
 
     @admin.dashboard
     async def dashboard(request):

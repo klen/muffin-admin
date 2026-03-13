@@ -78,25 +78,23 @@ class Plugin(BasePlugin):
         title = self.cfg.title
         api = self.api
 
-        def authorize(view):
+        async def check_request(request):
             """Authorization."""
+            if self.cfg.auth_storage != "cookies":
+                return
 
-            async def decorator(request):
-                """Authorize an user."""
-                authorize = api.authorize
-                if authorize:
-                    auth = await authorize(request)
-                    if not auth and login_url:
-                        return ResponseRedirect(login_url)
+            authorize = api.authorize
+            if authorize is None:
+                return
 
-                return await view(request)
-
-            return decorator
+            if not await authorize(request):
+                raise ResponseRedirect(login_url or "/")
 
         @app.route(f"/{prefix.lstrip('/')}")
-        @authorize
-        async def render_admin(_):
+        async def render_admin(request):
             """Render admin page."""
+            await check_request(request)
+
             return TEMPLATE.format(
                 prefix=prefix,
                 title=title,
@@ -106,10 +104,10 @@ class Plugin(BasePlugin):
             )
 
         @app.route(f"{prefix}/ra.json")
-        @authorize
         async def ra(request):
-            data = self.to_ra()
+            await check_request(request)
 
+            data = self.to_ra()
             if self.__dashboard__:
                 data["dashboard"] = await self.__dashboard__(request)
 
