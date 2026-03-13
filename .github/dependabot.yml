@@ -6,7 +6,7 @@ updates:
     labels:
       - dependencies
     schedule:
-      interval: "daily"
+      interval: monthly
     assignees:
       - "klen"
 
@@ -16,7 +16,7 @@ updates:
     labels:
       - dependencies
     schedule:
-      interval: "daily"
+      interval: monthly
     assignees:
       - "klen"
 
@@ -26,6 +26,6 @@ updates:
     labels:
       - dependencies
     schedule:
-      interval: "daily"
+      interval: monthly
     assignees:
       - "klen"
