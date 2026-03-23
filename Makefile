@@ -92,22 +92,21 @@ MAIN_BRANCH = master
 STAGE_BRANCH = develop
 
 .PHONY: release
-VPART?=minor
 # target: release - Bump version
 release:
 	git checkout $(MAIN_BRANCH)
 	git pull
 	git checkout $(STAGE_BRANCH)
 	git pull
-	uvx bump-my-version bump $(VPART)
+	uvx bump-my-version bump $(VERSION)
 	uv lock
-	@VERSION="$$(uv version --short)"; \
+	@CVER="$$(uv version --short)"; \
 		{ \
-			printf 'build(release): %s\n\n' "$$VERSION"; \
+			printf 'build(release): %s\n\n' "$$CVER"; \
 			printf 'Changes:\n\n'; \
 			git log --oneline --pretty=format:'%s [%an]' $(MAIN_BRANCH)..$(STAGE_BRANCH) | grep -Evi 'github|^Merge' || true; \
 		} | git commit -a -F -; \
-		git tag -a "$$VERSION" -m "$$VERSION";
+		git tag -a "$$CVER" -m "$$CVER";
 	git checkout $(MAIN_BRANCH)
 	git merge $(STAGE_BRANCH)
 	git checkout $(STAGE_BRANCH)
@@ -121,11 +120,11 @@ minor: release
 
 .PHONY: patch
 patch:
-	make release VPART=patch
+	make release VERSION=patch
 
 .PHONY: major
 major:
-	make release VPART=major
+	make release VERSION=major
 
 version v:
 	uv version --short

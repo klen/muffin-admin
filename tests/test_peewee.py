@@ -1,10 +1,12 @@
 import datetime as dt
+from enum import StrEnum
 from typing import ClassVar
 
 import muffin_peewee
 import peewee as pw
 import pytest
 from marshmallow import fields
+from muffin_peewee import StrEnumField
 
 from muffin_admin import Plugin, PWAdminHandler
 
@@ -38,9 +40,15 @@ class Message(pw.Model):
     user = pw.ForeignKeyField(User)
 
 
+class OrderSource(StrEnum):
+    WEB = "web"
+    MOBILE = "mobile"
+    API = "api"
+
+
 @db.register
 class Order(pw.Model):
-    source = pw.CharField()
+    source = StrEnumField(OrderSource, default=OrderSource.WEB)
     source_id = pw.CharField()
 
     amount = pw.IntegerField()
@@ -315,7 +323,12 @@ async def test_order_resource_composite_key(app):
 
 
 async def test_order_resource_by_composite_key(client, admin, setup_db):
-    await db.manager.create(Order, source="web", source_id="42", amount=100, currency="USD")
+    order = await db.manager.create(Order, source_id="42", amount=100, currency="USD")
+    assert order
+
+    response = await client.get(admin.api.prefix + "/order")
+    assert response.status_code == 200
+    payload = await response.json()
 
     response = await client.get(admin.api.prefix + "/order/web::42")
     assert response.status_code == 200

@@ -16,7 +16,7 @@ from peewee import CompositeKey
 
 from muffin_admin.handler import AdminHandler, AdminOptions
 from muffin_admin.peewee.schemas import PeeweeModelSchema
-from muffin_admin.peewee.utils import composite_key_to_id, id_to_composite_key
+from muffin_admin.peewee.utils import composite_key_to_id, id_to_composite_keys
 
 if TYPE_CHECKING:
     from muffin import Request
@@ -104,10 +104,14 @@ class PWAdminHandler(
         meta = self.meta
         model_pk = meta.model_pk
         if isinstance(model_pk, CompositeKey):
-            keys = id_to_composite_key(model_pk, key)
-            query = self.collection.filter(**keys)
+            keys = id_to_composite_keys(model_pk, key)
+            where = []
+            for name, value in keys.items():
+                field = getattr(meta.model, name)
+                where.append(field == field.python_value(value))
+            query = self.collection.where(*where)
         else:
-            query = self.collection.where(model_pk == key)
+            query = self.collection.where(model_pk == model_pk.python_value(key))
 
         try:
             resource = await meta.manager.fetchone(query)
