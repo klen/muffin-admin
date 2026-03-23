@@ -61,9 +61,10 @@ class PWAdminOptions(AdminOptions, PWRESTOptions):
         pk = self.model_pk
 
         if isinstance(pk, CompositeKey):
+            fields = [getattr(self.model, name) for name in pk.field_names]
             self.schema_fields.setdefault(
                 "id",
-                ma.fields.Function(partial(composite_key_to_id, pk), dump_only=True),
+                ma.fields.Function(partial(composite_key_to_id, fields), dump_only=True),
             )
 
         return type(
@@ -103,15 +104,18 @@ class PWAdminHandler(
 
         meta = self.meta
         model_pk = meta.model_pk
-        if isinstance(model_pk, CompositeKey):
-            keys = id_to_composite_keys(model_pk, key)
-            where = []
-            for name, value in keys.items():
-                field = getattr(meta.model, name)
-                where.append(field == field.python_value(value))
-            query = self.collection.where(*where)
-        else:
-            query = self.collection.where(model_pk == model_pk.python_value(key))
+        try:
+            if isinstance(model_pk, CompositeKey):
+                keys = id_to_composite_keys(model_pk, key)
+                where = []
+                for name, value in keys.items():
+                    field = getattr(meta.model, name)
+                    where.append(field == field.python_value(value))
+                query = self.collection.where(*where)
+            else:
+                query = self.collection.where(model_pk == model_pk.python_value(key))
+        except (TypeError, ValueError, AttributeError) as exc:
+            raise APIError.BAD_REQUEST("Invalid resource ID") from exc
 
         try:
             resource = await meta.manager.fetchone(query)

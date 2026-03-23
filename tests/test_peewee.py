@@ -1,5 +1,5 @@
 import datetime as dt
-from enum import StrEnum
+from enum import Enum
 from typing import ClassVar
 
 import muffin_peewee
@@ -40,7 +40,7 @@ class Message(pw.Model):
     user = pw.ForeignKeyField(User)
 
 
-class OrderSource(StrEnum):
+class OrderSource(Enum):
     WEB = "web"
     MOBILE = "mobile"
     API = "api"
@@ -322,6 +322,11 @@ async def test_order_resource_composite_key(app):
     assert ("TextField", {"source": "id"}) in ra["show"]["fields"]
 
 
+async def test_order_resource_by_composite_invalid_key(client, admin, setup_db):
+    res = await client.get(admin.api.prefix + "/order/web")
+    assert res.status_code == 400
+
+
 async def test_order_resource_by_composite_key(client, admin, setup_db):
     order = await db.manager.create(Order, source_id="42", amount=100, currency="USD")
     assert order
@@ -338,9 +343,6 @@ async def test_order_resource_by_composite_key(client, admin, setup_db):
     assert resource["id"] == "web::42"
     assert resource["source"] == "web"
     assert resource["source_id"] == "42"
-
-    with pytest.raises(ValueError, match="Invalid id"):
-        await client.get(admin.api.prefix + "/order/web")
 
 
 async def test_message_request(client, admin, setup_db):
