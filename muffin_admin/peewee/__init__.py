@@ -2,21 +2,20 @@
 
 from __future__ import annotations
 
-from functools import partial
 from typing import TYPE_CHECKING
 
 import marshmallow as ma
 import peewee as pw
 from muffin_peewee import JSONLikeField
-from muffin_rest import APIError, PWRESTHandler
+from muffin_rest import PWRESTHandler
 from muffin_rest.peewee.filters import PWFilter
 from muffin_rest.peewee.options import PWRESTOptions
+from muffin_rest.peewee.schemas import CompositePKField
 from muffin_rest.peewee.types import TVCollection, TVResource
 from peewee import CompositeKey
 
 from muffin_admin.handler import AdminHandler, AdminOptions
 from muffin_admin.peewee.schemas import PeeweeModelSchema
-from muffin_admin.peewee.utils import composite_key_to_id, id_to_composite_keys
 
 if TYPE_CHECKING:
     from muffin import Request
@@ -61,11 +60,7 @@ class PWAdminOptions(AdminOptions, PWRESTOptions):
         pk = self.model_pk
 
         if isinstance(pk, CompositeKey):
-            fields = [getattr(self.model, name) for name in pk.field_names]
-            self.schema_fields.setdefault(
-                "id",
-                ma.fields.Function(partial(composite_key_to_id, fields), dump_only=True),
-            )
+            self.schema_fields.setdefault("id", CompositePKField(self.model))
 
         return type(
             "Meta",
@@ -95,37 +90,6 @@ class PWAdminHandler(
 
     class Meta(AdminHandler.Meta):
         schema_base = PeeweeModelSchema
-
-    async def prepare_resource(self, request: Request) -> TVResource | None:
-        """Load a resource."""
-        key = request["path_params"].get("id")
-        if not key:
-            return None
-
-        meta = self.meta
-        model_pk = meta.model_pk
-        try:
-            if isinstance(model_pk, CompositeKey):
-                keys = id_to_composite_keys(model_pk, key)
-                where = []
-                for name, value in keys.items():
-                    field = getattr(meta.model, name)
-                    where.append(field == field.python_value(value))
-                query = self.collection.where(*where)
-            else:
-                query = self.collection.where(model_pk == model_pk.python_value(key))
-        except (TypeError, ValueError, AttributeError) as exc:
-            raise APIError.BAD_REQUEST("Invalid resource ID") from exc
-
-        try:
-            resource = await meta.manager.fetchone(query)
-        except Exception:  # noqa: BLE001
-            resource = None
-
-        if resource is None:
-            raise APIError.NOT_FOUND("Resource not found")
-
-        return resource
 
     def get_selected(self, request: Request):
         """Get selected objects."""

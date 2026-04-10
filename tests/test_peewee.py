@@ -7,6 +7,7 @@ import peewee as pw
 import pytest
 from marshmallow import fields
 from muffin_peewee import StrEnumField
+from muffin_rest.peewee.schemas import CompositePKField
 
 from muffin_admin import Plugin, PWAdminHandler
 
@@ -314,7 +315,7 @@ async def test_order_resource_composite_key(app):
 
     order_resource_type = admin.handlers[3]
     id_field = order_resource_type.meta.Schema._declared_fields["id"]
-    assert isinstance(id_field, fields.Function)
+    assert isinstance(id_field, CompositePKField)
     assert id_field.dump_only is True
 
     ra = order_resource_type.to_ra()
