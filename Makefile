@@ -87,7 +87,7 @@ example-sqlalchemy: $(VIRTUAL_ENV) front
 #  Bump version
 # ==============
 
-VERSION	?= minor
+VPART	?= minor
 MAIN_BRANCH = master
 STAGE_BRANCH = develop
 
@@ -98,21 +98,21 @@ release:
 	git pull
 	git checkout $(STAGE_BRANCH)
 	git pull
-	uvx bump-my-version bump $(VERSION)
+	uvx bump-my-version bump $(VPART)
 	uv lock
-	@CVER="$$(uv version --short)"; \
+	@VERSION="$$(uv version --short)"; \
 		{ \
-			printf 'build(release): %s\n\n' "$$CVER"; \
+			printf 'build(release): %s\n\n' "$$VERSION"; \
 			printf 'Changes:\n\n'; \
 			git log --oneline --pretty=format:'%s [%an]' $(MAIN_BRANCH)..$(STAGE_BRANCH) | grep -Evi 'github|^Merge' || true; \
-		} | git commit -a -F -; \
-		git tag -a "$$CVER" -m "$$CVER";
+		} | git commit -a -F -
 	git checkout $(MAIN_BRANCH)
 	git merge $(STAGE_BRANCH)
 	git checkout $(STAGE_BRANCH)
 	git merge $(MAIN_BRANCH)
-	@git -c push.followTags=false push origin $(STAGE_BRANCH) $(MAIN_BRANCH)
-	@git push --tags origin
+	@VERSION="$$(uv version --short)"; \
+		git tag -a "$$VERSION" -m "$$VERSION"; \
+		git push --atomic origin $(STAGE_BRANCH) $(MAIN_BRANCH) "refs/tags/$$VERSION"
 	@echo "Release process complete for `uv version --short`"
 
 .PHONY: minor
@@ -120,11 +120,11 @@ minor: release
 
 .PHONY: patch
 patch:
-	make release VERSION=patch
+	make release VPART=patch
 
 .PHONY: major
 major:
-	make release VERSION=major
+	make release VPART=major
 
 version v:
 	uv version --short

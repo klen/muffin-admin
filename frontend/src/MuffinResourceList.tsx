@@ -14,6 +14,7 @@ import {
   Pagination,
   SelectColumnsButton,
   TopToolbar,
+  useTranslate,
 } from "react-admin"
 import { buildRA, buildRAComponent } from "./buildRA"
 import { BulkActionButton, ListActionButton } from "./buttons"
@@ -76,6 +77,7 @@ function MuffinListDatagrid() {
   const { name, list } = useMuffinResourceOpts()
   const { fields, edit, show } = list
   const BulkActions = findBuilder(["list-actions", name])
+
   return (
     <DatagridConfigurable
       rowClick={show ? "show" : edit ? "edit" : false}
@@ -91,9 +93,21 @@ setupAdmin(["list-grid"], MuffinListDatagrid)
 
 function MuffinListGridButtons() {
   const { list } = useMuffinResourceOpts()
+  const translate = useTranslate()
   const { edit } = list
   if (!edit) return null
-  return <EditButton />
+  return (
+    <EditButton
+      label=""
+      title={translate("ra.action.edit", { _: "Edit" })}
+      sx={{
+        minWidth: "auto",
+        width: "100%",
+        justifyContent: "flex-end",
+        "& .MuiButton-startIcon": { margin: 0 },
+      }}
+    />
+  )
 }
 
 setupAdmin(["list-grid-buttons"], MuffinListGridButtons)
