@@ -712,7 +712,7 @@ wheels = [
 
 [[package]]
 name = "muffin-rest"
-version = "13.5.1"
+version = "13.5.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "apispec" },
@@ -720,9 +720,9 @@ dependencies = [
     { name = "muffin" },
     { name = "typing-extensions", marker = "python_full_version < '3.13'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/67/da/24e29adcf8e3b7b94377c4c243a94dc81a60d402c1a94eb08a9a060ae31c/muffin_rest-13.5.1.tar.gz", hash = "sha256:8a98a678848f17d0059d59dc6fb3d23c52908725ffe161e5a47a66ccc34a7480", size = 23890, upload-time = "2026-04-10T14:28:41.401Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/98/17/a85abc65edad8deb855b5e3c1a20ca5cbf4d0635b6f81355de9da3887470/muffin_rest-13.5.5.tar.gz", hash = "sha256:a3b9f3c32514445d841aa67a9cacbbabc8f1177c193272e015c93a23b73c8f67", size = 23945, upload-time = "2026-04-18T17:36:32.801Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/78/24/b67fe84920f191019726166d513a03197f09ca93beaacd3bf37518a6d2c4/muffin_rest-13.5.1-py3-none-any.whl", hash = "sha256:27127f3e3296f5b3ea87536c23f58674cc68da96363bc1044c424911e224ab21", size = 37216, upload-time = "2026-04-10T14:28:42.454Z" },
+    { url = "https://files.pythonhosted.org/packages/44/99/e6ff07b8de7e48d84396be62bb767c8891cad3cc3234cb1b3230d98b3a31/muffin_rest-13.5.5-py3-none-any.whl", hash = "sha256:a1ae8c83423924e0c316ec37de06847589d508e1c69e3cc0ff395518b2a1538e", size = 37325, upload-time = "2026-04-18T17:36:31.561Z" },
 ]
 
 [[package]]
