@@ -697,7 +697,7 @@ wheels = [
 
 [[package]]
 name = "muffin-peewee-aio"
-version = "2.3.0"
+version = "2.5.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "muffin" },
@@ -705,9 +705,9 @@ dependencies = [
     { name = "peewee-aio" },
     { name = "peewee-migrate" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/53/a0/4dd01370442b0f1349309ad2f5fc5f6d136bf862be941c18dc69188c9d4c/muffin_peewee_aio-2.3.0.tar.gz", hash = "sha256:ec04c0dce1b4258038f0997d24dc8a8fa9f6851e608401ff7fe659da46e64e2a", size = 6864, upload-time = "2026-03-12T14:17:28.44Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/44/6e/e09dd5b873f6703133d1ab1912bd310202a629811a89df2c24a9111af992/muffin_peewee_aio-2.5.0.tar.gz", hash = "sha256:478acc98771aaffd6e118902b83dc936e9cdca0a50be41cff287743e33477b25", size = 7252, upload-time = "2026-04-23T07:59:42.001Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b5/f9/f896e73854ce913c4b82cd7fcbba58cc18d18fd5378eab6d9b8a2ccc2f52/muffin_peewee_aio-2.3.0-py3-none-any.whl", hash = "sha256:e35888fd0854af75772732a6e8f46f7accd440b0716f496bf94c10f69306d68d", size = 7726, upload-time = "2026-03-12T14:17:27.273Z" },
+    { url = "https://files.pythonhosted.org/packages/85/5f/5d5b74ffedbb9d84656cb5deb9bf7f7bc5f3fd5a3e279de87d02839668b2/muffin_peewee_aio-2.5.0-py3-none-any.whl", hash = "sha256:954737e0d47aecfbb86fbc5959a6366a8b481b4233db5dcbf5600841a3f5829a", size = 7965, upload-time = "2026-04-23T07:59:43.143Z" },
 ]
 
 [[package]]
