@@ -43,8 +43,7 @@ class SAAdminHandler(
     meta: SAAdminOptions  # type: ignore[override]
 
     def get_selected(self, request: Request):
-        super(SAAdminHandler, self).get_selected(request)
-        keys = request.query.getall("ids")
+        keys = self.get_selected_ids(request)
         qs = self.collection
         if keys:
             qs = qs.where(self.meta.table_pk.in_(keys))

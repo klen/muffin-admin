@@ -2,10 +2,18 @@ import { TID } from "./types"
 import { APIParams, makeRequest, prepareFilters, setupAdmin } from "./utils"
 
 type TQueryMeta = {
+  getManyMethod?: "GET" | "POST"
   key?: string
 }
 
-export function MuffinDataprovider(apiUrl: string) {
+export type TMuffinDataproviderOptions = {
+  getManyMethod?: "GET" | "POST"
+}
+
+export function MuffinDataprovider(
+  apiUrl: string,
+  { getManyMethod = "GET" }: TMuffinDataproviderOptions = {}
+) {
   async function request(url: string, options?: APIParams) {
     if (!url.startsWith("/")) url = `${apiUrl}/${url}`
     const { json, headers } = await makeRequest(url, options)
@@ -90,9 +98,21 @@ export function MuffinDataprovider(apiUrl: string) {
       return { data: ids }
     },
 
-    getMany: (resource: string, props: { ids: TID[]; meta: any }) => {
+    getMany: (resource: string, props: { ids: TID[]; meta?: TQueryMeta }) => {
       const { ids, meta } = props
       const key = meta?.key || "id"
+      if ((meta?.getManyMethod || getManyMethod).toUpperCase() === "POST") {
+        return request(`${resource}/get-many`, { method: "POST", data: { ids } }).then(
+          (response) => {
+            if (meta?.key) {
+              for (const item of response.data) {
+                item.id = item.id ?? item[meta.key]
+              }
+            }
+            return response
+          }
+        )
+      }
       return methods.getList(resource, { filter: { [key]: { $in: ids } }, meta })
     },
 

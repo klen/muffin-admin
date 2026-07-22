@@ -1,6 +1,7 @@
 from muffin_rest import APIError
 
 from muffin_admin import Plugin
+from muffin_admin.plugin import VERSION
 
 
 async def test_plugin(app):
@@ -26,8 +27,9 @@ async def test_basic_files(app, client):
     assert res.status_code == 200
     text = await res.text()
     assert "Muffin-Admin Admin UI" in text
+    assert f'<script src="/admin/main.js?v={VERSION}"></script>' in text
 
-    res = await client.get("/admin/main.js")
+    res = await client.get(f"/admin/main.js?v={VERSION}")
     assert res.status_code == 200
     text = await res.text()
     assert "muffin-admin js files" in text
@@ -41,8 +43,9 @@ async def test_root_prefix(app, client):
     assert res.status_code == 200
     text = await res.text()
     assert "Muffin-Admin Admin UI" in text
+    assert f'<script src="/main.js?v={VERSION}"></script>' in text
 
-    res = await client.get("/main.js")
+    res = await client.get(f"/main.js?v={VERSION}")
     assert res.status_code == 200
     text = await res.text()
     assert "muffin-admin js files" in text

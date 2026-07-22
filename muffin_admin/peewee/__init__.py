@@ -93,7 +93,7 @@ class PWAdminHandler(
 
     def get_selected(self, request: Request):
         """Get selected objects."""
-        keys = request.query.getall("ids")
+        keys = self.get_selected_ids(request)
         qs = self.collection
         if keys:
             qs = qs.where(self.meta.model_pk.in_(keys))  # type: ignore[]

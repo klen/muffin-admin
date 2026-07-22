@@ -29,6 +29,7 @@ class AdminOptions(RESTOptions):
     limit: int = 25
     limit_max: int = 100
     limit_total = False
+    get_many_method: str = "GET"
 
     icon: str = ""
     label: str = ""
@@ -60,6 +61,10 @@ class AdminOptions(RESTOptions):
         """Check and build required options."""
         if not self.limit:
             raise ValueError("`AdminHandler.Meta.limit` can't be nullable.")
+
+        self.get_many_method = self.get_many_method.upper()
+        if self.get_many_method not in {"GET", "POST"}:
+            raise ValueError("`AdminHandler.Meta.get_many_method` must be GET or POST.")
 
         super(AdminOptions, self).setup(cls)
 
@@ -99,6 +104,18 @@ class AdminHandler(RESTBase[TVResource, TVCollection]):
     meta_class = AdminOptions
     meta: AdminOptions  # type: ignore[override]
 
+    @classmethod
+    def __route__(cls, router, *paths, **params):
+        """Bind standard REST routes and the endpoint used by POST ``getMany`` requests."""
+        collection_path = paths[0] if paths else f"/{cls.meta.name}"
+        router.bind(
+            cls,
+            f"{collection_path.rstrip('/')}/get-many",
+            methods=("POST",),
+            method_name="get_many",
+        )
+        return super(AdminHandler, cls).__route__(router, *paths, **params)
+
     async def __call__(self, request: Request, *, method_name=None, **_):
         """Handle the request."""
         response = await super(AdminHandler, self).__call__(request, method_name=method_name)
@@ -110,7 +127,32 @@ class AdminHandler(RESTBase[TVResource, TVCollection]):
 
     def get_selected(self, request: Request) -> TVCollection:
         """Get selected objects."""
-        return cast("TVCollection", request.query.getall("ids", []))
+        return cast("TVCollection", self.get_selected_ids(request))
+
+    @staticmethod
+    def get_selected_ids(request: Request) -> list[Any]:
+        """Get selected IDs from a query or from the internal POST transport."""
+        selected_ids = request.scope.get("muffin_admin.selected_ids")
+        if selected_ids is not None:
+            return cast("list[Any]", selected_ids)
+        return list(request.query.getall("ids", []))
+
+    async def get_many(self, request: Request, **_) -> Any:
+        """Return resources selected by IDs sent in the request body."""
+        try:
+            data = await request.json()
+        except ValueError:
+            raise APIError.BAD_REQUEST("Invalid data") from None
+
+        ids = data.get("ids") if isinstance(data, dict) else data
+        if not isinstance(ids, list):
+            raise APIError.BAD_REQUEST("Invalid data", errors={"ids": ["Not a valid list."]})
+        if not ids:
+            return await self.dump(request, [], many=True)
+
+        request.scope["muffin_admin.selected_ids"] = ids
+        self.collection = self.get_selected(request)
+        return await self.get(request)
 
     @classmethod
     def action(
@@ -204,6 +246,7 @@ class AdminHandler(RESTBase[TVResource, TVCollection]):
                 "limit": meta.limit,
                 "limitMax": meta.limit_max,
                 "limitTotal": meta.limit_total,
+                "getManyMethod": meta.get_many_method,
                 "show": bool(meta.show),
                 "fields": [fields_hash[name] for name in meta.columns if name in fields_hash],
                 "filters": [cls.to_ra_filter(flt) for flt in meta.filters.mutations.values()],

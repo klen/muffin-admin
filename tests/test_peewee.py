@@ -82,6 +82,7 @@ def admin(app):
     class UserAdmin(PWAdminHandler):
         class Meta(PWAdminHandler.Meta):
             model = User
+            get_many_method = "POST"
             schema_meta: ClassVar = {
                 "dump_only": ("is_super",),
                 "load_only": ("password",),
@@ -247,6 +248,7 @@ async def test_user_resource(app):
     assert ra["list"]["limit"] == 25
     assert ra["list"]["limitMax"] == 100
     assert ra["list"]["limitTotal"] is False
+    assert ra["list"]["getManyMethod"] == "POST"
     assert ra["list"]["show"] is True
     assert ra["list"]["edit"] is True
     assert ra["list"]["filters"] == [
@@ -362,6 +364,26 @@ async def test_message_request(client, admin, setup_db):
     resource = payload.get("data", payload)
     assert resource["id"] == str(message_id)
     assert resource["body"] == "hello"
+
+
+async def test_get_many_by_post(client, admin, setup_db):
+    user_password = str(id(client))
+    first = await db.manager.create(User, name="First", password=user_password)
+    second = await db.manager.create(User, name="Second", password=user_password)
+    await db.manager.create(User, name="Third", password=user_password)
+
+    response = await client.post(
+        admin.api.prefix + "/user/get-many",
+        json={"ids": [first.id, second.id]},  # type: ignore[attr-defined]
+    )
+
+    assert response.status_code == 200
+    payload = await response.json()
+    assert {item["id"] for item in payload} == {str(first.id), str(second.id)}  # type: ignore[attr-defined]
+
+    response = await client.post(admin.api.prefix + "/user/get-many", json={"ids": []})
+    assert response.status_code == 200
+    assert await response.json() == []
 
 
 async def test_client(client, admin, setup_db):

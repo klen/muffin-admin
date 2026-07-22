@@ -35,7 +35,7 @@ class Plugin(BasePlugin):
     defaults: ClassVar = {
         "prefix": "/admin",
         "title": "Muffin-Admin",
-        "main_js_url": "{prefix}/main.js",
+        "main_js_url": "{prefix}/main.js?v={version}",
         "custom_js_url": "",
         "custom_css_url": "",
         "login_url": None,
@@ -98,7 +98,7 @@ class Plugin(BasePlugin):
             return TEMPLATE.format(
                 prefix=prefix,
                 title=title,
-                main_js_url=self.cfg.main_js_url.format(prefix=prefix),
+                main_js_url=self.cfg.main_js_url.format(prefix=prefix, version=VERSION),
                 custom_js=f"<script src={custom_js}></script>" if custom_js else "",
                 custom_css=f"<link rel='stylesheet' href={custom_css} />" if custom_css else "",
             )

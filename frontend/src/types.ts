@@ -96,6 +96,7 @@ export type AdminResourceProps = {
       }
     | false
   list: {
+    getManyMethod?: "GET" | "POST"
     limit: number
     limitMax: number
     limitTotal: boolean

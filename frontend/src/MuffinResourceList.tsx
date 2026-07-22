@@ -2,6 +2,7 @@ import sortBy from "lodash/sortBy"
 import uniq from "lodash/uniq"
 import { PropsWithChildren } from "react"
 import {
+  BulkActionsToolbar,
   BulkDeleteButton,
   BulkExportButton,
   CreateButton,
@@ -12,8 +13,10 @@ import {
   InfiniteList,
   List,
   Pagination,
+  SelectAllButton,
   SelectColumnsButton,
   TopToolbar,
+  useListContext,
   useTranslate,
 } from "react-admin"
 import { buildRA, buildRAComponent } from "./buildRA"
@@ -74,14 +77,21 @@ function muffinListFilters(filters: AdminInput[]) {
 setupAdmin(["list-filters"], muffinListFilters)
 
 function MuffinListDatagrid() {
-  const { name, list } = useMuffinResourceOpts()
-  const { fields, edit, show } = list
+  const { name, list, key } = useMuffinResourceOpts()
+  const { fields, edit, show, limitMax } = list
   const BulkActions = findBuilder(["list-actions", name])
 
   return (
     <DatagridConfigurable
       rowClick={show ? "show" : edit ? "edit" : false}
       bulkActionButtons={<BulkActions />}
+      bulkActionsToolbar={
+        <BulkActionsToolbar
+          selectAllButton={<SelectAllButton limit={limitMax} queryOptions={{ meta: { key } }} />}
+        >
+          <BulkActions />
+        </BulkActionsToolbar>
+      }
     >
       {buildAdmin(["list-fields", name], fields)}
       {buildAdmin(["list-grid-buttons", name])}
@@ -116,8 +126,9 @@ function MuffinListToolbar() {
   const {
     actions: baseActions = [],
     help,
-    list: { create },
+    list: { create, limitMax },
   } = useMuffinResourceOpts()
+  const { selectedIds } = useListContext()
   const actions = baseActions.filter((a) => a.view?.includes("list"))
   const hasExport = actions.some((a) => a.id === "export")
   return (
@@ -129,7 +140,7 @@ function MuffinListToolbar() {
       {actions.length
         ? actions.map((props) => <ListActionButton key={props.id} {...props} />)
         : null}
-      {!hasExport && <ExportButton />}
+      {!hasExport && selectedIds.length === 0 && <ExportButton maxResults={limitMax} />}
     </TopToolbar>
   )
 }
@@ -138,7 +149,8 @@ setupAdmin(["list-toolbar"], MuffinListToolbar)
 function MuffinListActions() {
   const {
     actions: baseActions = [],
-    list: { remove },
+    key,
+    list: { getManyMethod, remove },
   } = useMuffinResourceOpts()
   const actions = baseActions.filter((a) => a.view?.includes("bulk"))
   return (
@@ -146,7 +158,7 @@ function MuffinListActions() {
       {actions.map((props) => (
         <BulkActionButton key={props.id} {...props} />
       ))}
-      <BulkExportButton />
+      <BulkExportButton meta={{ getManyMethod, key }} />
       {remove && <BulkDeleteButton />}
     </>
   )

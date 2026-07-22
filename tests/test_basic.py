@@ -77,6 +77,7 @@ def test_endpoint(app):
         "limit": 25,
         "limitMax": 100,
         "limitTotal": False,
+        "getManyMethod": "GET",
         "show": True,
         "edit": True,
         "remove": True,

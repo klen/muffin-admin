@@ -103,6 +103,9 @@ Initialize admin handlers (example for  `Peewee ORM`_):
             # Columns to show
             columns = 'id', 'email', 'is_active', 'role', 'created'
 
+            # Send bulk export IDs in a POST body instead of a GET query
+            get_many_method = 'POST'
+
             # Custom Material-UI icon
             icon = 'People'
 
