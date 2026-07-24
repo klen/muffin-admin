@@ -87,7 +87,7 @@ Allowed types from `.git-commits.yaml`:
 
 - Trust `ruff format` for canonical formatting.
 - Max line length: `100`.
-- Target syntax: Python `3.10+`.
+- Target syntax: Python `3.11+`.
 - Prefer simple control flow and guard clauses over deep nesting.
 - Keep functions single-purpose and easy to scan.
 

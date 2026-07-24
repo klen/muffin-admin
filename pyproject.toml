@@ -3,7 +3,7 @@ name = "muffin-admin"
 version = "12.0.0"
 description = "Admin interface for Muffin Framework"
 authors = [{ name = "Kirill Klenov", email = "horneds@gmail.com" }]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 readme = "README.rst"
 license = "MIT"
 keywords = ["admin", "api", "muffin", "asgi", "asyncio", "trio"]
@@ -13,7 +13,6 @@ classifiers = [
   "License :: OSI Approved :: MIT License",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
@@ -90,7 +89,7 @@ ignore_missing_imports = true
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = py310,py311,py312,py313,pypy310
+envlist = py311,py312,py313,pypy311
 
 [testenv]
 deps = -e .[dev]
@@ -100,7 +99,7 @@ commands =
   uv sync
 	uv run pytest --mypy tests
 
-[testenv:pypy310]
+[testenv:pypy311]
 deps = -e .[dev]
 commands =
 	pytest tests
@@ -110,7 +109,7 @@ commands =
 include = ["muffin_admin/**/*.py", "tests/**/*"]
 fix = false
 line-length = 100
-target-version = "py310"
+target-version = "py311"
 exclude = [".venv", "docs", "examples"]
 
 [tool.ruff.lint]

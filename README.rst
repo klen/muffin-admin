@@ -41,7 +41,7 @@ Features
 Requirements
 =============
 
-- python >= 3.10
+- python >= 3.11
 
 .. _installation:
 
