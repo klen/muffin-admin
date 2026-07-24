@@ -1,7 +1,7 @@
 import * as icons from "@mui/icons-material"
 import { stringify } from "query-string"
 import { fetchUtils } from "ra-core"
-import { TAdminPath } from "./types"
+import type { TAdminPath } from "./types"
 
 const builders = new Map<string, (props: any) => any>()
 
@@ -58,6 +58,7 @@ export function makeRequest(url: string, params: APIParams = {}) {
 }
 
 export function findIcon(icon?: string) {
+  // biome-ignore lint/performance/noDynamicNamespaceImportAccess: icons are looked up by name from admin config
   return icon ? icons[icon] : undefined
 }
 

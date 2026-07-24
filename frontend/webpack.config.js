@@ -1,4 +1,4 @@
-const path = require("path"),
+const path = require("node:path"),
   webpack = require("webpack"),
   mode = process.env.NODE_ENV
 
@@ -15,22 +15,24 @@ module.exports = {
     rules: [
       {
         test: /\.tsx?$/,
-        use: "ts-loader",
+        loader: "esbuild-loader",
+        options: {
+          loader: "tsx",
+          target: "es2015",
+        },
         exclude: /node_modules/,
       },
       {
         test: /\.s?css$/,
-        use: [
-          "style-loader",
-          "css-loader"
-        ]
-      }
+        use: ["style-loader", "css-loader"],
+      },
     ],
   },
 
-  plugins: [
-    new webpack.EnvironmentPlugin({ NODE_ENV: "production" }),
-  ],
+  plugins: [new webpack.EnvironmentPlugin({ NODE_ENV: "production" })],
+
+  // react-datepicker 9 uses a dynamic require for the optional date-fns-tz
+  ignoreWarnings: [{ module: /react-datepicker/, message: /Critical dependency/ }],
 
   mode: mode || "production",
   devtool: mode == "development" && "inline-source-map",

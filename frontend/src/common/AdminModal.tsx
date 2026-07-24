@@ -1,6 +1,6 @@
-import { Dialog, DialogActions, DialogContent, DialogProps, DialogTitle } from "@mui/material"
-import { PropsWithChildren } from "react"
-import { SxProps, Theme } from "@mui/material/styles"
+import { Dialog, DialogActions, DialogContent, type DialogProps, DialogTitle } from "@mui/material"
+import type { SxProps, Theme } from "@mui/material/styles"
+import type { PropsWithChildren } from "react"
 
 interface IProps extends Omit<DialogProps, "title" | "open" | "onClose"> {
   open: boolean

@@ -1,4 +1,4 @@
-import { ReferenceField, TextField, useFieldValue, UseFieldValueOptions } from "react-admin"
+import { ReferenceField, TextField, type UseFieldValueOptions, useFieldValue } from "react-admin"
 import { useLocation } from "react-router-dom"
 
 export function FKField({ reference, refSource, refKey, link, source, ...props }) {

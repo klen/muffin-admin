@@ -1,107 +1,94 @@
-import Cookies from "js-cookie";
-import { findBuilder, makeRequest, requestHeaders, setupAdmin } from ".";
-import type { AdminOpts } from "./types";
+import Cookies from "js-cookie"
+import type { AdminOpts } from "./types"
+import { findBuilder, makeRequest, requestHeaders, setupAdmin } from "./utils"
 
 setupAdmin(
-	["auth-storage-get"],
-	({ storage, storageName }: AdminOpts["auth"]) =>
-		() =>
-			storage == "localstorage"
-				? localStorage.getItem(storageName)
-				: Cookies.get(storageName),
-);
+  ["auth-storage-get"],
+  ({ storage, storageName }: AdminOpts["auth"]) =>
+    () =>
+      storage == "localstorage" ? localStorage.getItem(storageName) : Cookies.get(storageName)
+)
 
-setupAdmin(
-	["auth-storage-set"],
-	({ storage }) =>
-		(name, value, requestOnly) => {
-			if (storage == "localstorage") {
-				localStorage.setItem(name, value);
-				requestHeaders["Authorization"] = value;
-			} else Cookies.set(name, value);
-		},
-);
+setupAdmin(["auth-storage-set"], ({ storage }) => (name, value, _requestOnly) => {
+  if (storage == "localstorage") {
+    localStorage.setItem(name, value)
+    requestHeaders.Authorization = value
+  } else Cookies.set(name, value)
+})
 
 export function MuffinAuthProvider(props: AdminOpts["auth"]) {
-	const {
-		identityURL,
-		authorizeURL,
-		logoutURL,
-		required,
-		storageName,
-		storage,
-	} = props;
+  const { identityURL, authorizeURL, logoutURL, required, storageName, storage } = props
 
-	const authGet = findBuilder(["auth-storage-get"])(props);
-	const authSet = findBuilder(["auth-storage-set"])(props);
+  const authGet = findBuilder(["auth-storage-get"])(props)
+  const authSet = findBuilder(["auth-storage-set"])(props)
 
-	// Initialize request headers
-	if (storage == "localstorage") {
-		const token = authGet(storageName);
-		if (token) requestHeaders["Authorization"] = token;
-	}
+  // Initialize request headers
+  if (storage == "localstorage") {
+    const token = authGet(storageName)
+    if (token) requestHeaders.Authorization = token
+  }
 
-	const getIdentity = async () => {
-		if (identityURL) {
-			const { json } = await makeRequest(identityURL);
-			return json;
-		}
-	};
+  const getIdentity = async () => {
+    if (identityURL) {
+      const { json } = await makeRequest(identityURL)
+      return json
+    }
+  }
 
-	if (required)
-		return {
-			login: async (data) => {
-				if (!authorizeURL) throw { message: "Authorization is not supported" };
+  if (required)
+    return {
+      login: async (data) => {
+        if (!authorizeURL) throw { message: "Authorization is not supported" }
 
-				const { json } = await makeRequest(authorizeURL, {
-					data,
-					method: "POST",
-				});
-				authSet(storageName, json);
-			},
+        const { json } = await makeRequest(authorizeURL, {
+          data,
+          method: "POST",
+        })
+        authSet(storageName, json)
+      },
 
-			checkError: async (error) => {
-				const { status } = error || {};
+      checkError: async (error) => {
+        const { status } = error || {}
 
-				if (status == 401 || status == 403) {
-					// Clean storage
-					authSet(storageName, "");
+        if (status == 401 || status == 403) {
+          // Clean storage
+          authSet(storageName, "")
 
-					throw {
-						message: "Invalid authorization",
-						redirectTo: logoutURL,
-						logoutUser: !logoutURL,
-					};
-				}
-			},
+          throw {
+            message: "Invalid authorization",
+            redirectTo: logoutURL,
+            logoutUser: !logoutURL,
+          }
+        }
+      },
 
-			checkAuth: async () => {
-				const auth = authGet(storageName);
-				if (!auth) throw { message: "Authorization required" };
+      checkAuth: async () => {
+        const auth = authGet(storageName)
+        if (!auth) throw { message: "Authorization required" }
 
-				if (!identityURL) return auth;
+        if (!identityURL) return auth
 
-				const user = await getIdentity();
-				if (!user) throw { message: "Authorization required" };
+        const user = await getIdentity()
+        if (!user) throw { message: "Authorization required" }
 
-				return user;
-			},
+        return user
+      },
 
-			getAuthorization: () => authGet(storageName),
+      getAuthorization: () => authGet(storageName),
 
-			logout: async () => {
-				// Clean storage
-				authSet(storageName, "");
-				if (logoutURL) window.location.href = logoutURL;
-			},
+      logout: async () => {
+        // Clean storage
+        authSet(storageName, "")
+        if (logoutURL) window.location.href = logoutURL
+      },
 
-			getIdentity,
+      getIdentity,
 
-			getPermissions: async () => {
-				const role = authGet(storageName + "_role");
-				return role || "";
-			},
-		};
+      getPermissions: async () => {
+        const role = authGet(`${storageName}_role`)
+        return role || ""
+      },
+    }
 }
 
-setupAdmin(["auth-provider"], MuffinAuthProvider);
+setupAdmin(["auth-provider"], MuffinAuthProvider)

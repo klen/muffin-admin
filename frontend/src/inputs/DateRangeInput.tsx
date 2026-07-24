@@ -1,6 +1,6 @@
 import TextField from "@mui/material/TextField"
 import { enGB, ru } from "date-fns/locale"
-import { FieldTitle, InputProps, useLocale } from "react-admin"
+import { FieldTitle, type InputProps, useLocale } from "react-admin"
 import DatePicker, { registerLocale } from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 

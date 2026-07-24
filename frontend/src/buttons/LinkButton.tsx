@@ -1,6 +1,6 @@
 import { Button } from "react-admin"
 import { Link, useLocation } from "react-router-dom"
-import { AdminShowLink } from "../types"
+import type { AdminShowLink } from "../types"
 import { buildIcon } from "../utils"
 
 const LinkButton = ({

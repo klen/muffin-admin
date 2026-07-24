@@ -1,4 +1,4 @@
-import { TranslationMessages } from "ra-core"
+import type { TranslationMessages } from "ra-core"
 import raRussianMessages from "ra-language-russian"
 
 const muffinRussianMessages = {

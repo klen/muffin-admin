@@ -1,5 +1,5 @@
-import { TID } from "./types"
-import { APIParams, makeRequest, prepareFilters, setupAdmin } from "./utils"
+import type { TID } from "./types"
+import { type APIParams, makeRequest, prepareFilters, setupAdmin } from "./utils"
 
 type TQueryMeta = {
   key?: string

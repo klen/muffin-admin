@@ -1,18 +1,7 @@
 import { createRoot } from "react-dom/client"
-import { MuffinAdmin } from "./MuffinAdmin"
 import { MuffinAdminContext } from "./context"
+import { MuffinAdmin } from "./MuffinAdmin"
 
-export * from "./utils"
-
-export * from "./MuffinAdmin"
-export * from "./MuffinDashboard"
-export * from "./MuffinMenu"
-export * from "./MuffinRecordList"
-export * from "./MuffinResource"
-export * from "./MuffinResourceCreate"
-export * from "./MuffinResourceEdit"
-export * from "./MuffinResourceList"
-export * from "./MuffinResourceShow"
 export * from "./actions"
 export * from "./authprovider"
 export * from "./buildRA"
@@ -22,7 +11,17 @@ export * from "./context"
 export * from "./dataprovider"
 export * from "./fields"
 export * from "./hooks"
+export * from "./MuffinAdmin"
+export * from "./MuffinDashboard"
+export * from "./MuffinMenu"
+export * from "./MuffinRecordList"
+export * from "./MuffinResource"
+export * from "./MuffinResourceCreate"
+export * from "./MuffinResourceEdit"
+export * from "./MuffinResourceList"
+export * from "./MuffinResourceShow"
 export * from "./types"
+export * from "./utils"
 
 export async function initAdmin(prefix = "", containerId: string = "root") {
   const response = await fetch(`${prefix}/ra.json`)
@@ -37,4 +36,4 @@ export async function initAdmin(prefix = "", containerId: string = "root") {
   )
 }
 
-export const VERSION = "12.0.0"
+export { VERSION } from "./version"

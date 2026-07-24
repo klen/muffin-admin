@@ -8,7 +8,7 @@ const parseFunction = (json) => {
   try {
     retval = JSON.parse(json)
   } finally {
-    // eslint-disable-next-line no-unsafe-finally
+    // biome-ignore lint/correctness/noUnsafeFinally: intentional - return parsed value or original on error
     return retval
   }
 }

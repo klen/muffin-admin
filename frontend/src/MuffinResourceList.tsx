@@ -1,6 +1,6 @@
 import sortBy from "lodash/sortBy"
 import uniq from "lodash/uniq"
-import { PropsWithChildren } from "react"
+import type { PropsWithChildren } from "react"
 import {
   BulkDeleteButton,
   BulkExportButton,
@@ -19,7 +19,7 @@ import { buildRA, buildRAComponent } from "./buildRA"
 import { BulkActionButton, ListActionButton } from "./buttons"
 import { HelpLink } from "./common/HelpLink"
 import { useMuffinResourceOpts } from "./hooks"
-import { AdminInput } from "./types"
+import type { AdminInput } from "./types"
 import { buildAdmin, findBuilder, setupAdmin } from "./utils"
 
 export function MuffinList({ children }: PropsWithChildren) {
@@ -118,7 +118,6 @@ function MuffinListToolbar() {
     list: { create },
   } = useMuffinResourceOpts()
   const actions = baseActions.filter((a) => a.view?.includes("list"))
-  const hasExport = actions.some((a) => a.id === "export")
   return (
     <TopToolbar>
       {help && <HelpLink href={help} />}

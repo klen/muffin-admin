@@ -1,4 +1,4 @@
-import { PropsWithChildren } from "react"
+import type { PropsWithChildren } from "react"
 import { Create, ListButton, SimpleForm, TopToolbar } from "react-admin"
 import { buildRA } from "./buildRA"
 import { useMuffinResourceOpts } from "./hooks"

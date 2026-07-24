@@ -3,20 +3,19 @@ import SvgIcon from "@mui/material/SvgIcon"
 import Tooltip from "@mui/material/Tooltip"
 
 import Typography from "@mui/material/Typography"
+import { useEffect } from "react"
 import {
   AdminContext,
-  AdminProps,
+  type AdminProps,
   AdminUI,
   AppBar,
-  AppBarProps,
+  type AppBarProps,
   Layout,
-  LayoutProps,
-  localStorageStore,
+  type LayoutProps,
   Login,
-  LoginProps,
+  type LoginProps,
+  localStorageStore,
 } from "react-admin"
-
-import { useEffect } from "react"
 import { ConfirmationProvider } from "./common"
 import { useMuffinAdminOpts } from "./hooks"
 import { buildProvider, muffinTranslations } from "./i18n"

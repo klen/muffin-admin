@@ -1,4 +1,4 @@
-import { UseMutationOptions, useMutation } from "@tanstack/react-query"
+import { type UseMutationOptions, useMutation } from "@tanstack/react-query"
 import {
   useDataProvider,
   useNotify,
@@ -6,7 +6,7 @@ import {
   useResourceContext,
   useUnselectAll,
 } from "react-admin"
-import { MuffinDataprovider, TActionProps } from "../dataprovider"
+import type { MuffinDataprovider, TActionProps } from "../dataprovider"
 
 export function useAction(
   action: string,
@@ -21,8 +21,8 @@ export function useAction(
   return useMutation({
     mutationFn: (params: TActionProps) => dataProvider.runAction(resource, action, params),
     onSuccess: ({ data }) => {
-      if (data && data.message) notify(data.message, { type: "success" })
-      if (data && data.redirectTo) window.location = data.redirectTo
+      if (data?.message) notify(data.message, { type: "success" })
+      if (data?.redirectTo) window.location = data.redirectTo
       else {
         unselectAll()
         refresh()

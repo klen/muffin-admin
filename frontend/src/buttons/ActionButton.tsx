@@ -1,3 +1,5 @@
+import { Link, Stack } from "@mui/material"
+import { useState } from "react"
 import {
   Button,
   FormGroupsProvider,
@@ -8,15 +10,12 @@ import {
   useTranslate,
 } from "react-admin"
 import { FormProvider } from "react-hook-form"
-
-import { Link, Stack } from "@mui/material"
-import { useState } from "react"
 import { buildRA } from "../buildRA"
 import { AdminModal, PayloadButtons, useConfirmation } from "../common"
 import { HelpLink } from "../common/HelpLink"
 import { useMuffinAdminOpts } from "../hooks"
 import { useAction } from "../hooks/useAction"
-import { AdminAction, AdminPayloadProps } from "../types"
+import type { AdminAction, AdminPayloadProps } from "../types"
 import { buildIcon, findBuilder, prepareFilters, requestHeaders } from "../utils"
 
 export type ActionPayloadProps = {
@@ -160,11 +159,11 @@ export function CommonPayload({
           title={
             help
               ? ((
-                <Stack alignItems="flex-start">
-                  <span>{translate(title, { _: title })}</span>
-                  <HelpLink href={help} style={{ alignSelf: "flex-end" }} />
-                </Stack>
-              ) as any)
+                  <Stack sx={{ alignItems: "flex-start" }}>
+                    <span>{translate(title, { _: title })}</span>
+                    <HelpLink href={help} style={{ alignSelf: "flex-end" }} />
+                  </Stack>
+                ) as any)
               : translate(title, { _: title })
           }
           actions={
@@ -198,7 +197,7 @@ function FileButton({
   const { apiUrl } = useMuffinAdminOpts()
   let url = `${apiUrl}${path}?f`
   if (record) url = url.replace("{id}", record.id as string)
-  const authorization = requestHeaders["Authorization"]
+  const authorization = requestHeaders.Authorization
   if (authorization) url += `&t=${authorization}`
   if (Object.keys(filterValues).length) url += `&where=${prepareFilters(filterValues)}`
 

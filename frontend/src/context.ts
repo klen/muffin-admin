@@ -1,4 +1,4 @@
 import { createContext } from "react"
-import { AdminOpts } from "./types"
+import type { AdminOpts } from "./types"
 
 export const MuffinAdminContext = createContext<AdminOpts>(null)

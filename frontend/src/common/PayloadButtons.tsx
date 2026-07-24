@@ -11,7 +11,7 @@ export function PayloadButtons({
   isValid: boolean
 }) {
   return (
-    <Stack direction="row" alignItems="center" justifyContent="flex-end" spacing={1}>
+    <Stack direction="row" spacing={1} sx={{ alignItems: "center", justifyContent: "flex-end" }}>
       <Button
         label="ra.action.confirm"
         variant="contained"

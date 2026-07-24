@@ -1,7 +1,7 @@
 import { useRecordContext, useResourceContext } from "react-admin"
 import LinkButton from "../buttons/LinkButton"
 import { useMuffinAdminOpts } from "../hooks"
-import { AdminShowLink } from "../types"
+import type { AdminShowLink } from "../types"
 
 export function LinkAction({
   field,

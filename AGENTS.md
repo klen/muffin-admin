@@ -127,11 +127,11 @@ Allowed types from `.git-commits.yaml`:
 
 ### Frontend formatting and linting
 
-- Prettier config in `frontend/package.json` is authoritative.
+- Biome config in `frontend/biome.json` is authoritative (format + lint + import sorting).
+- Run `npx biome check --write` in `frontend/` to auto-fix formatting/lint issues.
 - Semicolons are disabled.
 - Print width is `100`.
-- Imports are auto-organized by `prettier-plugin-organize-imports`.
-- ESLint exists; TS compile checks are the primary enforced gate.
+- TS compile checks remain the primary enforced gate.
 
 ### Frontend typing and naming
 

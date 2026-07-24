@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography"
-import { Datagrid, SortPayload, useGetList, useRecordContext, useTranslate } from "react-admin"
+import { Datagrid, type SortPayload, useGetList, useRecordContext, useTranslate } from "react-admin"
 import { useMuffinResourceOpts } from "./hooks"
 import { buildAdmin } from "./utils"
 
@@ -17,7 +17,7 @@ export function MuffinRecordList({ resource, filter, sort }: TProps) {
   } = useMuffinResourceOpts(resource)
   const { data, isPending } = useGetList(resource, { sort, filter: filter(record) })
   return (
-    <Box p={2}>
+    <Box sx={{ p: 2 }}>
       <Typography variant="h6">
         {translate(`resources.${resource}.name`, { smart_count: 2 })}
       </Typography>

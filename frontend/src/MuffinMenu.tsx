@@ -4,15 +4,13 @@ import Collapse from "@mui/material/Collapse"
 import ListItemButton from "@mui/material/ListItemButton"
 import ListItemIcon from "@mui/material/ListItemIcon"
 import ListItemText from "@mui/material/ListItemText"
-import { matchPath, useLocation } from "react-router-dom"
-
-import { Menu, MenuProps, useBasename, useTheme, useTranslate } from "react-admin"
-
 import find from "lodash/find"
 import groupBy from "lodash/groupBy"
 import { useContext, useState } from "react"
+import { Menu, type MenuProps, useBasename, useTheme, useTranslate } from "react-admin"
+import { matchPath, useLocation } from "react-router-dom"
 import { MuffinAdminContext } from "./context"
-import { AdminResourceProps } from "./types"
+import type { AdminResourceProps } from "./types"
 import { findIcon, setupAdmin } from "./utils"
 
 export function MuffinMenu(props: MenuProps) {

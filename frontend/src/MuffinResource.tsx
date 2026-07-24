@@ -1,4 +1,4 @@
-import { Resource, ResourceProps } from "react-admin"
+import { Resource, type ResourceProps } from "react-admin"
 import { useMuffinAdminOpts } from "./hooks"
 import { findBuilder, findIcon, setupAdmin } from "./utils"
 

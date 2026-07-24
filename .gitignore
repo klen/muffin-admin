@@ -51,3 +51,4 @@ docs/_build
 /frontend/*lock.json
 /muffin_admin/main.js*
 /example/static
+*.tsbuildinfo

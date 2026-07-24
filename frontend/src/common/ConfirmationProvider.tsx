@@ -1,5 +1,5 @@
 import { Button, Typography } from "@mui/material"
-import { createContext, PropsWithChildren, useContext, useState } from "react"
+import { createContext, type PropsWithChildren, useContext, useState } from "react"
 import { useTranslate } from "react-admin"
 import { AdminModal } from "./AdminModal"
 

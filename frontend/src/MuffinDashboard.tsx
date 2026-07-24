@@ -8,18 +8,18 @@ import TableCell from "@mui/material/TableCell"
 import TableRow from "@mui/material/TableRow"
 import Typography from "@mui/material/Typography"
 import { useTranslate } from "react-admin"
-import { VERSION } from "."
 import { HelpLink } from "./common/HelpLink"
 import { useMuffinAdminOpts } from "./hooks"
-import { AdminDashboardBlock } from "./types"
+import type { AdminDashboardBlock } from "./types"
 import { buildAdmin, setupAdmin } from "./utils"
+import { VERSION } from "./version"
 
 export function MuffinDashboard() {
   const { dashboard, help } = useMuffinAdminOpts()
   const translate = useTranslate()
   return (
-    <Stack gap={2} pt={1}>
-      <Stack direction="row" flexWrap="wrap" gap={1}>
+    <Stack sx={{ gap: 2, pt: 1 }}>
+      <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1 }}>
         {help && <HelpLink href={help} label={translate("muffin.how_to_use_admin")} />}
         {buildAdmin(["dashboard-actions"])}
       </Stack>
@@ -28,7 +28,7 @@ export function MuffinDashboard() {
         <AdminCards src={dashboard} />
       </Grid>
       {VERSION && (
-        <Typography variant="body2" color="textSecondary" align="center" my={1}>
+        <Typography variant="body2" color="textSecondary" align="center" sx={{ my: 1 }}>
           Muffin Admin v.{VERSION}
         </Typography>
       )}
@@ -57,7 +57,7 @@ function DashboardCard({ title, value }: AdminDashboardBlock) {
   return (
     <Card>
       <CardContent>
-        <Typography variant="h5" component="h2" m={2} style={{ textAlign: "center" }}>
+        <Typography variant="h5" component="h2" sx={{ m: 2, textAlign: "center" }}>
           {title}
         </Typography>
         {(Array.isArray(value) && <AdminTableView src={value} />) || (
