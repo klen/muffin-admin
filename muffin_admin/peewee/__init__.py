@@ -207,7 +207,7 @@ class PWAdminHandler(
 class PWSearchFilter(PWFilter):
     """Search in query by value."""
 
-    async def filter(self, collection: pw.ModelSelect, *ops: tuple, **_) -> pw.ModelSelect:
+    async def filter(self, collection, *ops: tuple, **_):
         """Apply the filters to Peewee QuerySet.."""
         _, value = ops[0]
         column = self.field

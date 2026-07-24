@@ -49,7 +49,7 @@ class OrderSource(Enum):
 
 @db.register
 class Order(pw.Model):
-    source = StrEnumField(OrderSource, default=OrderSource.WEB)
+    source = StrEnumField(OrderSource, default=OrderSource.WEB)  # type: ignore[assignment]
     source_id = pw.CharField()
 
     amount = pw.IntegerField()
