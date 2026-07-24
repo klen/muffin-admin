@@ -157,6 +157,6 @@ search = '"version": "{current_version}"'
 replace = '"version": "{new_version}"'
 
 [[tool.bumpversion.files]]
-filename = "frontend/src/index.tsx"
+filename = "frontend/src/version.ts"
 search = 'export const VERSION = "{current_version}"'
 replace = 'export const VERSION = "{new_version}"'
