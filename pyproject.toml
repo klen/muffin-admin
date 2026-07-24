@@ -121,6 +121,7 @@ ignore = [
   "ARG003",
   "ANN",
   "COM",
+  "CPY",
   "D",
   "DJ",
   "EM",

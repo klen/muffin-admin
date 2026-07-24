@@ -7,7 +7,6 @@ import {
   CreateButton,
   DatagridConfigurable,
   EditButton,
-  ExportButton,
   FilterButton,
   InfiniteList,
   List,
@@ -129,7 +128,6 @@ function MuffinListToolbar() {
       {actions.length
         ? actions.map((props) => <ListActionButton key={props.id} {...props} />)
         : null}
-      {!hasExport && <ExportButton />}
     </TopToolbar>
   )
 }
