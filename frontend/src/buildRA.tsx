@@ -1,3 +1,4 @@
+import type { ElementType } from "react"
 import {
   ArrayField,
   ArrayInput,
@@ -40,7 +41,7 @@ import { AvatarField, CopyField, EditableBooleanField, FKField, JsonField } from
 import { DateRangeFilter, Filter, SearchFilter } from "./filters"
 import { FKInput, ImgInput, JsonInput, TimestampInput } from "./inputs"
 
-const UI: Record<string, JSX.ElementType> = {
+const UI: Record<string, ElementType> = {
   // Fields
   BooleanField,
   ChipField,
@@ -112,6 +113,6 @@ export function buildRA(items: [string, Record<string, any>][]) {
   return items.map((item) => buildRAComponent(item[0], item[1]))
 }
 
-export function registerUI(name: string, component: JSX.ElementType) {
+export function registerUI(name: string, component: ElementType) {
   UI[name] = component
 }

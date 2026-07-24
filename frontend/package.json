@@ -57,6 +57,10 @@
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.0.4"
   },
+  "resolutions": {
+    "@mui/material": "^7.2.0",
+    "@mui/icons-material": "^7.2.0"
+  },
   "prettier": {
     "arrowParens": "always",
     "plugins": [
