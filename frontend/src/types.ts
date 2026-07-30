@@ -112,6 +112,8 @@ export type AdminResourceProps = {
       field: string
       order: "ASC" | "DESC"
     }
+    // Enable export of selected records
+    bulkExport?: boolean
   }
   show: AdminShowProps
 }

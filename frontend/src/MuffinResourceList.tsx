@@ -73,14 +73,19 @@ function muffinListFilters(filters: AdminInput[]) {
 setupAdmin(["list-filters"], muffinListFilters)
 
 function MuffinListDatagrid() {
-  const { name, list } = useMuffinResourceOpts()
-  const { fields, edit, show } = list
-  const BulkActions = findBuilder(["list-actions", name])
+  const { name, actions = [], list } = useMuffinResourceOpts()
+  const { fields, edit, show, remove, bulkExport = true } = list
+
+  const BulkActions = findBuilder(["list-actions", name]);
+  const hasCustomBulkActions = actions.some((action) =>
+    action.view?.includes("bulk"),
+  )
+  const hasBulkActions = remove || bulkExport || hasCustomBulkActions;
 
   return (
     <DatagridConfigurable
       rowClick={show ? "show" : edit ? "edit" : false}
-      bulkActionButtons={<BulkActions />}
+      bulkActionButtons={hasBulkActions ? <BulkActions /> : false}
     >
       {buildAdmin(["list-fields", name], fields)}
       {buildAdmin(["list-grid-buttons", name])}
@@ -134,19 +139,21 @@ setupAdmin(["list-toolbar"], MuffinListToolbar)
 
 function MuffinListActions() {
   const {
-    actions: baseActions = [],
-    list: { remove },
+    actions = [],
+    list: { remove, bulkExport = true },
   } = useMuffinResourceOpts()
-  const actions = baseActions.filter((a) => a.view?.includes("bulk"))
+
+  const bulkActions = actions.filter((action) => action.view?.includes("bulk"))
+
   return (
     <>
-      {actions.map((props) => (
+      {bulkActions.map((props) => (
         <BulkActionButton key={props.id} {...props} />
       ))}
-      <BulkExportButton />
+      {bulkExport && <BulkExportButton />}
       {remove && <BulkDeleteButton />}
     </>
-  )
+  );
 }
 
 setupAdmin(["list-actions"], MuffinListActions)
