@@ -13,6 +13,7 @@ const LinkButton = ({
 }: AdminShowLink & { resource: string; filters?: any; id?: string }) => {
   const location = useLocation()
   const searchParams = new URLSearchParams()
+
   searchParams.set("returnTo", `${location.pathname}${location.search}`)
 
   if (filters) {

@@ -23,7 +23,9 @@ export function LinkAction({
       {...props}
       icon={icon || resource?.icon}
       label={label || `resources.${props.resource}.name`}
-      filters={{ [filter || currentResource]: encodeURIComponent(record[field || "id"]) }}
+      filters={{
+        [filter || currentResource]: record[field || "id"],
+      }}
     />
   )
 }

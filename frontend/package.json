@@ -23,6 +23,8 @@
   },
   "homepage": "https://github.com/klen/muffin-admin#readme",
   "dependencies": {
+    "@mui/icons-material": "^9.2.0",
+    "@mui/material": "^9.2.0",
     "date-fns": "^4.1.0",
     "js-cookie": "^3.0.5",
     "ra-language-russian": "^5.4.4",
