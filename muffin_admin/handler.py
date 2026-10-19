@@ -14,7 +14,7 @@ from muffin_rest.schemas import EnumField
 from muffin_rest.types import TVCollection, TVResource
 
 if TYPE_CHECKING:
-    from http_router.types import TMethods
+    from http_router.types import THostsArg, TMethods
     from muffin import Request, Response
     from muffin_rest.filters import Filter
 
@@ -113,10 +113,11 @@ class AdminHandler(RESTBase[TVResource, TVCollection]):
         return cast("TVCollection", request.query.getall("ids", []))
 
     @classmethod
-    def action(
+    def action(  # noqa: PLR0913
         cls,
         *paths: str,
         methods: TMethods | None = None,
+        hosts: THostsArg | None = None,
         icon: str | None = None,
         label: str | None = None,
         view: list[TActionView] | TActionView | None = None,
@@ -150,7 +151,7 @@ class AdminHandler(RESTBase[TVResource, TVCollection]):
 
                     return await method(self, request, data=data, **kwargs)
 
-            wrapper.__route__ = paths, methods  # type: ignore[]
+            wrapper.__route__ = paths, methods, hosts  # type: ignore[]
             wrapper.__action__ = {  # type: ignore[]
                 "view": [view] if isinstance(view, str) else view,
                 "icon": icon,

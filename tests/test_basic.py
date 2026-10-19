@@ -120,6 +120,15 @@ async def test_endpoint_action(app):
     assert ra["edit"]["inputs"] == []
 
 
+def test_action_route():
+
+    @AdminHandler.action("/base", view="show", hosts="example.com")
+    async def base_action(self, request):
+        pass
+
+    assert base_action.__route__ == (("/base",), None, "example.com")  # type: ignore[]
+
+
 def test_custom_fields_inputs():
 
     class BaseHandler(AdminHandler):
