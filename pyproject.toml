@@ -4,7 +4,7 @@ version = "13.2.0"
 description = "Admin interface for Muffin Framework"
 authors = [{ name = "Kirill Klenov", email = "horneds@gmail.com" }]
 requires-python = ">=3.11"
-readme = "README.rst"
+readme = "README.md"
 license = "MIT"
 keywords = ["admin", "api", "muffin", "asgi", "asyncio", "trio"]
 classifiers = [
@@ -17,6 +17,7 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3.15",
   "Topic :: Internet :: WWW/HTTP",
   "Framework :: AsyncIO",
   "Framework :: Trio",
