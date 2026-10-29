@@ -9,6 +9,7 @@ Repository guide for coding agents working in `muffin-admin`.
 - Tests: `tests/`
 - Python tooling config: `pyproject.toml`
 - Python workflow shortcuts: root `Makefile`
+- Documentation: MkDocs Material in `docs/`, config in `mkdocs.yml`
 - Frontend workflow shortcuts: `frontend/Makefile`
 - Git hooks: `.pre-commit-config.yaml`
 - Commit convention: `.git-commits.yaml`
@@ -30,9 +31,8 @@ Repository guide for coding agents working in `muffin-admin`.
 - Lint backend package: `uv run ruff check muffin_admin`
 - Lint package + tests: `uv run ruff check muffin_admin tests`
 - Format Python code: `uv run ruff format`
-- Typecheck package: `uv run mypy muffin_admin`
-- Typecheck all (CI style): `uv run mypy`
-- Secondary type checker: `uv run pyrefly check`
+- Typecheck package: `uv run pyrefly check`
+- Typecheck all (CI style): `uv run pyrefly check`
 
 ### Frontend commands (`frontend/`)
 
@@ -50,18 +50,23 @@ Use focused TS compile checks while editing:
 ### Useful make targets (repo root)
 
 - `make test` -> `uv run pytest tests`
-- `make lint` -> `mypy` + `ruff check`
+- `make lint` -> `pyrefly check` + `ruff check`
 - `make front` -> build frontend
 - `make example-peewee` -> run example app
+- `make docs` -> `mkdocs build --strict`
+- `make docs-serve` -> preview docs locally
 
 ## CI Baseline
 
 Current CI (`.github/workflows/tests.yml`) runs:
 
 - `uv sync --locked --all-extras --dev`
-- `uv run ruff check muffin_admin`
-- `uv run mypy`
+- `uv run pyrefly check`
+- `uv run ruff check`
 - `uv run pytest tests`
+
+`docs.yml` runs `uv run --locked --only-group docs mkdocs build --strict` and publishes to
+GitHub Pages on `develop`.
 
 Agent rule: before finishing non-trivial changes, run the checks relevant to touched code.
 
@@ -72,7 +77,7 @@ Hooks run on `pre-commit`, `commit-msg`, and `pre-push`.
 - `ruff format`
 - `ruff check`
 - `uv-lock --check`
-- `pyrefly-check`
+- `pyrefly-check` (runs `uv run pyrefly check`)
 - `uv run pytest tests` (pre-push)
 - plus standard sanity hooks (yaml/toml/merge/conflict/whitespace/debug)
 
@@ -145,6 +150,15 @@ Allowed types from `.git-commits.yaml`:
 - Surface action/request errors through React Admin notifications.
 - Throw explicit errors when required runtime state is missing.
 - Prefer safe fallbacks (`null`, defaults) where behavior is optional.
+
+## Documentation Guidance
+
+- Pages live in `docs/` as Markdown and are built with MkDocs Material; `mkdocs.yml` has the
+  `nav`. Add new pages to `nav` and link them from `docs/index.md`.
+- `make docs` must pass `--strict` (CI fails on warnings such as a broken link or a page
+  missing from `nav`).
+- Keep `README.md` a short entry point; detailed material belongs in `docs/`.
+- Code samples are taken from `muffin_admin/`, `example/` and `tests/`; do not invent options.
 
 ## Testing Guidance
 
