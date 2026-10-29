@@ -22,7 +22,7 @@ classifiers = [
   "Framework :: AsyncIO",
   "Framework :: Trio",
 ]
-dependencies = ["muffin>=3.0.0", "muffin-rest>=14.2.0"]
+dependencies = ["muffin>=3.1.0", "muffin-rest>=14.2.0"]
 
 [project.optional-dependencies]
 yaml = ["pyyaml"]

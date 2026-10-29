@@ -42,7 +42,7 @@ class UserResource(PWAdminHandler):
 ## Requirements
 
 - Python >= 3.11 (tested on 3.11, 3.12, 3.13, 3.14 and 3.15)
-- [Muffin](https://github.com/klen/muffin) >= 3.0
+- [Muffin](https://github.com/klen/muffin) >= 3.1
 - [Muffin-REST](https://github.com/klen/muffin-rest) >= 14.2
 - Peewee (`muffin-peewee-aio`) or SQLAlchemy Core (`muffin-databases`) for the storage
   backends

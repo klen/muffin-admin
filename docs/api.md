@@ -41,10 +41,13 @@ The Muffin plugin, registered as `app.plugins["admin"]`.
 | `handlers` | Registered `AdminHandler` subclasses, in registration order |
 
 ```python
-plugin.setup(app, **options)
+plugin.setup(app, *, name=None, **options) -> bool
 plugin.to_ra() -> dict
 plugin.route(obj, *paths, **params) -> Callable
 ```
+
+`setup` returns `True` when the plugin is mounted and `False` when it is disabled; a disabled
+plugin mounts nothing, so every admin route answers `404`.
 
 `route` accepts either a handler class (`@admin.route` on the class) or a path string
 (`@admin.route("/user")` on the class). With a class it registers the handler and forwards to

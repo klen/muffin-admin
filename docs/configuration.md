@@ -37,10 +37,12 @@ admin = Plugin(app)
 | `help`              | `ADMIN_HELP`             | `None`                                              | Link to a help page, shown on the dashboard |
 | `locales`           | `ADMIN_LOCALES`          | `None`                                              | Translations merged with per-resource `locales`; see [Customization](customization.md#translations) |
 | `secret`            | `ADMIN_SECRET`           | `None`                                              | Reserved. Nothing reads it; see below |
+| `disabled`          | `ADMIN_DISABLED`         | `False`                                             | Turn the plugin off: `setup()` returns `False`, nothing is mounted and every admin route answers `404` |
 
-`disabled` is inherited from Muffin's `BasePlugin` but does not disable the admin: the plugin
-logs `Plugin admin is disabled` and is not registered in `app.plugins`, yet the routes are
-still mounted. Do not rely on it.
+`disabled` is inherited from Muffin's `BasePlugin`. Set it with `ADMIN_DISABLED=1`, `app` config
+`ADMIN_DISABLED=True` or `admin.setup(app, disabled=True)`. `Plugin.setup()` then returns `False`,
+the plugin is not registered in `app.plugins`, and neither the page, `ra.json`, `main.js`, nor
+the `/api` routes are mounted.
 
 `prefix` is used verbatim after the trailing slash is stripped, so `prefix="/"` mounts the
 admin at the application root.

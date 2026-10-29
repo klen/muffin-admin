@@ -921,16 +921,16 @@ wheels = [
 
 [[package]]
 name = "muffin"
-version = "3.0.1"
+version = "3.1.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "asgi-tools" },
     { name = "modconfig" },
     { name = "orjson" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a5/af/60fdc82851df81d886c3cbdf88beb9c5ea5795be3196b1a7d08b8a095e21/muffin-3.0.1.tar.gz", hash = "sha256:71dc11d78cfefcc314b56681104c213d941ff4bf7d168e473818793b4b7724ba", size = 12906, upload-time = "2026-10-19T13:44:35.513Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/10/72/1821dd2088954c768f31af71625a941928ad40de8f7ca4c3179d346dd3d6/muffin-3.1.0.tar.gz", hash = "sha256:bef72e64ef2a3febce8b7b2beaa8ad712a20c37cea8919bb89c077a737af37b1", size = 13009, upload-time = "2026-10-29T12:53:39.508Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/db/89/53d2f703e1f83403f3bd0e1bc850648b90fa1f80701f73498bf0cb3c9c1c/muffin-3.0.1-py3-none-any.whl", hash = "sha256:9265547586ff4742a4f6723606e907b8603ee0e92eb40af15c961644f6819434", size = 15905, upload-time = "2026-10-19T13:44:34.362Z" },
+    { url = "https://files.pythonhosted.org/packages/a1/16/a476a2d9ef28af972162ca23f960b68aa397ae9254dbd1f989740e8c6e2f/muffin-3.1.0-py3-none-any.whl", hash = "sha256:597bbb6117dbcea32443e21f691167052fc611c24727152346610092e0dd48b5", size = 16026, upload-time = "2026-10-29T12:53:38.365Z" },
 ]
 
 [[package]]
@@ -988,7 +988,7 @@ example = [
 requires-dist = [
     { name = "marshmallow-peewee", marker = "extra == 'peewee'" },
     { name = "marshmallow-sqlalchemy", marker = "extra == 'sqlalchemy'" },
-    { name = "muffin", specifier = ">=3.0.0" },
+    { name = "muffin", specifier = ">=3.1.0" },
     { name = "muffin-databases", marker = "extra == 'sqlalchemy'" },
     { name = "muffin-peewee-aio", marker = "extra == 'peewee'" },
     { name = "muffin-rest", specifier = ">=14.2.0" },

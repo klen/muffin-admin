@@ -60,9 +60,11 @@ class Plugin(BasePlugin):
         self.__dashboard__: TAuth | None = None
         super(Plugin, self).__init__(app, **kwargs)
 
-    def setup(self, app: Application, **options):  # noqa: C901
+    def setup(self, app: Application, *, name: str | None = None, **options) -> bool:  # noqa: C901
         """Initialize the application."""
-        super().setup(app, **options)
+        if not super().setup(app, name=name, **options):
+            return False
+
         self.cfg.update(prefix=self.cfg.prefix.rstrip("/"))
         self.api.setup(app, prefix=f"{self.cfg.prefix}/api", openapi=False)
 
@@ -124,6 +126,8 @@ class Plugin(BasePlugin):
         @app.route(f"{prefix}/ident")
         async def ident(request):
             return await self.__ident__(request)
+
+        return True
 
     def route(self, path: Any, *paths: str, **params) -> Callable:
         """Route an handler."""

@@ -18,7 +18,7 @@ actions and authentication.
 ## Requirements
 
 - Python 3.11 - 3.15
-- Muffin >= 3.0 and Muffin-REST >= 14.2
+- Muffin >= 3.1 and Muffin-REST >= 14.2
 - Peewee (`muffin-peewee-aio`) or SQLAlchemy Core (`muffin-databases`) for a storage backend
 
 ## Install

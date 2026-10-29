@@ -1,6 +1,6 @@
 from muffin_rest import APIError
 
-from muffin_admin import Plugin
+from muffin_admin import AdminHandler, Plugin
 
 
 async def test_plugin(app):
@@ -126,6 +126,30 @@ async def test_auth_cookies_applies(app, client):
 
     res = await client.get("/admin/ra.json", headers={"authorization": "user"})
     assert res.status_code == 200
+
+
+async def test_setup_disabled(app, client):
+    admin = Plugin()
+
+    @admin.route
+    class BaseHandler(AdminHandler):
+        class Meta(AdminHandler.Meta):
+            name = "base"
+
+    assert admin.setup(app, disabled=True) is False
+    assert "admin" not in app.plugins
+
+    assert (await client.get("/admin")).status_code == 404
+    assert (await client.get("/admin/ra.json")).status_code == 404
+    assert (await client.get("/admin/main.js")).status_code == 404
+    assert (await client.get("/admin/api/base")).status_code == 404
+
+
+async def test_setup_enabled(app, client):
+    admin = Plugin()
+    assert admin.setup(app) is True
+    assert app.plugins["admin"] is admin
+    assert (await client.get("/admin")).status_code == 200
 
 
 async def test_dashboard(app, client):
