@@ -18,11 +18,13 @@ import { useMuffinResourceOpts } from "./hooks"
 import { buildAdmin, findBuilder, setupAdmin } from "./utils"
 
 export function MuffinShow({ children }: PropsWithChildren) {
-  const { show, name, key } = useMuffinResourceOpts()
+  const { show, list, name, key } = useMuffinResourceOpts()
   const location = useLocation()
   const navigate = useNavigate()
   const ShowToolbar = findBuilder(["show-toolbar", name])
   const returnTo = new URLSearchParams(location.search).get("returnTo")
+
+  if (!list.show) return null
 
   const handleClose = () => {
     if (returnTo) {

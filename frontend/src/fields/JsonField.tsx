@@ -6,7 +6,8 @@ export function JsonField({ label, source }) {
   const [expand, setExpand] = useState(false)
   const record = useRecordContext()
   const value = get(record, source)
-  if (!value || Object.keys(value).length == 0) return null
+  if (value === undefined || value === null) return null
+  if (typeof value === "object" && Object.keys(value).length === 0) return null
 
   const src = JSON.stringify(value, null, 2)
   const retval = (

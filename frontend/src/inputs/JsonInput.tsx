@@ -45,8 +45,10 @@ export function JsonInput(props) {
     if (!value || typeof value === "object") return undefined
     return isJSON(value) ? undefined : errortext
   }
-  validate.push(validateJSON)
-  rest.validate = validate
+  rest.validate = [
+    ...(Array.isArray(validate) ? validate : validate ? [validate] : []),
+    validateJSON,
+  ]
 
   const formatJSON = (json) => {
     let retval = json

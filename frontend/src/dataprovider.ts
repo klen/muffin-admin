@@ -5,6 +5,8 @@ type TQueryMeta = {
   key?: string
 }
 
+const encodeId = (id: TID) => encodeURIComponent(String(id))
+
 export function MuffinDataprovider(apiUrl: string) {
   async function request(url: string, options?: APIParams) {
     if (!url.startsWith("/")) url = `${apiUrl}/${url}`
@@ -50,7 +52,7 @@ export function MuffinDataprovider(apiUrl: string) {
     },
 
     getOne: async (resource: string, { id, meta }: { id: TID; meta?: TQueryMeta }) => {
-      const response = await request(`${resource}/${id}`)
+      const response = await request(`${resource}/${encodeId(id)}`)
       const { data } = response
       if (meta?.key) {
         data.id = data.id ?? data[meta.key]
@@ -66,7 +68,7 @@ export function MuffinDataprovider(apiUrl: string) {
     },
 
     update: async (resource: string, { id, data }: { id: TID; data: any }) => {
-      return await makeRequest(`${apiUrl}/${resource}/${id}`, {
+      return await makeRequest(`${apiUrl}/${resource}/${encodeId(id)}`, {
         method: "PUT",
         ...prepareDataParams(data),
       }).then(({ json }) => ({ data: json }))
@@ -78,7 +80,7 @@ export function MuffinDataprovider(apiUrl: string) {
     },
 
     delete: async (resource: string, { id }: { id: TID }) => {
-      await request(`${resource}/${id}`, { method: "DELETE" })
+      await request(`${resource}/${encodeId(id)}`, { method: "DELETE" })
       return { data: { id } }
     },
 

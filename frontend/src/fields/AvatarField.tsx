@@ -11,7 +11,7 @@ export function AvatarField({ source, alt, style, nameProp, ...props }) {
   // Check value is a valid URL
   if (value) {
     try {
-      new URL(value)
+      new URL(value, window.location.origin)
     } catch {
       // Not a valid URL, return loader
       return <CircularProgress size={24} />

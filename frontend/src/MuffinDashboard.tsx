@@ -41,6 +41,8 @@ setupAdmin(["dashboard-actions"], () => null)
 setupAdmin(["dashboard-content"], () => null)
 
 function AdminCards({ src }: { src: AdminDashboardBlock | AdminDashboardBlock[] }) {
+  if (!src) return null
+
   if (Array.isArray(src))
     return (
       <Grid container spacing={2}>

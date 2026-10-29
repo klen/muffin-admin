@@ -17,10 +17,16 @@ const OPERATORS = {
 
 export function Filter({ type = "text", ...props }: InputProps) {
   const { field } = useInput({
-    format: (value: any) => (value ? value[Object.keys(value)[0]] : ""),
+    format: (value: any) => {
+      if (value && typeof value === "object") {
+        const op = Object.keys(value)[0] || "$eq"
+        return { op, text: value[op] ?? "" }
+      }
+      return { op: "$eq", text: value ?? "" }
+    },
     ...props,
   })
-  const [op, setOp] = useState((field.value && Object.keys(field.value)[0]) || "$eq")
+  const [op, setOp] = useState(field.value.op)
 
   const onChange = (e: any) => {
     field.onChange({ [op]: e.target.value })
@@ -44,7 +50,7 @@ export function Filter({ type = "text", ...props }: InputProps) {
         <TextField
           {...field}
           onChange={onChange}
-          value={field.value}
+          value={field.value.text}
           variant="outlined"
           type={type}
           label={
@@ -60,7 +66,7 @@ export function Filter({ type = "text", ...props }: InputProps) {
             onClick={() => {
               setOp(key)
               setMenuEl(null)
-              field.onChange({ [key]: field.value })
+              field.onChange({ [key]: field.value.text })
             }}
           >
             {value}
