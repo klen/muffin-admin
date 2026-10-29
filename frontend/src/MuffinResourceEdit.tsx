@@ -119,6 +119,7 @@ export function MuffinEditToolbar({ children }: PropsWithChildren) {
   const resource = useResourceContext()
   const record = useRecordContext()
   const translate = useTranslate()
+  const { list } = useMuffinResourceOpts()
   const Actions = findBuilder(["edit-actions", resource])
   return (
     <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
@@ -130,7 +131,7 @@ export function MuffinEditToolbar({ children }: PropsWithChildren) {
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Actions />
           {children}
-          <ShowButton />
+          {list.show && <ShowButton />}
           <ListButton />
         </Box>
       </TopToolbar>

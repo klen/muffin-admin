@@ -81,4 +81,12 @@ repos:
         pass_filenames: false
         files: \.py$
         stages: ["pre-push"]
+
+      - id: frontend-tests
+        name: frontend tests
+        entry: make -C frontend test
+        language: system
+        pass_filenames: false
+        files: ^frontend/
+        stages: ["pre-push"]
 # See https://pre-commit.com/hooks.html for more hooks

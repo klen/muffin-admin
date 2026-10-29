@@ -20,7 +20,7 @@ export function MuffinResource({ name, ...props }: ResourceProps) {
       create={Create}
       edit={Edit}
       list={List}
-      show={Show}
+      show={opts.list.show ? Show : undefined}
       {...props}
     />
   )

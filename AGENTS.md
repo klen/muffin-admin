@@ -6,7 +6,7 @@ Repository guide for coding agents working in `muffin-admin`.
 
 - Backend: Python package in `muffin_admin/`
 - Frontend: React + TypeScript in `frontend/`
-- Tests: `tests/`
+- Tests: `tests/` (Python), `frontend/src/*.test.*` (frontend)
 - Python tooling config: `pyproject.toml`
 - Python workflow shortcuts: root `Makefile`
 - Documentation: MkDocs Material in `docs/`, config in `mkdocs.yml`
@@ -24,10 +24,11 @@ Repository guide for coding agents working in `muffin-admin`.
 
 ### Python commands (run from repo root)
 
-- Run full test suite: `uv run pytest tests`
-- Run one test file: `uv run pytest tests/test_basic.py`
-- Run one test case: `uv run pytest tests/test_basic.py::test_endpoint`
-- Run tests by expression: `uv run pytest tests -k "endpoint and not action"`
+- Run full test suite: `make test` (Python + frontend)
+- Run Python tests: `uv run pytest tests`
+- Run one Python test file: `uv run pytest tests/test_basic.py`
+- Run one Python test case: `uv run pytest tests/test_basic.py::test_endpoint`
+- Run Python tests by expression: `uv run pytest tests -k "endpoint and not action"`
 - Lint backend package: `uv run ruff check muffin_admin`
 - Lint package + tests: `uv run ruff check muffin_admin tests`
 - Format Python code: `uv run ruff format`
@@ -41,15 +42,17 @@ Repository guide for coding agents working in `muffin-admin`.
 - Start dev server: `make -C frontend dev`
 - Watch webpack rebuilds: `make -C frontend watch`
 - Typecheck frontend: `make -C frontend lint`
+- Run frontend tests: `make -C frontend test` (or `cd frontend && yarn test`)
 
-Single-test equivalent for frontend does not exist yet (no real JS test runner configured).
+Single-test example: `cd frontend && npx vitest run src/dataprovider.test.ts`.
 Use focused TS compile checks while editing:
 
 - `cd frontend && npx tsc --noEmit --pretty src/index.tsx`
 
 ### Useful make targets (repo root)
 
-- `make test` -> `uv run pytest tests`
+- `make test` -> `uv run pytest tests` + `make -C frontend test`
+- `make test-frontend` -> `make -C frontend test`
 - `make lint` -> `pyrefly check` + `ruff check`
 - `make front` -> build frontend
 - `make example-peewee` -> run example app
@@ -64,6 +67,7 @@ Current CI (`.github/workflows/tests.yml`) runs:
 - `uv run pyrefly check`
 - `uv run ruff check`
 - `uv run pytest tests`
+- `yarn install --frozen-lockfile` and `yarn test` in `frontend/`
 
 `docs.yml` runs `uv run --locked --only-group docs mkdocs build --strict` and publishes to
 GitHub Pages on `develop`.
@@ -79,6 +83,7 @@ Hooks run on `pre-commit`, `commit-msg`, and `pre-push`.
 - `uv-lock --check`
 - `pyrefly-check` (runs `uv run pyrefly check`)
 - `uv run pytest tests` (pre-push)
+- `make -C frontend test` (pre-push, when `frontend/` changes)
 - plus standard sanity hooks (yaml/toml/merge/conflict/whitespace/debug)
 
 Commit messages must follow conventional commits.

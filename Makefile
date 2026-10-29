@@ -27,9 +27,15 @@ $(VIRTUAL_ENV): pyproject.toml .pre-commit-config.yaml
 	@touch $(VIRTUAL_ENV)
 
 .PHONY: test t
-# target: test - Runs tests
+# target: test - Runs Python and frontend tests
 test t: $(VIRTUAL_ENV)
 	@uv run pytest tests
+	@$(MAKE) -C frontend test
+
+.PHONY: test-frontend
+# target: test-frontend - Runs frontend tests
+test-frontend:
+	@$(MAKE) -C frontend test
 
 example/db.sqlite: $(VIRTUAL_ENV)
 	@uv run muffin $(EXAMPLE) db

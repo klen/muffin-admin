@@ -28,7 +28,8 @@ uv run ruff check
 uv run pytest tests
 ```
 
-`make lint` runs `pyrefly check` and `ruff check`. `make test` runs the test suite.
+`make lint` runs `pyrefly check` and `ruff check`. `make test` runs the Python and
+frontend test suites; `make test-frontend` runs only `frontend/` tests.
 
 Pytest defaults come from `pyproject.toml` (`-xsv`), so the suite stops on the first failure.
 A focused run:
@@ -43,7 +44,8 @@ The suite uses SQLite only; no Postgres or Mongo services are needed. Base and p
 under asyncio, trio and curio through the `aiolib` fixture; backend tests pin asyncio.
 
 An autouse fixture writes a stub `muffin_admin/main.js` for the duration of the session and
-deletes it afterwards, so tests do not need a built frontend and do not modify the worktree.
+restores any existing file afterwards, so tests do not need a built frontend and do not destroy
+the local bundle.
 
 ## Pre-commit
 
@@ -53,6 +55,7 @@ Hooks run on `pre-commit`, `commit-msg` and `pre-push`:
 - `pyrefly check`
 - `uv lock --check`
 - `uv run pytest tests` on pre-push
+- `make -C frontend test` on pre-push when `frontend/` changes
 - the usual YAML/TOML, whitespace and merge-conflict checks
 
 If dependency metadata changes, run `uv lock` before committing. Commit messages must follow
@@ -98,6 +101,7 @@ The example applications are `example/peewee_orm/` and `example/sqlalchemy_core/
 ```bash
 make -C frontend        # yarn install if needed, then webpack -> muffin_admin/main.js
 make -C frontend lint   # tsc --noEmit
+make -C frontend test   # vitest (data provider, file URLs, dashboard)
 make -C frontend dev    # webpack dev server
 make -C frontend watch  # rebuild on change
 ```

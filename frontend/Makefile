@@ -23,6 +23,9 @@ lint:
 	# npx lint
 	npx tsc --noEmit --pretty
 
+test: node_modules
+	yarn test
+
 
 build: clean
 	yarn build
