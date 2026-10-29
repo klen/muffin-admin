@@ -30,11 +30,11 @@ jobs:
       - name: Setup dependencies
         run: uv sync --locked --all-extras --dev
 
-      - name: Check code
-        run: uv run ruff check muffin_admin
-
       - name: Check typing
-        run: uv run mypy
+        run: uv run pyrefly check
+
+      - name: Check code
+        run: uv run ruff check
 
       - name: Test with pytest
         run: uv run pytest tests

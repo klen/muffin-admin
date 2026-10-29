@@ -12,7 +12,7 @@ help:
 .PHONY: clean
 # target: clean - Display callable targets
 clean:
-	rm -rf build/ dist/ docs/_build *.egg-info
+	rm -rf build/ dist/ site/ docs/_build *.egg-info
 	find $(CURDIR) -name "*.py[co]" -delete
 	find $(CURDIR) -name "*.orig" -delete
 	find $(CURDIR)/$(MODULE) -name "__pycache__" | xargs rm -rf
@@ -62,8 +62,18 @@ dev:
 
 .PHONY: lint
 lint: $(VIRTUAL_ENV)
-	@uv run mypy $(PACKAGE)
+	@uv run pyrefly check
 	@uv run ruff check $(PACKAGE)
+
+.PHONY: docs docs-serve
+# target: docs - Build documentation
+docs: $(VIRTUAL_ENV)
+	@uv run --group docs mkdocs build --strict
+
+.PHONY: docs-serve
+# target: docs-serve - Serve documentation locally
+docs-serve: $(VIRTUAL_ENV)
+	@uv run --group docs mkdocs serve
 
 
 BACKEND_PORT ?= 8080
