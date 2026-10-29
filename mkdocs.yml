@@ -36,6 +36,7 @@ nav:
   - Authentication: auth.md
   - Dashboard: dashboard.md
   - Customization: customization.md
+  - Custom frontend: frontend.md
   - API reference: api.md
   - Development: development.md
 

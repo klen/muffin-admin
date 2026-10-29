@@ -36,6 +36,8 @@ class UserResource(PWAdminHandler):
 - [Authentication](auth.md): `check_auth`, `get_identity`, login and logout.
 - [Dashboard](dashboard.md): cards on the start page.
 - [Customization](customization.md): CSS, JS, translations and building the frontend.
+- [Custom frontend](frontend.md): extending the stock bundle or building your own SPA on the
+  `muffin-admin` package.
 - [API reference](api.md): classes, options and hook signatures.
 - [Development](development.md): setup, tests, examples, release.
 

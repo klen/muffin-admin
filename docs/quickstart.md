@@ -66,7 +66,8 @@ uvicorn app:app --reload
 ```
 
 Open <http://127.0.0.1:8000/admin>. Without an authorization callback the admin is open to
-anyone; see [Authentication](auth.md) before deploying it.
+anyone; see [Authentication](auth.md) before deploying it. The page and the bundle come from the
+package; [Custom frontend](frontend.md) covers replacing them.
 
 The routes registered by the plugin are:
 

@@ -13,8 +13,9 @@ admin = Plugin(
 ```
 
 The CSS link is placed in `<head>` and the script after the main bundle, so custom JavaScript
-can extend the admin after it initializes. Keep both values to a plain URL: they are inserted
-into the HTML body as-is.
+can extend the admin before it initializes. Keep both values to a plain URL: they are inserted
+into the HTML body as-is. [Custom frontend](frontend.md) explains the load order and what a
+script can do with it.
 
 To replace the bundle entirely, point `main_js_url` at another build:
 
@@ -23,7 +24,10 @@ admin = Plugin(app, main_js_url="https://cdn.example.com/admin/main.js")
 ```
 
 The default `{prefix}/main.js` is served from the package. It is built from `frontend/` and is
-not committed; a checkout without a built bundle answers `404` for that route.
+not committed; a checkout without a built bundle answers `500` for that route.
+
+Replacing the bundle with your own application, or extending the stock one with JavaScript, is
+described in [Custom frontend](frontend.md).
 
 ## Translations
 
