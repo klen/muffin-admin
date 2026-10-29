@@ -63,7 +63,7 @@ example = [
 default-groups = ["dev", "example"]
 
 [build-system]
-requires = ["uv_build>=0.9.7,<0.10.0"]
+requires = ["uv_build>=0.13.6,<0.14.0"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]
@@ -80,8 +80,10 @@ envlist = py311,py312,py313,py314,py315,pypy311
 
 [testenv]
 allowlist_externals = uv,pytest
+setenv =
+  UV_PROJECT_ENVIRONMENT = {envdir}
 commands =
-  uv pip install --system -e . --group dev
+  uv sync --locked --all-extras
 	pytest tests
 """
 
