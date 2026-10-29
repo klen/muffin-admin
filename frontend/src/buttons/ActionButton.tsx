@@ -1,10 +1,11 @@
-import { Link, Stack } from "@mui/material"
+import { Stack } from "@mui/material"
 import { useState } from "react"
 import {
   Button,
   FormGroupsProvider,
   useAugmentedForm,
   useListContext,
+  useNotify,
   useRecordContext,
   useResourceContext,
   useTranslate,
@@ -99,7 +100,8 @@ function ActionButtonBase({
   const resource = useResourceContext()
   const [payloadActive, setPayloadActive] = useState(false)
 
-  const PayloadForm = findBuilder(["action-form", id, resource]) || (schema && CommonPayload)
+  const PayloadForm =
+    findBuilder(["action-form", id, resource]) || (schema?.length ? CommonPayload : null)
   if (!PayloadForm)
     return (
       <Button label={label} title={title} onClick={() => onHandle()} disabled={isPending}>
@@ -137,8 +139,8 @@ export function CommonPayload({
   title,
   help,
 }: AdminPayloadProps) {
-  schema[0][1] = { ...schema[0][1], autoFocus: true }
-  const inputs = buildRA(schema)
+  if (schema?.length) schema[0][1] = { ...schema[0][1], autoFocus: true }
+  const inputs = buildRA(schema || [])
   const translate = useTranslate()
   const { form, formHandleSubmit } = useAugmentedForm({
     onSubmit: (data) => {
@@ -181,6 +183,14 @@ export function CommonPayload({
   )
 }
 
+export function buildFileUrl(apiUrl: string, path: string, id?: any, filterValues?: any) {
+  let url = `${apiUrl}${path.replace("{id}", encodeURIComponent(String(id ?? "")))}?f`
+  if (filterValues && Object.keys(filterValues).length) {
+    url += `&where=${encodeURIComponent(prepareFilters(filterValues))}`
+  }
+  return url
+}
+
 function FileButton({
   path,
   record,
@@ -195,14 +205,28 @@ function FileButton({
   filterValues?: any
 }) {
   const { apiUrl } = useMuffinAdminOpts()
-  let url = `${apiUrl}${path}?f`
-  if (record) url = url.replace("{id}", record.id as string)
-  const authorization = requestHeaders.Authorization
-  if (authorization) url += `&t=${authorization}`
-  if (Object.keys(filterValues).length) url += `&where=${prepareFilters(filterValues)}`
+  const notify = useNotify()
+
+  const onClick = async () => {
+    const url = buildFileUrl(apiUrl, path, record?.id, filterValues)
+
+    try {
+      const response = await fetch(url, { headers: new Headers(requestHeaders) })
+      if (!response.ok) throw new Error(`Download failed (${response.status})`)
+
+      const blob = await response.blob()
+      const link = document.createElement("a")
+      link.href = URL.createObjectURL(blob)
+      link.download = path.split("/").pop() || "download"
+      link.click()
+      URL.revokeObjectURL(link.href)
+    } catch (err: any) {
+      notify(err?.message || "Download failed", { type: "error" })
+    }
+  }
 
   return (
-    <Button href={url} label={label} component={Link}>
+    <Button onClick={onClick} label={label}>
       {buildIcon(icon)}
     </Button>
   )

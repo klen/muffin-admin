@@ -12,7 +12,7 @@ admin = Plugin(app)
 @admin.check_auth
 async def auth(request):
     """Return the current user, or raise when there is none."""
-    token = request.headers.get("authorization") or request.query.get("t")
+    token = request.headers.get("authorization")
     user = await User.select().where(User.email == token).first()
     if not user:
         raise APIError.FORBIDDEN()
@@ -86,7 +86,7 @@ admin = Plugin(app, logout_url="/logout")
 
 | Value | Stored in | Sent as |
 | ----- | --------- | ------- |
-| `localstorage` (default) | `localStorage[auth_storage_name]` | `Authorization` header on API calls; `?t=` on file downloads |
+| `localstorage` (default) | `localStorage[auth_storage_name]` | `Authorization` header on API and file requests |
 | `cookies` | cookie `auth_storage_name` via `js-cookie` | cookie on every request |
 
 In `cookies` mode the server decides what to do with the cookie, because `check_auth` is the
@@ -113,21 +113,20 @@ server-side. See [`secret`](configuration.md#about-secret).
 
 ## File downloads
 
-A file action renders a plain browser link, not an authenticated `fetch`. The frontend appends
-the stored token as the `t` query parameter:
+A file action downloads the response with `fetch`, using the same `Authorization` header as
+normal API calls. The current list filters are sent as the `where` query parameter:
 
 ```
-/admin/api/message/data.csv?f&t=user@example.com&where=...
+/admin/api/message/data.csv?f&where=...
 ```
 
-`check_auth` therefore has to accept the token from either place while keeping the header path
-for normal API calls:
+`check_auth` reads the token from the header, exactly like other requests:
 
 ```python
-token = request.headers.get("authorization") or request.query.get("t")
+token = request.headers.get("authorization")
 ```
 
-With `auth_storage="cookies"` the cookie is sent automatically and no query parameter is added.
+With `auth_storage="cookies"` the cookie is sent automatically.
 
 ## Roles
 
@@ -149,7 +148,7 @@ admin = Plugin(app)
 
 @admin.check_auth
 async def auth(request):
-    token = request.headers.get("authorization") or request.query.get("t")
+    token = request.headers.get("authorization")
     user = await User.select().where(User.email == token).first()
     if not user:
         raise APIError.FORBIDDEN()

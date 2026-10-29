@@ -103,7 +103,7 @@ inputs follow the same field mapping used for create/edit; `metadata`, `required
 
 ## File downloads
 
-`file=True` turns the button into a plain link, so the browser handles the response as a
+`file=True` fetches the response with the normal `Authorization` header and saves it as a
 download. Only `list` and `show` views support it; bulk actions ignore `file`.
 
 ```python
@@ -122,10 +122,10 @@ async def csv(self, request, **_):
     )
 ```
 
-The download is a normal browser request: the frontend appends the stored token as the `t`
-query parameter, and the current list filters as `where`. If you use `auth_storage="cookies"`,
-the cookie is sent with the request as usual. In localstorage mode, read the token from
-`request.query["t"]` in `check_auth`; see [Authentication](auth.md#file-downloads).
+The download is an authenticated `fetch`: the frontend sends the usual `Authorization`
+header (or the cookie in `cookies` mode), and the current list filters as the `where` query
+parameter. Read the token from the header in `check_auth`; see
+[Authentication](auth.md#file-downloads).
 
 ## Restricting method and host
 
