@@ -55,7 +55,7 @@ The template loads the bundle, then the custom script, then calls the initialize
 
 ```html
 <script src="/admin/main.js"></script>
-<script src=/static/admin-extra.js></script>
+<script src="/static/admin-extra.js"></script>
 <script> initAdmin('/admin') </script>
 ```
 
@@ -79,8 +79,9 @@ exposes `initAdmin` and nothing else. For that use the npm package.
 
 Two details of the option:
 
-- the value is inserted into the template as-is, without quotes, so keep it a plain URL with no
-  spaces or quotes;
+- the value goes into the `src` (or `href`) attribute as-is: query strings work
+  (`/static/admin-extra.js?v=2`), but the value is not HTML-escaped, so keep quotes and
+  angle brackets out of it;
 - the plugin renders the tag only. It does not serve the file: put it in the application's
   static files (`STATIC_FOLDERS` / `STATIC_URL_PREFIX`) or on a CDN.
 

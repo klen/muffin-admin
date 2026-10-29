@@ -101,8 +101,8 @@ class Plugin(BasePlugin):
                 prefix=prefix,
                 title=title,
                 main_js_url=self.cfg.main_js_url.format(prefix=prefix),
-                custom_js=f"<script src={custom_js}></script>" if custom_js else "",
-                custom_css=f"<link rel='stylesheet' href={custom_css} />" if custom_css else "",
+                custom_js=f'<script src="{custom_js}"></script>' if custom_js else "",
+                custom_css=f'<link rel="stylesheet" href="{custom_css}" />' if custom_css else "",
             )
 
         @app.route(f"{prefix}/ra.json")

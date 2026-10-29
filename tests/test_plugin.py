@@ -181,3 +181,14 @@ async def test_dashboard(app, client):
     assert data["dashboard"]
     assert data["dashboard"][0]["name"] == "application config"
     assert data["dashboard"][1]["name"] == "request headers"
+
+
+async def test_custom_assets_are_quoted(app, client):
+    """Query strings in custom asset URLs must survive the template."""
+    Plugin(app, custom_js_url="/static/admin.js?v=2", custom_css_url="/static/admin.css?v=2")
+
+    res = await client.get("/admin")
+    text = await res.text()
+
+    assert 'src="/static/admin.js?v=2"' in text
+    assert 'href="/static/admin.css?v=2"' in text
