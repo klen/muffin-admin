@@ -33,6 +33,18 @@ async def test_basic_files(app, client):
     assert "muffin-admin js files" in text
 
 
+async def test_custom_assets_order(app, client):
+    Plugin(app, custom_js_url="/static/admin-extra.js", custom_css_url="/static/admin.css")
+
+    res = await client.get("/admin")
+    assert res.status_code == 200
+    text = await res.text()
+
+    # The custom script has to load after the bundle and before the inline initAdmin call
+    assert text.index("/admin/main.js") < text.index("/static/admin-extra.js")
+    assert text.index("/static/admin-extra.js") < text.index("initAdmin('/admin')")
+
+
 async def test_root_prefix(app, client):
     admin = Plugin(app, prefix="/")
     assert admin
