@@ -31,9 +31,11 @@ sqlalchemy = ["muffin-databases", "marshmallow-sqlalchemy", "sqlalchemy"]
 
 [project.urls]
 Homepage = "https://github.com/klen/muffin-admin"
+Documentation = "https://klen.github.io/muffin-admin/"
 Repository = "https://github.com/klen/muffin-admin"
 
 [dependency-groups]
+docs = ["mkdocs-material>=9,<10"]
 dev = [
   "aiofile",
   "aiosqlite",
@@ -43,8 +45,8 @@ dev = [
   "muffin-peewee-aio",
   "pytest",
   "pytest-aio[curio, trio]",
-  "pytest-mypy",
   "pyyaml",
+  "pyrefly",
   "ruff",
   "pre-commit",
 ]
@@ -60,49 +62,26 @@ example = [
 [tool.uv]
 default-groups = ["dev", "example"]
 
-[tool.hatch.build.targets.sdist]
-ignore-vcs = true
-include = [
-  "muffin_admin",
-  "muffin_admin/main.js",
-  "muffin_admin/main.js.LICENSE.txt",
-]
-
-[tool.hatch.build.targets.wheel]
-ignore-vcs = true
-include = [
-  "muffin_admin",
-  "muffin_admin/main.js",
-  "muffin_admin/main.js.LICENSE.txt",
-]
-
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["uv_build>=0.9.7,<0.10.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "muffin_admin"
+module-root = ""
 
 [tool.pytest.ini_options]
 addopts = "-xsv"
 
-[tool.mypy]
-packages = ["muffin_admin"]
-ignore_missing_imports = true
-
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = py311,py312,py313,pypy311
+envlist = py311,py312,py313,py314,py315,pypy311
 
 [testenv]
-deps = -e .[dev]
-allowlist_externals =
-  uv
+allowlist_externals = uv,pytest
 commands =
-  uv sync
-	uv run pytest --mypy tests
-
-[testenv:pypy311]
-deps = -e .[dev]
-commands =
+  uv pip install --system -e . --group dev
 	pytest tests
 """
 
