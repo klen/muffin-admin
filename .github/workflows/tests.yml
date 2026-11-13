@@ -47,10 +47,16 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: lts/*
-          cache: yarn
-          cache-dependency-path: frontend/yarn.lock
+
+      - uses: actions/cache@v4
+        id: modules
+        with:
+          path: frontend/node_modules
+          key: modules-${{ runner.os }}-${{ hashFiles('frontend/yarn.lock') }}
+          restore-keys: modules-${{ runner.os }}-
 
       - name: Install frontend dependencies
+        if: steps.modules.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
         working-directory: frontend
 

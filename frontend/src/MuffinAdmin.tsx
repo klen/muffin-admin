@@ -31,6 +31,9 @@ export function MuffinAdmin({
   const { resources = [], auth, adminProps, apiUrl, locales: backendLocales } = opts
 
   document.title = adminProps?.title || "Muffin Admin"
+  // The configured theme is merged into both palettes, otherwise it is lost as soon as
+  // react-admin switches to the dark mode
+  const themeOverride = props.theme ?? adminProps?.theme
   const muffinI18nProvider = buildProvider(
     backendLocales
       ? Object.fromEntries(
@@ -60,7 +63,6 @@ export function MuffinAdmin({
     requireAuth = auth.required,
     store = localStorageStore(),
     ready,
-    theme,
     defaultTheme,
     title = "React Admin",
   } = props
@@ -73,9 +75,8 @@ export function MuffinAdmin({
       i18nProvider={i18nProvider}
       store={store}
       queryClient={queryClient}
-      theme={theme ?? adminProps?.theme}
-      lightTheme={lightTheme}
-      darkTheme={darkTheme}
+      lightTheme={themeOverride ? deepMerge({}, lightTheme, themeOverride) : lightTheme}
+      darkTheme={themeOverride ? deepMerge({}, darkTheme, themeOverride) : darkTheme}
       defaultTheme={defaultTheme}
     >
       <ConfirmationProvider>
