@@ -21,8 +21,13 @@ jobs:
         with:
           node-version: lts/*
           registry-url: https://registry.npmjs.org
-          cache: yarn
-          cache-dependency-path: frontend/yarn.lock
+
+      - uses: actions/cache@v4
+        id: modules
+        with:
+          path: frontend/node_modules
+          key: modules-${{ runner.os }}-${{ hashFiles('frontend/yarn.lock') }}
+          restore-keys: modules-${{ runner.os }}-
 
       - name: Build Frontend
         run: |
