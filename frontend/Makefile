@@ -6,7 +6,7 @@ node_modules: package.json
 	touch node_modules
 
 pypi:
-	yarn install --imutable
+	yarn install --frozen-lockfile
 	yarn build
 	$(CURDIR)/node_modules/.bin/webpack
 
