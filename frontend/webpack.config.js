@@ -3,6 +3,7 @@ const path = require("node:path"),
   mode = process.env.NODE_ENV
 
 module.exports = {
+  cache: { type: "filesystem" },
   entry: "./src/web.ts",
 
   output: {
