@@ -95,7 +95,12 @@ export function MuffinDataprovider(apiUrl: string) {
     getMany: (resource: string, props: { ids: TID[]; meta: any }) => {
       const { ids, meta } = props
       const key = meta?.key || "id"
-      return methods.getList(resource, { filter: { [key]: { $in: ids } }, meta })
+      // React-admin expects every requested record back, so ask for exactly that many
+      return methods.getList(resource, {
+        filter: { [key]: { $in: ids } },
+        pagination: { page: 1, perPage: ids.length },
+        meta,
+      })
     },
 
     getManyReference: async (resource: string, { target, id, filter, ...opts }) => {

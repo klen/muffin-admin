@@ -37,4 +37,18 @@ describe("MuffinDataprovider", () => {
     expect(result.data).toEqual([{ id: "web::42", key: "web::42" }])
     expect(result.total).toBe(1)
   })
+
+  it("requests every referenced record on getMany", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(jsonResponse([{ id: 1 }, { id: 2 }], { "x-total": "2" }))
+    vi.stubGlobal("fetch", fetchMock)
+
+    const dataProvider = MuffinDataprovider("/admin/api")
+    const result = await dataProvider.getMany("user", { ids: [1, 2], meta: {} })
+
+    const url = new URL(fetchMock.mock.calls[0][0], "http://localhost")
+    expect(url.searchParams.get("limit")).toBe("2")
+    expect(result.data).toEqual([{ id: 1 }, { id: 2 }])
+  })
 })
