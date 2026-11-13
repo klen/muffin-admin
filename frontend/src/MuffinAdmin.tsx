@@ -73,7 +73,7 @@ export function MuffinAdmin({
       i18nProvider={i18nProvider}
       store={store}
       queryClient={queryClient}
-      theme={theme}
+      theme={theme ?? adminProps?.theme}
       lightTheme={lightTheme}
       darkTheme={darkTheme}
       defaultTheme={defaultTheme}

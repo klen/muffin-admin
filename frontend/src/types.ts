@@ -1,3 +1,5 @@
+import type { ThemeOptions } from "@mui/material"
+
 export type TID = string | number
 
 export type TProps = {
@@ -126,6 +128,7 @@ export type AdminOpts = {
     title: string
     disableTelemetry?: boolean
     mutationMode?: "optimistic" | "pessimistic" | "undoable"
+    theme?: ThemeOptions
   }
   apiUrl: string
   appBarLinks: [{ url: string; title: string; icon?: string }]
