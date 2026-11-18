@@ -136,10 +136,10 @@ want the type checker to stay quiet; the runtime reads them as ordinary attribut
 | `ra_fields` | Field widget overrides for the list/show views |
 | `ra_inputs` | Input widget overrides for create/edit and action forms |
 | `ra_filters` | Filter widget overrides |
-| `ra_filters_always_on` | Filter names rendered as always-on with a reset button |
+| `ra_filters_always_on` | Filter names rendered as always-on with a reset button; their `load_default` becomes the initial value |
 | `ra_refs` | Foreign key display: `{source: {source, key, reference}}` |
 | `ra_links` | Show-view links to related resources |
-| `ra_list_params` | Extra properties merged into the `list` payload |
+| `ra_list_params` | Extra properties merged into the `list` payload and passed to `<List>` |
 | `ra_show_params` | Extra properties merged into the `show` payload |
 
 Each field or input override is either a widget name or a `(widget, props)` tuple:

@@ -188,6 +188,19 @@ class AdminHandler(RESTBase[TVResource, TVCollection]):
             for (ra_type, props) in fields
         }
 
+        list_params = dict(meta.ra_list_params)
+        filter_defaults = {
+            name: default
+            for name, flt in meta.filters.mutations.items()
+            if name in meta.ra_filters_always_on
+            and (default := _load_default(flt.schema_field)) is not ma.missing
+        }
+        if filter_defaults:
+            list_params["filterDefaultValues"] = {
+                **filter_defaults,
+                **list_params.get("filterDefaultValues", {}),
+            }
+
         data = {
             "name": meta.name,
             "group": meta.group,
@@ -208,7 +221,7 @@ class AdminHandler(RESTBase[TVResource, TVCollection]):
                 "show": meta.show,
                 "fields": [fields_hash[name] for name in meta.columns if name in fields_hash],
                 "filters": [cls.to_ra_filter(flt) for flt in meta.filters.mutations.values()],
-                **meta.ra_list_params,
+                **list_params,
             },
             "show": {
                 "links": meta.ra_links,
@@ -319,6 +332,8 @@ class AdminHandler(RESTBase[TVResource, TVCollection]):
         else:
             ra_type, props = cls.to_ra_input(flt.schema_field, source, resource=True)
             props.pop("required", None)
+            # The default value of a filter is set by <List>, as a prop it breaks alwaysOn filters
+            props.pop("defaultValue", None)
 
         props["source"] = source
 
@@ -338,8 +353,9 @@ class AdminHandler(RESTBase[TVResource, TVCollection]):
         """Convert a field to react-admin."""
         rtype, props = ma_to_ra(field, MA_TO_RAI)
 
-        if isinstance(field.load_default, (bool, str, int)):
-            props.setdefault("defaultValue", field.load_default)
+        default = _load_default(field)
+        if default is not ma.missing:
+            props.setdefault("defaultValue", default)
 
         if field.required:
             props.setdefault("required", True)
@@ -354,6 +370,12 @@ class AdminHandler(RESTBase[TVResource, TVCollection]):
             props.setdefault("label", label)
 
         return rtype, props
+
+
+def _load_default(field: ma.fields.Field) -> Any:
+    """Return a load_default simple enough to be a react-admin default value."""
+    default = field.load_default
+    return default if isinstance(default, (bool, str, int)) else ma.missing
 
 
 MA_TO_RAF: dict[type, TRAConverter] = {

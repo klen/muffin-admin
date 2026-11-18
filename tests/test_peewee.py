@@ -91,7 +91,8 @@ def admin(app):
                 "name": fields.String(metadata={"description": "User name"}),
             }
             ra_refs: ClassVar = {"role": {"source": "name"}}
-            filters = ("status",)
+            ra_filters_always_on: ClassVar = ["is_active"]
+            filters = ("status", "is_active")
 
     @admin.route
     class RoleAdmin(PWAdminHandler):
@@ -258,7 +259,17 @@ async def test_user_resource(app):
                 "source": "status",
             },
         ),
+        (
+            "BooleanInput",
+            {
+                "source": "is_active",
+                "helperText": "Disable to block the user",
+                "alwaysOn": True,
+                "resettable": True,
+            },
+        ),
     ]
+    assert ra["list"]["filterDefaultValues"] == {"is_active": True}
 
     assert ra["list"]["fields"] == [
         ("TextField", {"source": "id", "sortable": True}),

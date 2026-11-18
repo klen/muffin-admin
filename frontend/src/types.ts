@@ -114,6 +114,9 @@ export type AdminResourceProps = {
       field: string
       order: "ASC" | "DESC"
     }
+    // Extra keys are passed to <List> as is, for example `ra_list_params`
+    queryOptions?: { meta?: Record<string, any> }
+    [key: string]: any
   }
   show: AdminShowProps
 }

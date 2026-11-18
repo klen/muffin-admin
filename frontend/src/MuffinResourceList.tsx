@@ -24,7 +24,21 @@ import { buildAdmin, findBuilder, setupAdmin } from "./utils"
 
 export function MuffinList({ children }: PropsWithChildren) {
   const { name, list, key } = useMuffinResourceOpts()
-  const { limit, limitMax, limitTotal, sort, filters } = list
+  // Own keys are handled here, the rest are <List> props from `ra_list_params`
+  const {
+    limit,
+    limitMax,
+    limitTotal,
+    sort,
+    filters,
+    fields,
+    create,
+    remove,
+    edit,
+    show,
+    queryOptions,
+    ...listProps
+  } = list
 
   const DataGrid = findBuilder(["list-grid", name])
   const Toolbar = findBuilder(["list-toolbar", name])
@@ -32,11 +46,12 @@ export function MuffinList({ children }: PropsWithChildren) {
 
   return limitTotal ? (
     <List
+      {...listProps}
       sort={sort}
       perPage={limit}
       filters={raFilters}
       actions={<Toolbar />}
-      queryOptions={{ meta: { key } }}
+      queryOptions={{ ...queryOptions, meta: { key, ...queryOptions?.meta } }}
       pagination={
         <Pagination rowsPerPageOptions={sortBy(uniq([10, 25, 50, 100, limit, limitMax]))} />
       }
@@ -46,11 +61,12 @@ export function MuffinList({ children }: PropsWithChildren) {
     </List>
   ) : (
     <InfiniteList
+      {...listProps}
       sort={sort}
       perPage={limit}
       filters={raFilters}
       actions={<Toolbar />}
-      queryOptions={{ meta: { key } }}
+      queryOptions={{ ...queryOptions, meta: { key, ...queryOptions?.meta } }}
     >
       {children}
       <DataGrid />
