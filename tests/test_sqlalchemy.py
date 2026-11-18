@@ -161,6 +161,7 @@ def test_admin_schemas(app):
     assert ra["show"] == {
         "edit": True,
         "links": (),
+        "inline": (),
         "fields": [
             ("NumberField", {"source": "id"}),
             ("TextField", {"source": "name"}),

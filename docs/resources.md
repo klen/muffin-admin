@@ -139,6 +139,7 @@ want the type checker to stay quiet; the runtime reads them as ordinary attribut
 | `ra_filters_always_on` | Filter names rendered as always-on with a reset button; their `load_default` becomes the initial value |
 | `ra_refs` | Foreign key display: `{source: {source, key, reference}}` |
 | `ra_links` | Show-view links to related resources |
+| `ra_inline` | Show-view inline lists of related records, rendered under the fields |
 | `ra_list_params` | Extra properties merged into the `list` payload and passed to `<List>` |
 | `ra_show_params` | Extra properties merged into the `show` payload |
 
@@ -158,6 +159,7 @@ class Meta(PWAdminHandler.Meta):
     ra_filters_always_on = ["is_active"]
     ra_refs = {"group": {"source": "name"}}
     ra_links = (("message", {"label": "Messages", "title": "Show user messages"}),)
+    ra_inline = (("message", {"filter": "user"}),)
 ```
 
 `ra_refs` keys are serialized field names. The backend fills in the rest: for a Peewee
@@ -167,6 +169,12 @@ related admin resource.
 
 There is no `related_fields` option; related data is wired through `ra_refs` (for foreign keys)
 and `ra_links` (for links on the detail page).
+
+`ra_inline` renders a read-only list of a related resource under the show fields, for example
+the messages of a user. It takes the same `(resource, props)` pairs as `ra_links`, where
+`filter` is the filter of the related resource (default: the current resource name) and `field`
+is the record field to filter by (default: `id`). The list uses the related resource's `columns`
+and its default sorting.
 
 Defaults are chosen from the model/table where possible: Peewee choices become `SelectInput` /
 `SelectField`, `TextField` becomes a multiline input, JSON fields become `JsonInput` /

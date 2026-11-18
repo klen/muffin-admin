@@ -51,6 +51,7 @@ class AdminOptions(RESTOptions):
     ra_filters: ClassVar[dict[str, TRAInfo]] = {}
     ra_refs: ClassVar[dict[str, TRAReference]] = {}
     ra_links: TRALinks = ()
+    ra_inline: TRALinks = ()
 
     ra_list_params: ClassVar[dict[str, Any]] = {}
     ra_filters_always_on: ClassVar[list[str]] = []
@@ -225,6 +226,7 @@ class AdminHandler(RESTBase[TVResource, TVCollection]):
             },
             "show": {
                 "links": meta.ra_links,
+                "inline": meta.ra_inline,
                 "edit": meta.edit,
                 "fields": fields,
                 **meta.ra_show_params,

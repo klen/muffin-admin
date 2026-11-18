@@ -15,6 +15,7 @@ import { buildRA } from "./buildRA"
 import { ActionButton } from "./buttons"
 import { AdminModal } from "./common"
 import { useMuffinResourceOpts } from "./hooks"
+import { MuffinRecordList } from "./MuffinRecordList"
 import { buildAdmin, findBuilder, setupAdmin } from "./utils"
 
 export function MuffinShow({ children }: PropsWithChildren) {
@@ -81,6 +82,13 @@ export function MuffinShow({ children }: PropsWithChildren) {
         >
           {buildAdmin(["show-fields", name], show)}
         </SimpleShowLayout>
+        {show.inline.map(([resource, props]) => (
+          <MuffinRecordList
+            key={resource}
+            resource={resource}
+            filter={(record) => ({ [props.filter || name]: record[props.field || "id"] })}
+          />
+        ))}
         {children}
       </AdminModal>
     </Show>

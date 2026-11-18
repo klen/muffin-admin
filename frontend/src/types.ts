@@ -70,6 +70,7 @@ export type AdminShowLink = {
 export type AdminShowProps = {
   fields: AdminField[]
   links: [string, AdminShowLink][]
+  inline: [string, AdminShowLink][]
   edit?: boolean
 }
 

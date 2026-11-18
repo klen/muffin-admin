@@ -59,6 +59,7 @@ def test_endpoint(app):
     }
     assert ra["show"] == {
         "links": (),
+        "inline": (),
         "edit": True,
         "fields": [
             ("TextField", {"source": "id"}),
@@ -118,6 +119,19 @@ async def test_endpoint_action(app):
         },
     ]
     assert ra["edit"]["inputs"] == []
+
+
+def test_inline_lists():
+
+    class BaseHandler(AdminHandler):
+        class Meta(AdminHandler.Meta):
+            name = "base"
+            ra_inline: ClassVar = (("message", {"filter": "user"}),)
+
+            class Schema(ma.Schema):  # type: ignore[]
+                id = ma.fields.String()
+
+    assert BaseHandler.to_ra()["show"]["inline"] == (("message", {"filter": "user"}),)
 
 
 def test_action_route():

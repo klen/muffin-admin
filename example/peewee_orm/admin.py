@@ -171,6 +171,7 @@ class UserResource(PWAdminHandler):
             "picture": ("AvatarField", {"alt": "picture", "nameProp": "name", "sortable": False}),
         }
         ra_links = (("message", {"label": "Messages", "title": "Show user messages"}),)
+        ra_inline = (("message", {"filter": "user"}),)
         ra_refs: ClassVar = {"group": {"source": "name"}}
         ra_filters: ClassVar = {
             "email": ("SearchFilter", {}),

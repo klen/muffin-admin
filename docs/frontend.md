@@ -210,7 +210,7 @@ Per-resource slots (`name` is the resource name from `ra.json`):
 
 The builders receive what the default implementation needs: `list-fields`, `list-filters` and
 `create-inputs` get the serialized array from `ra.json` (`AdminField[]` / `AdminInput[]`),
-`show-fields` gets the show object (`{fields, links, edit}`), the rest get no props. A few
+`show-fields` gets the show object (`{fields, links, inline, edit}`), the rest get no props. A few
 examples:
 
 ```tsx

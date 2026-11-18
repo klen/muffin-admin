@@ -149,7 +149,7 @@ locales = None
 ra_order = 0
 ```
 
-`ra_fields`, `ra_inputs`, `ra_filters`, `ra_refs`, `ra_links`, `ra_list_params`,
+`ra_fields`, `ra_inputs`, `ra_filters`, `ra_refs`, `ra_links`, `ra_inline`, `ra_list_params`,
 `ra_filters_always_on` and `ra_show_params` are class-level overrides. Everything is described
 in [Resources](resources.md).
 

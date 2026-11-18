@@ -217,6 +217,7 @@ async def test_user_resource(app):
     }
     assert ra["show"] == {
         "links": (),
+        "inline": (),
         "edit": True,
         "fields": [
             ("TextField", {"source": "id"}),
