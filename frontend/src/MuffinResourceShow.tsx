@@ -3,10 +3,12 @@ import type { PropsWithChildren } from "react"
 import {
   EditButton,
   ListButton,
+  RecordContextProvider,
   Show,
   SimpleShowLayout,
   TopToolbar,
   useRecordContext,
+  useShowContext,
   useTranslate,
 } from "react-admin"
 import { useLocation, useNavigate } from "react-router-dom"
@@ -82,13 +84,7 @@ export function MuffinShow({ children }: PropsWithChildren) {
         >
           {buildAdmin(["show-fields", name], show)}
         </SimpleShowLayout>
-        {show.inline.map(([resource, props]) => (
-          <MuffinRecordList
-            key={resource}
-            resource={resource}
-            filter={(record) => ({ [props.filter || name]: record[props.field || "id"] })}
-          />
-        ))}
+        <MuffinShowInline />
         {children}
       </AdminModal>
     </Show>
@@ -97,6 +93,25 @@ export function MuffinShow({ children }: PropsWithChildren) {
 
 setupAdmin(["show"], MuffinShow)
 setupAdmin(["show-fields"], ({ fields }) => buildRA(fields))
+
+// <Show> only provides ShowContext, RecordContext comes from the layout
+function MuffinShowInline() {
+  const { show, name } = useMuffinResourceOpts()
+  const { record } = useShowContext()
+  if (!record) return null
+
+  return (
+    <RecordContextProvider value={record}>
+      {show.inline.map(([resource, props]) => (
+        <MuffinRecordList
+          key={resource}
+          resource={resource}
+          filter={(rec) => ({ [props.filter || name]: rec[props.field || "id"] })}
+        />
+      ))}
+    </RecordContextProvider>
+  )
+}
 
 export function MuffinShowToolbar() {
   const { show, name } = useMuffinResourceOpts()

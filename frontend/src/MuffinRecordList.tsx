@@ -4,9 +4,9 @@ import {
   Datagrid,
   type SortPayload,
   useGetList,
+  useGetResourceLabel,
   useRecordContext,
   useTheme,
-  useTranslate,
 } from "react-admin"
 import { useMuffinResourceOpts } from "./hooks"
 import { buildAdmin } from "./utils"
@@ -20,22 +20,24 @@ type TProps = {
 export function MuffinRecordList({ resource, filter, sort, highlightBy }: TProps) {
   const record = useRecordContext()
   const theme = useTheme()[0]
-  const translate = useTranslate()
+  const getResourceLabel = useGetResourceLabel()
   const {
     list: { fields },
   } = useMuffinResourceOpts(resource)
-  const { data, isPending } = useGetList(resource, { sort, filter: filter(record) })
+  const { data, isPending } = useGetList(
+    resource,
+    { sort, filter: record ? filter(record) : {} },
+    { enabled: Boolean(record) }
+  )
   const rowSx = (row: any) => {
-    if (!highlightBy) return {}
+    if (!highlightBy || !record) return {}
     const { field, value } = highlightBy(record)
     const selectColor = theme === "dark" ? "#646D7E" : "#B4CFEC"
     return { backgroundColor: row[field] === value ? selectColor : "" }
   }
   return (
     <Box sx={{ p: 2 }}>
-      <Typography variant="h6">
-        {translate(`resources.${resource}.name`, { smart_count: 2 })}
-      </Typography>
+      <Typography variant="h6">{getResourceLabel(resource, 2)}</Typography>
       <Datagrid
         resource={resource}
         bulkActionButtons={false}
