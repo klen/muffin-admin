@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import inspect
 from functools import wraps
-from typing import TYPE_CHECKING, Any, ClassVar, Sequence, cast
+from typing import TYPE_CHECKING, Any, Callable, ClassVar, ParamSpec, Sequence, cast, overload
 
 import marshmallow as ma
 from muffin_rest import APIError
@@ -14,13 +14,17 @@ from muffin_rest.schemas import EnumField
 from muffin_rest.types import TVCollection, TVResource
 
 if TYPE_CHECKING:
+    from collections.abc import Awaitable
+
     from http_router.types import THostsArg, TMethods
     from muffin import Request, Response
     from muffin_rest.filters import Filter
 
     from muffin_admin.types import TActionView, TRAInputs, TRALinks, TRAProps, TRAReference
 
-    from .types import TRAConverter, TRAInfo
+    from .types import TRAConverter, TRActionMethod, TRAInfo
+
+P = ParamSpec("P")
 
 
 class AdminOptions(RESTOptions):
@@ -57,7 +61,7 @@ class AdminOptions(RESTOptions):
     ra_filters_always_on: ClassVar[list[str]] = []
     ra_show_params: ClassVar[dict[str, Any]] = {}
 
-    def setup(self, cls: AdminHandler):
+    def setup(self, cls: type[RESTBase]) -> None:
         """Check and build required options."""
         if not self.limit:
             raise ValueError("`AdminHandler.Meta.limit` can't be nullable.")
@@ -114,6 +118,32 @@ class AdminHandler(RESTBase[TVResource, TVCollection]):
         return cast("TVCollection", request.query.getall("ids", []))
 
     @classmethod
+    @overload
+    def action(
+        cls,
+        *paths: str,
+        methods: TMethods | None = None,
+        hosts: THostsArg | None = None,
+        icon: str | None = None,
+        label: str | None = None,
+        view: list[TActionView] | TActionView | None = None,
+        schema: None = None,
+        **opts: Any,
+    ) -> Callable[[Callable[P, Awaitable[Any]]], Callable[P, Awaitable[Any]]]: ...
+    @classmethod
+    @overload
+    def action(
+        cls,
+        *paths: str,
+        methods: TMethods | None = None,
+        hosts: THostsArg | None = None,
+        icon: str | None = None,
+        label: str | None = None,
+        view: list[TActionView] | TActionView | None = None,
+        schema: type[ma.Schema],
+        **opts: Any,
+    ) -> Callable[[Callable[..., Awaitable[Any]]], Callable[..., Awaitable[Any]]]: ...
+    @classmethod
     def action(  # noqa: PLR0913
         cls,
         *paths: str,
@@ -123,8 +153,8 @@ class AdminHandler(RESTBase[TVResource, TVCollection]):
         label: str | None = None,
         view: list[TActionView] | TActionView | None = None,
         schema: type[ma.Schema] | None = None,
-        **opts,
-    ):
+        **opts: Any,
+    ) -> Callable[..., Any]:
         """Register an action for the handler.
 
         Decorate any function to use it as an action.
@@ -135,16 +165,16 @@ class AdminHandler(RESTBase[TVResource, TVCollection]):
         :param view: View name (list, show)
         """
 
-        def decorator(method):
+        def decorator(method: Callable[..., Awaitable[Any]]) -> Callable[..., Any]:
             if schema is None:
                 wrapper = method
             else:
 
                 @wraps(method)
-                async def wrapper(self, request: Request, **kwargs):
+                async def wrapper(self: Any, request: Request, **kwargs: Any) -> Any:
                     try:
                         raw_data = cast("dict", await request.json())
-                        data = schema().load(raw_data)  # type: ignore[]
+                        data = schema().load(raw_data)
                     except ValueError:
                         raise APIError.BAD_REQUEST("Invalid data") from None
                     except ma.ValidationError as exc:
@@ -152,8 +182,9 @@ class AdminHandler(RESTBase[TVResource, TVCollection]):
 
                     return await method(self, request, data=data, **kwargs)
 
-            wrapper.__route__ = paths, methods, hosts  # type: ignore[]
-            wrapper.__action__ = {  # type: ignore[]
+            action = cast("TRActionMethod", wrapper)
+            action.__route__ = paths, methods, hosts
+            action.__action__ = {
                 "view": [view] if isinstance(view, str) else view,
                 "icon": icon,
                 "paths": paths,
@@ -164,7 +195,7 @@ class AdminHandler(RESTBase[TVResource, TVCollection]):
             }
 
             if schema:
-                wrapper.__action__["schema"] = schema  # type: ignore[]
+                action.__action__["schema"] = schema
 
             return wrapper
 
@@ -183,9 +214,9 @@ class AdminHandler(RESTBase[TVResource, TVCollection]):
                 info["schema"] = inputs
             actions.append(info)
 
-        fields, inputs = cls.to_ra_schema(meta.Schema)  # type: ignore[]
+        fields, inputs = cls.to_ra_schema(meta.Schema)
         fields_hash = {
-            props["source"]: (ra_type, dict(props, sortable=props["source"] in meta.sorting))  # type: ignore[]
+            props["source"]: (ra_type, dict(props, sortable=props["source"] in meta.sorting))
             for (ra_type, props) in fields
         }
 
@@ -242,9 +273,9 @@ class AdminHandler(RESTBase[TVResource, TVCollection]):
 
         default_sort = meta.sorting.default and meta.sorting.default[0]
         if default_sort:
-            data["list"]["sort"] = {  # type: ignore[call-overload, index]
-                "field": default_sort.name,  # type: ignore[]
-                "order": default_sort.meta["default"].upper(),  # type: ignore[]
+            data["list"]["sort"] = {
+                "field": default_sort.name,
+                "order": default_sort.meta["default"].upper(),
             }
 
         return data
@@ -390,7 +421,7 @@ MA_TO_RAF: dict[type, TRAConverter] = {
     ma.fields.Url: lambda _: ("UrlField", {}),
     ma.fields.Enum: lambda field: (
         "SelectField",
-        {"choices": [{"id": choice.value, "name": choice.name} for choice in field.enum]},  # type: ignore[attr-defined]
+        {"choices": [{"id": choice.value, "name": choice.name} for choice in field.enum]},
     ),
     # Default
     object: lambda _: ("TextField", {}),
@@ -404,7 +435,7 @@ MA_TO_RAI: dict[type, TRAConverter] = {
     ma.fields.Field: lambda _: ("TextInput", {}),
     ma.fields.Enum: lambda field: (
         "SelectInput",
-        {"choices": [{"id": choice.value, "name": choice.name} for choice in field.enum]},  # type: ignore[attr-defined]
+        {"choices": [{"id": choice.value, "name": choice.name} for choice in field.enum]},
     ),
     # Default
     object: lambda _: ("TextField", {}),

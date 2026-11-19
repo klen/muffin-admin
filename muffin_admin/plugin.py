@@ -5,7 +5,7 @@ from __future__ import annotations
 from importlib import metadata
 from inspect import isclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, ClassVar, cast
+from typing import TYPE_CHECKING, Any, Callable, ClassVar, ParamSpec, TypeVar, cast, overload
 
 from muffin import Application, Request, ResponseError, ResponseFile, ResponseRedirect
 from muffin.plugins import BasePlugin
@@ -16,7 +16,12 @@ from muffin_admin.utils import deepmerge
 from .handler import AdminHandler
 
 if TYPE_CHECKING:
+    from collections.abc import Awaitable
+
     from muffin_rest.types import TAuth
+
+P = ParamSpec("P")
+TAdminHandler = TypeVar("TAdminHandler", bound=AdminHandler)
 
 PACKAGE_DIR: Path = Path(__file__).parent
 TEMPLATE: str = (PACKAGE_DIR / "admin.html").read_text()
@@ -130,7 +135,13 @@ class Plugin(BasePlugin):
 
         return True
 
-    def route(self, path: Any, *paths: str, **params) -> Callable:
+    @overload
+    def route(self, path: type[TAdminHandler], /) -> type[TAdminHandler]: ...
+    @overload
+    def route(
+        self, path: str, *paths: str, **params: Any
+    ) -> Callable[[Callable[P, Awaitable[Any]]], Callable[P, Awaitable[Any]]]: ...
+    def route(self, path: Any, *paths: str, **params: Any) -> Any:
         """Route an handler."""
         if not isinstance(path, str):
             self.register_handler(path)
@@ -138,7 +149,7 @@ class Plugin(BasePlugin):
 
         paths = (path, *paths)
 
-        def wrapper(cb):
+        def wrapper(cb: Callable[..., Awaitable[Any]]) -> Any:
             self.register_handler(cb)
             return self.api.route(*paths, **params)(cb)
 

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import marshmallow as ma
 import peewee as pw
@@ -20,14 +20,15 @@ from muffin_admin.peewee.schemas import PeeweeModelSchema
 if TYPE_CHECKING:
     from muffin import Request
     from muffin_rest.filters import Filter
+    from muffin_rest.handler import RESTBase
 
-    from muffin_admin.types import TRAInfo
+    from muffin_admin.types import TRAInfo, TRAProps
 
 
 class PWAdminOptions(AdminOptions, PWRESTOptions):
     """Keep PWAdmin options."""
 
-    def setup(self, cls):
+    def setup(self, cls: type[RESTBase]) -> None:
         """Auto insert filter by id."""
 
         # Make a copy of schema_fields to avoid modifying the class variable in subclasses
@@ -55,7 +56,7 @@ class PWAdminOptions(AdminOptions, PWRESTOptions):
         else:
             self.filters = [PWFilter(self.id, field=self.model_pk), *self.filters]  # type: ignore[]
 
-    def setup_schema_meta(self, _):
+    def setup_schema_meta(self, _: type[RESTBase]) -> type[Any]:
         """Prepare a schema."""
         pk = self.model_pk
 
@@ -73,7 +74,7 @@ class PWAdminOptions(AdminOptions, PWRESTOptions):
 
     def default_sort(self: PWAdminOptions):
         """Default sorting."""
-        fields = self.model._meta.fields  # type: ignore[]
+        fields = self.model._meta.fields
         sorting: list = [name for name in self.columns if name in fields]
         if sorting:
             sorting[0] = (sorting[0], {"default": "desc"})
@@ -96,7 +97,7 @@ class PWAdminHandler(
         keys = request.query.getall("ids")
         qs = self.collection
         if keys:
-            qs = qs.where(self.meta.model_pk.in_(keys))  # type: ignore[]
+            qs = qs.where(self.meta.model_pk.in_(keys))
 
         return qs
 
@@ -154,7 +155,7 @@ class PWAdminHandler(
                 return "TextInput", dict(props, multiline=True)
 
             if isinstance(model_field, pw.DateTimeField) and isinstance(field, ma.fields.DateTime):
-                dtformat = field.format or cls.meta.Schema.opts.datetimeformat  # type: ignore[]
+                dtformat = field.format or cls.meta.Schema.opts.datetimeformat  # type: ignore[attr-defined]
                 if dtformat == "timestamp_ms":
                     return "TimestampInput", dict(props, ms=True)
                 elif dtformat == "timestamp":
@@ -184,20 +185,18 @@ class PWAdminHandler(
 
         if isinstance(field, pw.Field) and field.choices:
             source = flt.name
-            ra_type, props = (
-                "SelectArrayInput",
-                {
-                    "source": source,
-                    "choices": [{"id": c[0], "name": c[1]} for c in field.choices],
-                },
-            )
+            ra_type = "SelectArrayInput"
+            props: TRAProps = {
+                "source": source,
+                "choices": [{"id": c[0], "name": c[1]} for c in field.choices],
+            }
             custom = meta.ra_filters.get(source)
             if custom:
                 ra_type, props = custom[0], {**props, **custom[1]}
 
             if source in meta.ra_filters_always_on:
-                props["alwaysOn"] = True  # type: ignore[assignment]
-                props["resettable"] = True  # type: ignore[assignment]
+                props["alwaysOn"] = True
+                props["resettable"] = True
 
             return ra_type, props
 

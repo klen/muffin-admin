@@ -1,13 +1,27 @@
 """Custom types."""
 
-from typing import Any, Callable, Literal, NotRequired, TypeAlias, TypedDict
+from __future__ import annotations
 
-from marshmallow.fields import Field
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Literal,
+    NotRequired,
+    Protocol,
+    TypeAlias,
+    TypedDict,
+)
+
+if TYPE_CHECKING:
+    from collections.abc import Awaitable
+
+    from http_router.types import THostsArg, TMethods
 
 TActionView = Literal["show", "edit", "list", "bulk"]
 TRAProps = dict[str, Any]
 TRAInfo = tuple[str, TRAProps]
-TRAConverter = Callable[[Field], TRAInfo]
+TRAConverter = Callable[[Any], TRAInfo]  # field type depends on the converter
 TRAInputs: TypeAlias = tuple[tuple[str, TRAInfo], ...]
 
 
@@ -27,3 +41,12 @@ class TRAActionLink(TypedDict):
 
 
 TRALinks = tuple[tuple[str, TRAActionLink], ...]
+
+
+class TRActionMethod(Protocol):
+    """A handler method decorated by `AdminHandler.action`."""
+
+    __action__: dict[str, Any]
+    __route__: tuple[tuple[str, ...], TMethods | None, THostsArg | None]
+
+    def __call__(self, *args: Any, **kwargs: Any) -> Awaitable[Any]: ...
