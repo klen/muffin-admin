@@ -933,7 +933,7 @@ wheels = [
 
 [[package]]
 name = "muffin-admin"
-version = "13.8.1"
+version = "13.8.2"
 source = { editable = "." }
 default-groups = ["dev", "example"]
 dependencies = [
