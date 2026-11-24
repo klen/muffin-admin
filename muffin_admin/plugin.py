@@ -51,6 +51,7 @@ class Plugin(BasePlugin):
         "app_bar_links": [
             {"url": "/", "icon": "Home", "title": "Home"},
         ],
+        "app_bar_color": None,
         "mutation_mode": "optimistic",
         "theme": None,
         "help": None,
@@ -213,6 +214,7 @@ class Plugin(BasePlugin):
                 "theme": cfg.theme,
             },
             "appBarLinks": cfg.app_bar_links,
+            "appBarColor": cfg.app_bar_color,
             "version": VERSION,
             "help": cfg.help,
             "resources": [res.to_ra() for res in handlers],

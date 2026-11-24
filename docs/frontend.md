@@ -19,7 +19,7 @@ You need your own build when you want something the description cannot express:
 
 - components that do not map to a react-admin field or input (custom charts, editors, wizards);
 - your own authorization flow, identity, or a token stored somewhere else;
-- branding beyond a title, a stylesheet and app bar links;
+- branding beyond a title, a stylesheet, app bar links and an app bar color;
 - static files deployed on their own host, container or release cadence.
 
 ## Three levels of customization

@@ -110,9 +110,11 @@ export function MuffinAdminLayout(props: LayoutProps) {
 setupAdmin(["layout"], MuffinAdminLayout)
 
 export function MuffinAppBar(props: AppBarProps) {
-  const { appBarLinks } = useMuffinAdminOpts()
+  const { appBarColor, appBarLinks } = useMuffinAdminOpts()
+  // Inline style beats the MUI `colorSecondary` variant, so only the bar is recolored
+  const appBarStyle = appBarColor ? { ...props.style, backgroundColor: appBarColor } : props.style
   return (
-    <AppBar {...props}>
+    <AppBar {...props} style={appBarStyle}>
       <Typography
         variant="h6"
         color="inherit"

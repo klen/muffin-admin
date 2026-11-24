@@ -136,6 +136,7 @@ export type AdminOpts = {
   }
   apiUrl: string
   appBarLinks: [{ url: string; title: string; icon?: string }]
+  appBarColor?: string
   auth: {
     identityURL: string
     authorizeURL: string

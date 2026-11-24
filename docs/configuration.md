@@ -33,6 +33,8 @@ admin = Plugin(app)
 | `auth_storage`      | `ADMIN_AUTH_STORAGE`     | `"localstorage"`                                    | `localstorage` or `cookies`; see [Authentication](auth.md) |
 | `auth_storage_name` | `ADMIN_AUTH_STORAGE_NAME`| `"muffin_admin_auth"`                               | Key of the stored auth value |
 | `app_bar_links`     | `ADMIN_APP_BAR_LINKS`    | `[{"url": "/", "icon": "Home", "title": "Home"}]`   | Links in the top bar; `icon` is a Material-UI icon name |
+| `app_bar_color`     | `ADMIN_APP_BAR_COLOR`    | `None`                                              | Background color of the top bar; see below |
+| `theme`             | `ADMIN_THEME`            | `None`                                              | MUI theme options merged into both the light and dark themes; see [Theme](#theme) |
 | `mutation_mode`     | `ADMIN_MUTATION_MODE`    | `"optimistic"`                                      | react-admin mutation mode: `pessimistic`, `optimistic` or `undoable` |
 | `help`              | `ADMIN_HELP`             | `None`                                              | Link to a help page, shown on the dashboard |
 | `locales`           | `ADMIN_LOCALES`          | `None`                                              | Translations merged with per-resource `locales`; see [Customization](customization.md#translations) |
@@ -46,6 +48,31 @@ the `/api` routes are mounted.
 
 `prefix` is used verbatim after the trailing slash is stripped, so `prefix="/"` mounts the
 admin at the application root.
+
+`app_bar_color` is written as an inline style on the bar, so it wins over react-admin's
+`color="secondary"` variant and changes nothing else. The text color still comes from
+`theme.palette.secondary.contrastText` (white in both stock themes), which keeps a dark brand
+color readable and needs the `theme` option for a light one.
+
+## Theme
+
+`theme` takes MUI theme options and deep-merges them into both the light and the dark theme,
+so a single value applies in both modes:
+
+```python
+admin = Plugin(
+    app,
+    theme={"palette": {"primary": {"main": "#1e88e5"}}, "shape": {"borderRadius": 2}},
+)
+```
+
+The same value goes to `ra.json` as `adminProps.theme` and accepts the JSON form in
+`ADMIN_THEME`. Two things to know:
+
+- `palette.secondary` colors the top bar, but also every other component that uses the
+  secondary palette (buttons, accents). Use `app_bar_color` to recolor the bar alone.
+- Overriding `components.RaAppBar.styleOverrides` from the theme does not recolor the bar:
+  MUI applies the `colorSecondary` variant after the root overrides. Use `app_bar_color`.
 
 ## Environment variables
 
@@ -72,6 +99,7 @@ Values are JSON-decoded when possible, so lists and dictionaries fit in one vari
 export MUFFIN_ADMIN_TITLE="Shop admin"
 export MUFFIN_ADMIN_AUTH_STORAGE="cookies"
 export MUFFIN_ADMIN_APP_BAR_LINKS='[{"url": "/", "title": "Home", "icon": "Home"}]'
+export MUFFIN_ADMIN_APP_BAR_COLOR='#1e88e5'
 ```
 
 ## About `secret`

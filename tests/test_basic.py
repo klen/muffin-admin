@@ -2,6 +2,7 @@ from typing import ClassVar
 
 import marshmallow as ma
 from marshmallow import validate
+from muffin import Application
 
 from muffin_admin import AdminHandler, Plugin
 
@@ -85,6 +86,16 @@ def test_endpoint(app):
 
     ra = admin.to_ra()
     assert ra["locales"] == {"en": {"test": "Test"}}
+
+
+def test_app_bar_and_theme(app):
+    theme = {"palette": {"secondary": {"main": "#1e88e5"}}}
+    admin = Plugin(app, theme=theme, app_bar_color="#1e88e5")
+    ra = admin.to_ra()
+    assert ra["appBarColor"] == "#1e88e5"
+    assert ra["adminProps"]["theme"] == theme
+
+    assert Plugin(Application()).to_ra()["appBarColor"] is None
 
 
 async def test_endpoint_action(app):
