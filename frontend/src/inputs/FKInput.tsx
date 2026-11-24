@@ -1,6 +1,9 @@
 import { AutocompleteInput, ReferenceInput } from "react-admin"
+import { useMuffinResourceOpts } from "../hooks"
 
 export function FKInput({ refKey, refSource, fullWidth, reference, source, ...props }) {
+  // List the options with the related resource's default sorting instead of react-admin's `-id`
+  const { list } = useMuffinResourceOpts(reference) || {}
   // Bind to AutoCompleteInput if we want to customize the search
   // const filterToQuery = (search) => {
   //   const filters = {}
@@ -19,6 +22,7 @@ export function FKInput({ refKey, refSource, fullWidth, reference, source, ...pr
     <ReferenceInput
       reference={reference}
       source={source}
+      sort={list?.sort}
       queryOptions={{
         meta: { key: refKey },
       }}

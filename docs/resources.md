@@ -167,6 +167,11 @@ class Meta(PWAdminHandler.Meta):
 `ForeignKey` the referenced column and table. `reference` must match the resource name of the
 related admin resource.
 
+The foreign key input lists the related records with the related resource's default `sorting`
+(or its first `columns` entry descending), so a resource sorted by name gets an alphabetical
+dropdown instead of react-admin's default newest-first order. The same order applies to the
+`ra_inline` lists.
+
 There is no `related_fields` option; related data is wired through `ra_refs` (for foreign keys)
 and `ra_links` (for links on the detail page).
 

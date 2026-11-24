@@ -22,11 +22,11 @@ export function MuffinRecordList({ resource, filter, sort, highlightBy }: TProps
   const theme = useTheme()[0]
   const getResourceLabel = useGetResourceLabel()
   const {
-    list: { fields },
+    list: { fields, sort: defaultSort },
   } = useMuffinResourceOpts(resource)
   const { data, isPending } = useGetList(
     resource,
-    { sort, filter: record ? filter(record) : {} },
+    { sort: sort ?? defaultSort, filter: record ? filter(record) : {} },
     { enabled: Boolean(record) }
   )
   const rowSx = (row: any) => {

@@ -88,6 +88,18 @@ def test_endpoint(app):
     assert ra["locales"] == {"en": {"test": "Test"}}
 
 
+def test_default_sorting(app):
+    admin = Plugin(app)
+
+    @admin.route
+    class Handler(AdminHandler):
+        class Meta(AdminHandler.Meta):
+            name = "sorted"
+            sorting = (("id", {"default": "asc"}),)
+
+    assert Handler.to_ra()["list"]["sort"] == {"field": "id", "order": "ASC"}
+
+
 def test_app_bar_and_theme(app):
     theme = {"palette": {"secondary": {"main": "#1e88e5"}}}
     admin = Plugin(app, theme=theme, app_bar_color="#1e88e5")
